@@ -1,0 +1,76 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
+/// <summary>
+/// 이동/점프 입력 및 처리
+/// </summary>
+[RequireComponent(typeof(CharacterController))]
+public class PlayerMovement : MonoBehaviour
+{
+    [SerializeField] private float moveSpeed = 5.0f; // 이동 속도
+    [SerializeField] private float jumpHeight = 2.0f; // 점프 높이
+    [SerializeField] private float gravity = -9.81f; // 중력가속도(음수)
+
+    private CharacterController characterController; // 캐릭터 컨트롤러
+    private Vector3 velocity; // 현재 속도
+    private bool isGrounded; // 땅에 닿아 있는지 여부
+
+    void Start()
+    {
+        characterController = GetComponent<CharacterController>();
+    }
+
+    void Update()
+    {
+        GroundCheck();
+        Move();
+    }
+
+    /// <summary>
+    /// 플레이어가 땅에 닿아있는지 판단 + 땅에 닿아있고 속도가 아래로 향할 때 속도 리셋
+    /// </summary>
+    private void GroundCheck()
+    {
+        isGrounded = characterController.isGrounded;
+
+        // 땅에 닿아 있고, y축 속도가 아래로 향하고 있으면
+        if (isGrounded && velocity.y < 0)
+        {
+            // y축 속도를 고정하여 플레이어가 바닥에 안정적으로 붙어있게 함
+            velocity.y = -2.0f;
+        }
+    }
+
+    /// <summary>
+    /// 이동 관련 입력을 받아 플레이어의 이동 방향 계산
+    /// </summary>
+    /// <returns>이동 방향 벡터</returns>
+    private Vector3 GetInputMovement()
+    {
+        float x = Input.GetAxis("Horizontal"); // 좌우 이동 (A/D or ←/→)
+        float z = Input.GetAxis("Vertical"); // 앞뒤 이동 (W/S or ↑/↓)
+
+        return transform.right * x + transform.forward * z;
+    }
+
+    /// <summary>
+    /// 이동, 점프, 중력 처리 담당
+    /// </summary>
+    private void Move()
+    {
+        Vector3 move = GetInputMovement(); // 입력에 따른 방향 벡터 계산
+        characterController.Move(move * moveSpeed * Time.deltaTime); // 이동 처리
+
+        // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때
+        if(isGrounded && Input.GetButtonDown("Jump"))
+        {
+            // 점프 높이와 중력으로 초기 y속도 계산
+            velocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravity);
+        }
+
+        velocity.y += gravity * Time.deltaTime; // 중력을 누적시켜 시간이 지날수록 더 빠르게 떨어지도록 함
+        characterController.Move(velocity * Time.deltaTime); // 최종 이동 적용
+    }
+}
