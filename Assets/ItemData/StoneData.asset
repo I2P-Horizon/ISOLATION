@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b597242af57330945a22e8bf03013df0, type: 3}
+  m_Name: StoneData
+  m_EditorClassIdentifier: 
+  _id: 2
+  _name: "\uB3CC\uB369\uC774"
+  _tooltip: "\uBC14\uC704\uC5D0\uC11C \uB5A8\uC5B4\uC838 \uB098\uC628 \uB3CC \uC870\uAC01"
+  _iconSprite: {fileID: 21300000, guid: d812479bdef8a1c458e64d9743f2e637, type: 3}
+  _dropItemPrefab: {fileID: 8468863848485236020, guid: ae85a80047daad442bff1dac6f140e39, type: 3}
+  _maxAmount: 99
+  _value: 0

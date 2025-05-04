@@ -9,17 +9,17 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5.0f; // 이동 속도
-    [SerializeField] private float jumpHeight = 2.0f; // 점프 높이
-    [SerializeField] private float gravity = -9.81f; // 중력가속도(음수)
+    [SerializeField] private float _moveSpeed = 5.0f; // 이동 속도
+    [SerializeField] private float _jumpHeight = 2.0f; // 점프 높이
+    [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
 
-    private CharacterController characterController; // 캐릭터 컨트롤러
-    private Vector3 velocity; // 현재 속도
-    private bool isGrounded; // 땅에 닿아 있는지 여부
+    private CharacterController _characterController; // 캐릭터 컨트롤러
+    private Vector3 _velocity; // 현재 속도
+    private bool _isGrounded; // 땅에 닿아 있는지 여부
 
     void Start()
     {
-        characterController = GetComponent<CharacterController>();
+        _characterController = GetComponent<CharacterController>();
     }
 
     void Update()
@@ -33,13 +33,13 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void GroundCheck()
     {
-        isGrounded = characterController.isGrounded;
+        _isGrounded = _characterController.isGrounded;
 
         // 땅에 닿아 있고, y축 속도가 아래로 향하고 있으면
-        if (isGrounded && velocity.y < 0)
+        if (_isGrounded && _velocity.y < 0)
         {
             // y축 속도를 고정하여 플레이어가 바닥에 안정적으로 붙어있게 함
-            velocity.y = -2.0f;
+            _velocity.y = -2.0f;
         }
     }
 
@@ -61,16 +61,16 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         Vector3 move = GetInputMovement(); // 입력에 따른 방향 벡터 계산
-        characterController.Move(move * moveSpeed * Time.deltaTime); // 이동 처리
+        _characterController.Move(move * _moveSpeed * Time.deltaTime); // 이동 처리
 
         // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때
-        if(isGrounded && Input.GetButtonDown("Jump"))
+        if(_isGrounded && Input.GetButtonDown("Jump"))
         {
             // 점프 높이와 중력으로 초기 y속도 계산
-            velocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravity);
+            _velocity.y = Mathf.Sqrt(_jumpHeight * -2.0f * _gravity);
         }
 
-        velocity.y += gravity * Time.deltaTime; // 중력을 누적시켜 시간이 지날수록 더 빠르게 떨어지도록 함
-        characterController.Move(velocity * Time.deltaTime); // 최종 이동 적용
+        _velocity.y += _gravity * Time.deltaTime; // 중력을 누적시켜 시간이 지날수록 더 빠르게 떨어지도록 함
+        _characterController.Move(_velocity * Time.deltaTime); // 최종 이동 적용
     }
 }

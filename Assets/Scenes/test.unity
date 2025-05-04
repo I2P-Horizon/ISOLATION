@@ -489,9 +489,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c17886c87fd377e4ea4e4005241a30f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  jumpHeight: 2
-  gravity: -9.81
+  _moveSpeed: 5
+  _jumpHeight: 2
+  _gravity: -9.81
 --- !u!143 &784928698
 CharacterController:
   m_ObjectHideFlags: 0
@@ -600,7 +600,7 @@ Transform:
   m_GameObject: {fileID: 784928696}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: -4.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -618,9 +618,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab0bdd5dcbee96243bb7fc82decff4ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InteractionDistance: 5
-  gatherStrength: 5
-  gatherInterval: 1
+  _interactionDistance: 5
+  _gatherStrength: 5
+  _gatherInterval: 1
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -726,9 +726,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b007d056f66a7eb46884a4443d386b96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetTransform: {fileID: 784928702}
-  offset: {x: 0, y: 5, z: -13}
-  smoothTime: 0.1
+  _targetTransform: {fileID: 0}
+  _offset: {x: 0, y: 3, z: -10}
+  _smoothTime: 0.1
 --- !u!1001 &1409315157
 PrefabInstance:
   m_ObjectHideFlags: 0

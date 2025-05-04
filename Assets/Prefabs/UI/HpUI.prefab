@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 5550836465626057156}
   - component: {fileID: 1598525690710769213}
   m_Layer: 5
-  m_Name: DurabilityUI
+  m_Name: HpUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -137,7 +137,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4044842287539796994}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.106506646, y: 0.44132438, z: -0.05284695, w: 0.88943595}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_ConstrainProportionsScale: 0
@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 7179273073327373261}
   - component: {fileID: 8238321782885057805}
   m_Layer: 5
-  m_Name: DurabilitySlider
+  m_Name: HpSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -371,9 +371,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 1
+  m_MaxValue: 50
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 50
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

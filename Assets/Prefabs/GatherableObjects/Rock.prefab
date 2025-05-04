@@ -151,11 +151,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5baa82f27e1331459086d8420660e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 100
-  dropItem: {fileID: 0}
-  dropAmount: 3
-  durabilityUI: {fileID: 465746393847060118}
-  UIHideTime: 3
+  _hp: 100
+  _dropItem: {fileID: 8468863848485236020, guid: ae85a80047daad442bff1dac6f140e39, type: 3}
+  _dropAmount: 3
+  _hpUI: {fileID: 465746393847060118}
+  _UIHideTime: 3
 --- !u!1001 &4491359047381281428
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -246,7 +246,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4044842287539796994, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_Name
-      value: DurabilityUI
+      value: HpUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5550836465626057156, guid: 0da8438502d69b042807caca74565a91, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6195920642657744267, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_AnchorMax.x

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class RockObject : GatherableObject
 {
-    public override void Interact(float amount)
+    public override void Interact(object context = null)
     {
-        base.Interact(amount);
+        base.Interact(context);
 
         // 효과음, 애니메이션 등 추후 구현 예정
     }

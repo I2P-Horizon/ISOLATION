@@ -3,42 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class GatherableObject : InteractiveObject
+public abstract class GatherableObject : DestructibleObject
 {
     /// <summary>
     /// 내구도 표시 UI
     /// </summary>
-    [SerializeField] private GameObject durabilityUI;
+    [SerializeField] private GameObject _hpUI;
 
-    private Slider durabilitySlider;
-    private Canvas durabilityCanvas;
+    private Slider _hpSlider;
+    private Canvas _hpCanvas;
 
     /// <summary>
     /// 플레이어와 상호작용하고 몇초가 지난 후 UI를 숨길건지
     /// </summary>
-    [SerializeField] private float UIHideTime = 3.0f;
-    private Coroutine hideUICoroutine;
+    [SerializeField] private float _UIHideTime = 3.0f;
+    private Coroutine _hideUICoroutine;
 
     private void Awake()
     {
-        if (durabilityUI != null)
+        if (_hpUI != null)
         {
-            durabilityCanvas = durabilityUI.GetComponentInChildren<Canvas>();
-            durabilitySlider = durabilityUI.GetComponentInChildren<Slider>();
+            _hpCanvas = _hpUI.GetComponentInChildren<Canvas>();
+            _hpSlider = _hpUI.GetComponentInChildren<Slider>();
 
-            durabilitySlider.maxValue = hp;
-            durabilitySlider.value = hp;
+            _hpSlider.maxValue = _hp;
+            _hpSlider.value = _hp;
 
-            durabilitySlider.gameObject.SetActive(false);
+            _hpSlider.gameObject.SetActive(false);
         }
     }
 
     private void Update()
     {
-        if (durabilityCanvas != null)
+        if (_hpCanvas != null)
         {
             // UI가 카메라를 바라보도록 방향 전환
-            durabilityCanvas.transform.rotation = Quaternion.LookRotation(durabilityCanvas.transform.position - Camera.main.transform.position);
+            _hpCanvas.transform.rotation = Quaternion.LookRotation(_hpCanvas.transform.position - Camera.main.transform.position);
         }
     }
 
@@ -46,39 +46,42 @@ public abstract class GatherableObject : InteractiveObject
     /// 채집 상호작용 시 내구도를 깎는 함수 (플레이어가 상호작용 시 호출)
     /// </summary>
     /// <param name="amount">줄일 내구도 수치</param>
-    public override void Interact(float amount)
+    public override void Interact(object context = null)
     {
-        hp -= amount;
-
-        if (hp > 0)
+        if (context is float amount)
         {
-            if (durabilityUI != null)
+            _hp -= amount;
+
+            if (_hp > 0)
             {
-                durabilitySlider.value = hp;
-
-                // 상호작용 하면 UI 활성화
-                durabilitySlider.gameObject.SetActive(true);
-
-                if (hideUICoroutine != null)
+                if (_hpUI != null)
                 {
-                    StopCoroutine(hideUICoroutine);
-                }
+                    _hpSlider.value = _hp;
 
-                hideUICoroutine = StartCoroutine(HideUIAfterDelay(UIHideTime));
+                    // 상호작용 하면 UI 활성화
+                    _hpSlider.gameObject.SetActive(true);
+
+                    if (_hideUICoroutine != null)
+                    {
+                        StopCoroutine(_hideUICoroutine);
+                    }
+
+                    _hideUICoroutine = StartCoroutine(HideUIAfterDelay(_UIHideTime));
+                }
             }
-        }
-        else
-        {
-            DestroyObject();
+            else
+            {
+                DestroyObject();
+            }
         }
     }
 
     private IEnumerator HideUIAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (durabilityCanvas != null)
+        if (_hpCanvas != null)
         {
-            durabilitySlider.gameObject.SetActive(false);
+            _hpSlider.gameObject.SetActive(false);
         }
     }
 }
