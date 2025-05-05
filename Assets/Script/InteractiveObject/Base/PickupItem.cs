@@ -10,6 +10,8 @@ public class PickupItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private ItemData _itemData;
 
+    public ItemData ItemData => _itemData;
+
     /// <summary>
     /// 플레이어가 아이템을 주웠을 때 호출되는 함수.
     /// </summary>

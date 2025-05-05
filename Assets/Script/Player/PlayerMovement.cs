@@ -14,16 +14,25 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
 
     private CharacterController _characterController; // 캐릭터 컨트롤러
+    private PlayerInteraction _interaction; 
     private Vector3 _velocity; // 현재 속도
     private bool _isGrounded; // 땅에 닿아 있는지 여부
 
     void Start()
     {
         _characterController = GetComponent<CharacterController>();
+        _interaction = GetComponent<PlayerInteraction>();
     }
 
     void Update()
     {
+        if(_interaction.IsInteracting)
+        {
+            GroundCheck();
+            ApplyGravity();
+            return;
+        }
+
         GroundCheck();
         Move();
     }
@@ -56,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     /// <summary>
-    /// 이동, 점프, 중력 처리 담당
+    /// 이동, 점프 처리
     /// </summary>
     private void Move()
     {
@@ -70,6 +79,14 @@ public class PlayerMovement : MonoBehaviour
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2.0f * _gravity);
         }
 
+        ApplyGravity();
+    }
+
+    /// <summary>
+    /// 중력 계산 담당
+    /// </summary>
+    private void ApplyGravity()
+    {
         _velocity.y += _gravity * Time.deltaTime; // 중력을 누적시켜 시간이 지날수록 더 빠르게 떨어지도록 함
         _characterController.Move(_velocity * Time.deltaTime); // 최종 이동 적용
     }

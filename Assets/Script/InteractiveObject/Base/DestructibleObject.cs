@@ -37,6 +37,7 @@ public abstract class DestructibleObject : MonoBehaviour, IInteractable
             if (_hp <= 0)
             {
                 DestroyObject();
+                return;
             }
         }
     }
