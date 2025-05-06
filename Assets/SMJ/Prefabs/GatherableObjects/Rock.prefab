@@ -440,7 +440,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hp: 100
-  _dropItem: {fileID: 8468863848485236020, guid: ae85a80047daad442bff1dac6f140e39, type: 3}
+  _dropItem: {fileID: 8468863848485236020, guid: 4ac15ac8ad729784f88c48f009985cc9, type: 3}
   _dropAmount: 3
   _hpUI: {fileID: 465746393847060118}
   _UIHideTime: 3

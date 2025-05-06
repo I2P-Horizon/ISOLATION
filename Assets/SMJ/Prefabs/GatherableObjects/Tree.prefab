@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hp: 50
-  _dropItem: {fileID: 8992916093723219132, guid: 44ea1f53d03785349ab55297c29288b6, type: 3}
+  _dropItem: {fileID: 8992916093723219132, guid: a50527626768f684f95883fa223c0d48, type: 3}
   _dropAmount: 5
   _hpUI: {fileID: 3015017333849045551}
   _UIHideTime: 3
@@ -259,6 +259,10 @@ PrefabInstance:
     - target: {fileID: 6195920642657744267, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107873640576528371, guid: 0da8438502d69b042807caca74565a91, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -219,14 +219,14 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         // <인벤토리 연결 전 확인용 코드>
-        nearestItem.Interact();
-        _ItemsInScope.Remove(nearestItem);
+        //nearestItem.Interact();
+        //_ItemsInScope.Remove(nearestItem);
 
-        // <인벤토리 연결 시 아래 코드 주석 제거 후 사용>
-        //if (_inventory.Add(nearestItem.ItemData) == 0)
-        //{
-        //    nearestItem.Interact();
-        //    _ItemsInScope.Remove(nearestItem);
-        //}
+        //<인벤토리 연결 시 아래 코드 주석 제거 후 사용>
+        if (_inventory.Add(nearestItem.ItemData) == 0)
+        {
+            nearestItem.Interact();
+            _ItemsInScope.Remove(nearestItem);
+        }
     }
 }

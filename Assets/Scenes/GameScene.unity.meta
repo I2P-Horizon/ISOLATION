@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scenes/SampleScene.unity.meta
-guid: 732a54a0044b70b4f8e4ca4dec7ea49f
-========
-guid: 99f291cb482785547b2d390db9c32456
->>>>>>>> ISOLATION_JSH:Assets/Scenes/JSH_Test.unity.meta
+guid: 2e4a51773feb6b9468a2da7424821ed4
 DefaultImporter:
   externalObjects: {}
   userData: 
