@@ -457,6 +457,7 @@ GameObject:
   - component: {fileID: 979613896}
   - component: {fileID: 979613895}
   - component: {fileID: 979613898}
+  - component: {fileID: 979613899}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -531,13 +532,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 979613894}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17954262, y: 0.6839331, z: -0.17954266, w: 0.6839331}
-  m_LocalPosition: {x: -8.93, y: 4.96, z: -0.25999975}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.7234955, y: 10.465935, z: -4.799423}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1413267124}
-  m_LocalEulerAnglesHint: {x: 29.418, y: 90, z: 0}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &979613898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -582,6 +583,21 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &979613899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979613894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b007d056f66a7eb46884a4443d386b96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetTransform: {fileID: 1413267124}
+  _offset: {x: 0, y: 3, z: -10}
+  _smoothTime: 0.1
 --- !u!1 &1237662631
 GameObject:
   m_ObjectHideFlags: 0
@@ -875,8 +891,7 @@ Transform:
   m_LocalPosition: {x: 4.206505, y: 5.5059342, z: -4.5394235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 979613897}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1413267125
@@ -904,7 +919,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &1413267127
 MonoBehaviour:
@@ -1034,6 +1049,7 @@ SceneRoots:
   - {fileID: 679389586}
   - {fileID: 214975701}
   - {fileID: 1237662635}
+  - {fileID: 979613897}
   - {fileID: 1413267124}
   - {fileID: 2140624771}
   - {fileID: 1351568141}
