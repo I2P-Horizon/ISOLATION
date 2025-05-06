@@ -5208,10 +5208,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inventory: {fileID: 385120942}
   _itemDataArray:
-  - {fileID: 11400000, guid: 62d1a54587789df4db03bd484da62147, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 436a447a5eb419b41bc2f77c563ca821, type: 2}
+  - {fileID: 11400000, guid: 0472a7598f7854e4ab86764d17b18e81, type: 2}
+  - {fileID: 11400000, guid: 4724bc568fe0bd540a3313a13d904d59, type: 2}
+  - {fileID: 11400000, guid: 5fc88128678fe664a8df6c01de65c8c8, type: 2}
   _removeAllButton: {fileID: 2104693536}
   _AddArmorA1: {fileID: 385847249}
   _AddArmorB1: {fileID: 1752385889}
