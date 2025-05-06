@@ -8,18 +8,26 @@ using UnityEngine.Rendering.Universal;
 
 public class TimeManager : MonoBehaviour
 {
+    // Observer
+    private List<ICycleListener> listeners = new List<ICycleListener>();
+    // 외부에서는 값 읽기만, 내부에서는 값 수정 가능
+    public static TimeManager instance { get;  private set; } // set 잠깐 private 없애둠 JSG FLAG
+
+    public bool IsNight => isNight;
+
     // Time
     [Header("Time")]
     [SerializeField] private float realTimePerDay;
     [SerializeField] private float realTimePerDaySec;
-    [SerializeField] private float currentTime; 
+    [SerializeField] private float currentTime;
     [SerializeField] private float timeSpeed = 1.0f;
     [SerializeField] private int dayStartTime;
     [SerializeField] private int nightStartTime;
     private const int minToSec = 60;
 
     // Flag
-    public bool isNight;
+    [SerializeField] private bool isNight;
+    private bool previousIsNight;
 
     // Sun
     [Header("Sun")]
@@ -39,18 +47,24 @@ public class TimeManager : MonoBehaviour
     private ColorAdjustments colorAdjustment;
 
     // Color
-    Color dayColor = new Color(1.0f, 1.0f, 1.0f);
-    Color nightColor = new Color(0.6f, 0.7f, 1.0f);
+    private Color dayColor = new Color(1.0f, 1.0f, 1.0f);
+    private Color nightColor = new Color(0.6f, 0.7f, 1.0f);
 
-
-    void Start()
+    // Singleton
+    private void Awake()
     {
+        if (instance == null) instance = this;
+    }
+
+    private void Start()
+    {
+        previousIsNight = isNight;
         currentTime = dayStartTime;
 
         realTimePerDaySec = realTimePerDay * minToSec;
 
-        dayStartTime = (int)realTimePerDaySec/4;       // 0.25 == 25.0%
-        nightStartTime = (int)realTimePerDaySec * 7/8; // 0.875 == 87.5%
+        dayStartTime = (int)realTimePerDaySec / 4;       // 0.25 == 25.0%
+        nightStartTime = (int)realTimePerDaySec * 7 / 8; // 0.875 == 87.5%
 
         if (postProcessingVolume == null) return;
         postProcessingVolume.profile.TryGet(out ColorAdjustments _colorAdjustment);
@@ -62,27 +76,29 @@ public class TimeManager : MonoBehaviour
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.ExponentialSquared;
     }
-    void Update()
+    private void Update()
     {
         UpdateTime();
         RotateSun();
         UpdateLighting();
         UpdatePostProcessing();
+
         CheckCycleState();
+        NotifyCycleChanged();
     }
 
-    void UpdateTime()
+    private void UpdateTime()
     {
         currentTime += Time.deltaTime * timeSpeed;
         if (currentTime >= realTimePerDaySec) currentTime = 0; // DayCycle
     }
-    void RotateSun()
+    private void RotateSun()
     {
         // -90 ~ 270 Rotate
         float sunRotation = Mathf.Lerp(-90, 270, currentTime / realTimePerDaySec);
         sun.transform.rotation = Quaternion.Euler(new Vector3(sunRotation, sunAngle, 0f));
     }
-    void UpdateLighting()
+    private void UpdateLighting()
     {
         sun.intensity = sunIntensity.Evaluate(currentTime / realTimePerDaySec);
 
@@ -98,11 +114,11 @@ public class TimeManager : MonoBehaviour
         if (skyboxMaterial == null) return;
         skyboxMaterial.SetFloat("_Exposure", skyboxIntensity.Evaluate(currentTime / realTimePerDaySec));
     }
-    void UpdatePostProcessing()
+    private void UpdatePostProcessing()
     {
-        float timeBlend = Mathf.Abs(currentTime - 10f) / 10f; // 0 ~ 10 
-
-        if(colorAdjustment == null) return;
+        float timeBlend = (( (currentTime - 10f) >= 0 ) ? (currentTime - 10f) : (10f - currentTime));
+        //float timeBlend = Mathf.Abs(currentTime - 10f) / 10f; // 0 ~ 10 
+        if (colorAdjustment == null) return;
 
         colorAdjustment.colorFilter.value = Color.Lerp(dayColor, nightColor, timeBlend);
 
@@ -110,18 +126,42 @@ public class TimeManager : MonoBehaviour
         RenderSettings.fogDensity = Mathf.Lerp(0.001f, 0.005f, timeBlend);
     }
 
-    void CheckCycleState()
+    public void Register(ICycleListener listener)
+    {
+        if(listeners.Contains(listener)) return;
+        listeners.Add(listener);
+    }
+    public void UnRegister(ICycleListener listener)
+    {
+        if (!listeners.Contains(listener)) return;
+        listeners.Remove(listener);
+    }
+
+    private void NotifyCycleChanged()
+    {
+        if (isNight != previousIsNight) {
+            Debug.Log("Notify DatCycle Changed");
+            foreach (var listener in listeners) listener.OnCycleChanged(isNight);
+            }
+
+        previousIsNight = isNight;
+        
+        //Debug.Log(isNight);
+        //Debug.Log(previousIsNight);
+    }
+
+    private void CheckCycleState()
     {
         if ((int)currentTime >= dayStartTime && (int)currentTime < nightStartTime)
         {
             isNight = false;
-            Debug.Log("Day");
+            //Debug.Log("Day");
         }
 
-        else if ((nightStartTime <= (int)currentTime  && (int)currentTime <= realTimePerDaySec) || (0 <= (int)currentTime && (int)currentTime < dayStartTime))
+        else if ((nightStartTime <= (int)currentTime && (int)currentTime <= realTimePerDaySec) || (0 <= (int)currentTime && (int)currentTime < dayStartTime))
         {
             isNight = true;
-            Debug.Log("Night");
+            //Debug.Log("Night");
         }
     }
 }
