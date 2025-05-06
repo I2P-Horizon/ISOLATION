@@ -147,9 +147,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc4d2c1d319c8cc43b07454f87b66e31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hp: 100
-  _dropItem: {fileID: 0}
-  _dropAmount: 0
+  _hp: 15
+  _dropItem: {fileID: 8992916093723219132, guid: a50527626768f684f95883fa223c0d48, type: 3}
+  _dropAmount: 500
   AnimalState: 0
   animalShape: {fileID: 0}
   MonsterState: 0

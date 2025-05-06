@@ -69,6 +69,7 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
+            Debug.Log("F");
             TryPickupItem();
         }
     }

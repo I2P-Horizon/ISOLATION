@@ -92,7 +92,7 @@ public class TimeManager : MonoBehaviour
         currentTime += Time.deltaTime * timeSpeed;
         if (currentTime >= realTimePerDaySec) currentTime = 0; // DayCycle
     }
-    private void RotateSun()
+    private void RotateSun() // JSH FLAG 각도 그대로, Intensity & sun.color 변경 고려 / 직접광 변경 최소화, 간접광(Skybox) 변경을 통한 분위기 변화 구현
     {
         // -90 ~ 270 Rotate
         float sunRotation = Mathf.Lerp(-90, 270, currentTime / realTimePerDaySec);
@@ -102,7 +102,7 @@ public class TimeManager : MonoBehaviour
     {
         sun.intensity = sunIntensity.Evaluate(currentTime / realTimePerDaySec);
 
-        // Animation Curve - Keyframe (x) : Value (y) 
+        // Animation Curve - Keyframe (x) : Value (y)
         // 0 ~ 0.25 : sunIntensity 0.8
         // 0.25 ~ 0.5 : sunIntensity 1
         // 0.5 ~ 0.8 : sunIntensity 0.8
