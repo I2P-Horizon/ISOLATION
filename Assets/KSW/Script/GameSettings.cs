@@ -145,6 +145,9 @@ public class GameSettings : MonoBehaviour
     private ScreenModeController screenModeController;
     private GraphicsController graphicsController;
 
+    [SerializeField] private GameObject gameSettingsUI;
+    [SerializeField] private Camera mainCamera;
+
     /// <summary>
     /// 해상도 설정
     /// </summary>
@@ -176,8 +179,17 @@ public class GameSettings : MonoBehaviour
         graphicsController.SetQuality(index);
     }
 
+    public void GameSettingsUI()
+    {
+        if (!gameSettingsUI.activeSelf) gameSettingsUI.SetActive(true);
+        else gameSettingsUI.SetActive(false);
+    }
+
     private void Start()
     {
+        gameSettingsUI.SetActive(false);
+        mainCamera.enabled = false;
+
         screenSettings.Init(0);
         graphicsSettings.Init(0);
 
