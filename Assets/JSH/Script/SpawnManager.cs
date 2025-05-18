@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     float timer = 0;
+    int count = 0;
 
     public GameObject go;
     public GameObject goInstance;
@@ -19,14 +20,12 @@ public class SpawnManager : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if (timer >= 1)
+        if (timer >= 1 && count <= 3)
         {
             goInstance = Instantiate(go);
             goInstance.transform.position = new Vector3(Random.Range(-20, 20), 0, Random.Range(-20, 20));
             timer = 0;
+            count++;
         }
-        
-
-        
     }
 }
