@@ -20,16 +20,19 @@ public class PlayerInteraction : MonoBehaviour
     }
 
     [SerializeField] private Inventory _inventory; // 플레이어 인벤토리
+    private PlayerState _playerState;
 
     [Header("Common")]
     /// <summary>상호작용(채집, 사냥) 가능한 거리</summary>
     [SerializeField] private float _interactionDistance = 5.0f;
 
     [Header("Gather")]
-    /// <summary>채집 시 내구도 감소량</summary>
+    /// <summary>채집 시 오브젝트 내구도 감소량</summary>
     [SerializeField] private float _gatherStrength = 5.0f;
     /// <summary>지속 채집 간격</summary>
     [SerializeField] private float _gatherInterval = 1.0f;
+    /// <summary>채집 시 포만감 감소량</summary>
+    [SerializeField] private float _satietyDecreaseAmount = 0.05f;
 
     [Header("Attack")]
     /// <summary>공격력</summary>
@@ -48,6 +51,7 @@ public class PlayerInteraction : MonoBehaviour
     private void Awake()
     {
         _ItemsInScope = new List<PickupItem>();
+        _playerState = GetComponent<PlayerState>();
     }
 
     private void Update()
@@ -166,6 +170,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             case InteractionState.Gathering:
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
+                _playerState.DecreaseSatiety(_satietyDecreaseAmount);
                 break;
             case InteractionState.Attacking:
                 (_currentTarget as CreatureBase)?.Interact(_attackPower);
