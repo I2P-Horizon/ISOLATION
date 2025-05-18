@@ -646,7 +646,7 @@ namespace InventorySystem
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         private void EditorLog(object message)
         {
-            if (!_showDebug) return;
+            //if (!_showDebug) return;
             UnityEngine.Debug.Log($"[InventoryUI] {message}");
         }
 
