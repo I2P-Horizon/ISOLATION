@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerState : MonoBehaviour
@@ -27,6 +27,20 @@ public class PlayerState : MonoBehaviour
     [Header("Hunger Penalty Settings")]
     [SerializeField] private float _hpDecreaseInterval = 1.0f; 
     [SerializeField] private float _hpDecreaseAmount = 0.1f;
+
+    // ΩÃ±€≈Ê
+    public static PlayerState Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance !=  this)
+        {
+            Destroy(gameObject);
+            return;
+        }    
+        
+        Instance = this;
+    }
 
     private void Update()
     {

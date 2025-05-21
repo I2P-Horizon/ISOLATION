@@ -1,8 +1,7 @@
 using InventorySystem;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Runtime.CompilerServices;
+using UnityEditor;
 using UnityEngine;
 
 /// <summary>
@@ -20,7 +19,6 @@ public class PlayerInteraction : MonoBehaviour
     }
 
     [SerializeField] private Inventory _inventory; // 플레이어 인벤토리
-    private PlayerState _playerState;
 
     [Header("Common")]
     /// <summary>상호작용(채집, 사냥) 가능한 거리</summary>
@@ -51,7 +49,6 @@ public class PlayerInteraction : MonoBehaviour
     private void Awake()
     {
         _ItemsInScope = new List<PickupItem>();
-        _playerState = GetComponent<PlayerState>();
     }
 
     private void Update()
@@ -170,7 +167,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             case InteractionState.Gathering:
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
-                _playerState.DecreaseSatiety(_satietyDecreaseAmount);
+                PlayerState.Instance.DecreaseSatiety(_satietyDecreaseAmount);
                 break;
             case InteractionState.Attacking:
                 (_currentTarget as CreatureBase)?.Interact(_attackPower);

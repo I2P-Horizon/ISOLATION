@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,8 +9,6 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    private PlayerState _playerState;
-
     private float _moveSpeed; // 이동 속도
     [SerializeField] private float _jumpHeight = 2.0f; // 점프 높이
     [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
@@ -25,11 +22,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        _playerState = GetComponent<PlayerState>();
         _characterController = GetComponent<CharacterController>();
         _interaction = GetComponent<PlayerInteraction>();
 
-        _moveSpeed = _playerState.MoveSpeed;
+        _moveSpeed = PlayerState.Instance.MoveSpeed;
     }
 
     void Update()
@@ -91,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 7.0f);
 
             // 이동에 따른 포만감 감소
-            _playerState.DecreaseSatiety(_satietyDecreaseAmount);
+            PlayerState.Instance.DecreaseSatiety(_satietyDecreaseAmount);
         }
         
 
