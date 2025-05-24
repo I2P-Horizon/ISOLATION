@@ -123,13 +123,16 @@ public class PlayerInteraction : MonoBehaviour
     {
         target = null;
 
+        // ray에 걸리지 않는 것: trigger collider, 'Ignore Raycast' Layer로 설정된 객체
+        int mask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, mask, QueryTriggerInteraction.Ignore))
         {
             Debug.Log($"Camera : {mouseHit.collider.name}");
             Vector3 dir = (mouseHit.point - transform.position);
 
-            if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, ~0, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, mask, QueryTriggerInteraction.Ignore))
             {
                 Debug.Log($"Player {hit.collider.name}");
                 Debug.DrawRay(transform.position, dir * _interactionDistance, Color.green, 1f);
