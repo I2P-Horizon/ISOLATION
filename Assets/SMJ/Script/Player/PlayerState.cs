@@ -7,15 +7,18 @@ public class PlayerState : MonoBehaviour
 {
     // 플레이어 스탯
     [Header("State")]
-    [SerializeField] private float _hp = 100.0f;
-    [SerializeField] private float _satiety = 100.0f;
+    [SerializeField] private float _maxHp = 100.0f;
+    [SerializeField] private float _maxSatiety = 100.0f;
     [SerializeField] private float _moveSpeed = 5.0f;
     [SerializeField] private float _attackSpeed = 1.0f;
 
-    public float HP => _hp;
-    public float Ssatiety => _satiety;
+    public float MaxHp => _maxHp;
+    public float MaxSatiety => _maxSatiety;
     public float MoveSpeed => _moveSpeed;
     public float AttackSpeed => _attackSpeed;
+
+    [SerializeField] private float _hp;
+    [SerializeField] private float _satiety;
 
     // 내부 사용 변수
     private bool _die = false;
@@ -40,6 +43,9 @@ public class PlayerState : MonoBehaviour
         }    
         
         Instance = this;
+
+        _hp = MaxHp;
+        _satiety = MaxSatiety;
     }
 
     private void Update()
@@ -65,6 +71,16 @@ public class PlayerState : MonoBehaviour
         {
             _timeSinceZeroSatiety = 0;
         }
+    }
+
+    public void IncreaseSatiety(float amount)
+    {
+        _satiety = Mathf.Min(_maxSatiety, _satiety + amount);
+    }
+
+    public void IncreaseHp(float amount)
+    {
+        _hp = Mathf.Min(_maxHp, _hp + amount);
     }
 
     public void DecreaseSatiety(float amount)
