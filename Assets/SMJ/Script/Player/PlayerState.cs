@@ -2,7 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
+/// <summary>
+/// 플레이어의 스탯(체력, 포만감 등)을 관리하는 스크립트.
+/// 싱글톤으로 이루어져 있으며 접근 시 PlayerState.Instance.메서드 사용.
+/// </summary>
 public class PlayerState : MonoBehaviour
 {
     // 플레이어 스탯
@@ -28,7 +33,7 @@ public class PlayerState : MonoBehaviour
     private float _timeSinceZeroSatiety = 0; // 굶주림 지속 시간
 
     [Header("Hunger Penalty Settings")]
-    [SerializeField] private float _hpDecreaseInterval = 1.0f; 
+    [SerializeField] private float _hpDecreaseInterval = 1.0f;
     [SerializeField] private float _hpDecreaseAmount = 0.1f;
 
     // 싱글톤
@@ -36,12 +41,12 @@ public class PlayerState : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance !=  this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
-        }    
-        
+        }
+
         Instance = this;
 
         _hp = MaxHp;
@@ -73,6 +78,16 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    // Getter
+    public float GetCurrentHp() { return _hp; }
+
+    public float GetCurrentSatiety() { return _satiety; }
+
+    // Setter
+    public void RestoreFullHp() { _hp = _maxHp; }
+
+    public void RestoreHullSatiety() { _satiety -= _maxSatiety; }
+
     public void IncreaseSatiety(float amount)
     {
         _satiety = Mathf.Min(_maxSatiety, _satiety + amount);
@@ -85,11 +100,27 @@ public class PlayerState : MonoBehaviour
 
     public void DecreaseSatiety(float amount)
     {
-        _satiety = Mathf.Max(0, _satiety -  amount);
+        _satiety = Mathf.Max(0, _satiety - amount);
     }
 
     public void DecreaseHP(float amount)
     {
         _hp = Mathf.Max(0, _hp - amount);
+    }
+
+    public void SetMoveSpeed(float speed)
+    {
+        if (speed > 0)
+        {
+            _moveSpeed = speed;
+        }
+    }
+
+    public void SetAttackSpeed(float speed)
+    {
+        if (speed > 0)
+        {
+            _attackSpeed = speed;
+        }
     }
 }
