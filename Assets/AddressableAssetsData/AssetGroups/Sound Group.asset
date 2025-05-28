@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Sound Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Sound Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 9556b17fe2f38084b800001af34930d7
+  m_SerializeEntries:
+  - m_GUID: ddc8b79cd02921b42a99818b54a31d06
+    m_Address: Assets/Sounds/InventoryChange.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ece6cd49f8c91f944a8888e604ded989
+    m_Address: Assets/Sounds/MainScene.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6291cf2f68ed7ad4996085063ce8418d
+    m_Address: Assets/Sounds/Gold.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 21acc16cea2d50540824fdef992966c8
+    m_Address: Assets/Sounds/DungeonScene.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 55d33af174169f547b0115a774172ce7
+    m_Address: Assets/Sounds/DialogueEffect.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 14577ad91c7cf364ab749d1cb1bdfcb5
+    m_Address: Assets/Sounds/Sword.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8be6292f3b85c714b9e922cd9379dbc5
+    m_Address: Assets/Sounds/Punch.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ec3df33fb103e174f9edb3e5e7c63aa9
+    m_Address: Assets/Sounds/Staff.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6e623341f80f9334ea7273f9db45a6ce
+    m_Address: Assets/Sounds/Slash.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9e185cf6d14da4c4eaf9a5e231ad5b93
+    m_Address: Assets/Sounds/Buff.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a0af681cbbe3d3e4eb531bade5d2d93a
+    m_Address: Assets/Sounds/IceShot.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ec834e3a0a9a041e58e015c0bf39ed52
+    m_Address: Assets/Sounds/Grunt_Attack02.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 228a434ca9f954909a9176e45f877eaa
+    m_Address: Assets/Sounds/Grunt_Attack03.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9a2d033f7760b4ef09400945a538ccd9
+    m_Address: Assets/Sounds/Grunt_Attack01.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c55fb47f6865f480c989e8407de1d19c
+    m_Address: Assets/Sounds/Grunt_Roar.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8a42266be58db4c518b5d4e47cc0f780
+    m_Address: Assets/Sounds/Grunt_Attack04.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6beb606fbac8f4d0e9ea410969417e51
+    m_Address: Assets/Sounds/Grunt_Die.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 138388b4a8cf8304db6d5713cc759f49
+    m_Address: Assets/Sounds/TurtleShell_Die.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 24fbd3b980f40fd4384dc1641c029845, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0e47cb7f3185a32428e823c2b1eeb291, type: 2}
+    - {fileID: 11400000, guid: 6b551775b2fa22c4f978209809849a64, type: 2}
