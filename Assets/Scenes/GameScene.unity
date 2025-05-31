@@ -8853,15 +8853,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0472a7598f7854e4ab86764d17b18e81, type: 2}
   - {fileID: 11400000, guid: 4724bc568fe0bd540a3313a13d904d59, type: 2}
   - {fileID: 11400000, guid: 5fc88128678fe664a8df6c01de65c8c8, type: 2}
-  _removeAllButton: {fileID: 0}
-  _AddArmorA1: {fileID: 0}
-  _AddArmorB1: {fileID: 0}
-  _AddSwordA1: {fileID: 0}
-  _AddSwordB1: {fileID: 0}
-  _AddPortionA1: {fileID: 0}
-  _AddPortionA50: {fileID: 0}
-  _AddPortionB1: {fileID: 0}
-  _AddPortionB50: {fileID: 0}
+  _removeAllButton: {fileID: 1809671148}
+  _AddArmorA1: {fileID: 1158388756}
+  _AddArmorB1: {fileID: 209100591}
+  _AddSwordA1: {fileID: 1981291886}
+  _AddSwordB1: {fileID: 1128803320}
+  _AddPortionA1: {fileID: 629025592}
+  _AddPortionA50: {fileID: 2055089506}
+  _AddPortionB1: {fileID: 281737849}
+  _AddPortionB50: {fileID: 523674790}
 --- !u!4 &1980708295
 Transform:
   m_ObjectHideFlags: 0
@@ -9713,6 +9713,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 679389586}
   - {fileID: 1978927457}
+  - {fileID: 1539847769}
   - {fileID: 214975701}
   - {fileID: 1237662635}
   - {fileID: 2140624771}
@@ -9721,7 +9722,6 @@ SceneRoots:
   - {fileID: 1092240662}
   - {fileID: 1383573061}
   - {fileID: 1372363845}
-  - {fileID: 1539847769}
   - {fileID: 1980708295}
   - {fileID: 742756325}
   - {fileID: 2021986716}
