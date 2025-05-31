@@ -69,7 +69,7 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            //Debug.Log("F");
+            Debug.Log("F");
             TryPickupItem();
         }
     }
@@ -125,16 +125,13 @@ public class PlayerInteraction : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, ~0, QueryTriggerInteraction.Ignore))
         {
-            Debug.Log($"Camera : {mouseHit.collider.name}");
-            Vector3 dir = (mouseHit.point - transform.position);
+            Vector3 dir = (mouseHit.point - transform.position).normalized;
 
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, ~0, QueryTriggerInteraction.Ignore))
             {
-                Debug.Log($"Player {hit.collider.name}");
                 Debug.DrawRay(transform.position, dir * _interactionDistance, Color.green, 1f);
                 if (hit.collider.TryGetComponent(out DestructibleObject destructible))
                 {
-                    Debug.Log("Targetting");
                     target = destructible;
                     return true;
                 }
@@ -151,8 +148,8 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (target is GatherableObject)
             _currentState = InteractionState.Gathering;
-        else if (target is CreatureBase)
-            _currentState = InteractionState.Attacking;
+        //else if (target is CreatureBase)
+        //    _currentState = InteractionState.Attacking;
         else
             _currentState = InteractionState.None;
     }
@@ -167,9 +164,9 @@ public class PlayerInteraction : MonoBehaviour
             case InteractionState.Gathering:
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
                 break;
-            case InteractionState.Attacking:
-                (_currentTarget as CreatureBase)?.Interact(_attackPower);
-                break;
+            //case InteractionState.Attacking:
+            //    (_currentTarget as CreatureBase)?.Interact(_attackPower);
+            //    break;
         }
     }
 
@@ -219,14 +216,14 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         // <인벤토리 연결 전 확인용 코드>
-        //nearestItem.Interact();
-        //_ItemsInScope.Remove(nearestItem);
+        nearestItem.Interact();
+        _ItemsInScope.Remove(nearestItem);
 
-        //<인벤토리 연결 시 아래 코드 주석 제거 후 사용>
-        if (_inventory.Add(nearestItem.ItemData) == 0)
-        {
-            nearestItem.Interact();
-            _ItemsInScope.Remove(nearestItem);
-        }
+        // <인벤토리 연결 시 아래 코드 주석 제거 후 사용>
+        //if (_inventory.Add(nearestItem.ItemData) == 0)
+        //{
+        //    nearestItem.Interact();
+        //    _ItemsInScope.Remove(nearestItem);
+        //}
     }
 }

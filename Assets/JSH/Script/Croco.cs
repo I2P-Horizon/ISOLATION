@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class Croco : CreatureBase
 {
 
-
     // Stat
 
     protected override void AnimalAi() // https://docs.unity3d.com/kr/2022.3/Manual/nav-AgentPatrol.html
@@ -27,11 +26,10 @@ public class Croco : CreatureBase
         agent = GetComponent<NavMeshAgent>();
         agent.speed = moveSpeed;
 
-        SetNextPatrolPoint();
+        //SetNextPatrolPoint();
     }
-    protected override void Update()
+    void Update()
     {
-        base.Update();
         if (AnimalState) AnimalAi();
         else if(MonsterState) MonsterAi();
     }
