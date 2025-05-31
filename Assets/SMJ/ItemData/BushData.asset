@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6679aafbb1f6d84e811266ea01ce5ab, type: 3}
+  m_Name: BushData
+  m_EditorClassIdentifier: 
+  _id: 21
+  _name: "\uB364\uBD88"
+  _tooltip: "\uC7AC\uB8CC\uC640 \uB554\uAC10\uC73C\uB85C \uC0AC\uC6A9\uD560 \uC218
+    \uC788\uB294 \uB364\uBD88"
+  _iconSprite: {fileID: 21300000, guid: b543a6e9e1d6d0e44b37ebd4998af6b2, type: 3}
+  _dropItemPrefab: {fileID: 4988372604714733805, guid: f44f1e5dc1f8569488061ce8be59bbb8, type: 3}
+  _maxAmount: 99

@@ -235,6 +235,8 @@ public class PlayerInteraction : MonoBehaviour
     {
         nearestItem = null;
 
+        _ItemsInScope.RemoveAll(item => item == null);
+
         if (_ItemsInScope.Count == 0)
         {
             return false;
