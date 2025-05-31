@@ -4,19 +4,35 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public abstract class CreatureBase : DestructibleObject, ICycleListener// Creture로 놔두고, 추상 클래스 Object에서 상속 받아 사용
+public abstract class CreatureBase : DestructibleObject, ICycleListener//추상 클래스 DestructibleObject에서 상속 받아 사용
 {
-    [Header("Animal")]
+    [Header("AnimalState")]
     [SerializeField] protected bool AnimalState;
     [SerializeField] private GameObject animalShape;
 
 
-    [Header("Monster")]
+    [Header("MonsterState")]
     [SerializeField] protected bool MonsterState;
     [SerializeField] private GameObject monsterShape;
 
-    [Header("Stat")]
-    [SerializeField] protected float moveSpeed;
+    [Header("State")]
+    [SerializeField] protected bool isPatrolling;
+    [SerializeField] protected bool isChasing;
+    [SerializeField] protected bool isAttacking;
+
+    [Header("Stats")]
+    [SerializeField] protected float moveSpeed = 5.0f;
+    [SerializeField] protected float defense;
+    [SerializeField] protected float detectionRadius = 5.0f;
+    [SerializeField] protected float attackableRadius = 2.0f;
+    [SerializeField] protected float attackDamage;
+    [SerializeField] protected float attackSpeed;
+
+    [SerializeField] protected float distanceToPlayer;
+
+    private Vector3 playerPos;
+
+    Rigidbody rb;
 
     protected virtual void Awake()
     {
@@ -28,6 +44,16 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener// Cretur
         TimeManager.instance.Register(this);
         //Debug.Log("Creature Register Complete");
 
+        agent = GetComponent<NavMeshAgent>();
+        agent.speed = moveSpeed;
+
+        isPatrolling = true;
+        isChasing = false;
+        isAttacking = false;
+
+        //SetNextPatrolPoint();
+
+        rb = GetComponent<Rigidbody>();
 
         //MJ
         if (_hpUI != null)
@@ -85,23 +111,115 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener// Cretur
         //monsterShape.SetActive(true);
     }
 
+    
+
     // AI
+
+    protected virtual void AnimalAi() // https://docs.unity3d.com/kr/2022.3/Manual/nav-AgentPatrol.html
+    {
+        Patrol();
+    }
+    protected virtual void MonsterAi()
+    {
+        if (!isAttacking)
+        {
+            if (isPatrolling)
+            {
+                Patrol();
+            }
+            else if (isChasing)
+            {
+                Chase();
+            }
+        }
+    }
+
+    // Patrol()
     protected NavMeshAgent agent;
     [SerializeField] protected float patrolRadius = 5f;
+    protected virtual void Patrol()
+    {
+        agent.speed = 5.0f;
+        agent.acceleration = 1.0f;
+        agent.angularSpeed = 120.0f;
 
-    protected virtual void SetNextPatrolPoint() 
+        Debug.Log("Patrol");
+        if (!agent.pathPending && (agent.remainingDistance <= 0.5f))
+            SetNextPatrolPoint();
+
+        if (distanceToPlayer <= detectionRadius)
+        {
+            isChasing = true;
+            isPatrolling = false;
+        }
+    }
+    protected virtual void SetNextPatrolPoint()
     {
         //Debug.Log("New Destination Setting");
         Vector3 randomDirection = Random.insideUnitCircle * patrolRadius;
 
-        randomDirection += new Vector3 (transform.position.x, 0, transform.position.z);
+        randomDirection += new Vector3(transform.position.x, 0, transform.position.z);
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, patrolRadius, NavMesh.AllAreas))
             agent.SetDestination(hit.position);
     }
 
-    protected virtual void AnimalAi() { }
-    protected virtual void MonsterAi() { }
+    // Chase()
+    protected virtual void Chase()
+    {
+
+        if (distanceToPlayer > detectionRadius)
+        {
+            isPatrolling = true;
+            isChasing = false;
+        }
+
+        if (distanceToPlayer <= attackableRadius)
+        {
+            StartCoroutine(Attack());
+        }
+        //agent.speed = 7.0f;
+        //agent.angularSpeed = 180f;
+        Debug.Log("Chase");
+
+        agent.speed = 5.0f;
+        agent.acceleration = 1000.0f;
+        agent.angularSpeed = 720.0f;
+        //agent.stoppingDistance = 0.0f;
+
+        agent.SetDestination(playerPos);
+
+    }
+
+    // Attack()
+    /*
+    protected virtual void Attack()
+    {
+        agent.enabled = false;
+        rb.isKinematic = true;
+        Debug.Log("Attack");
+        transform.Addforce()
+    }
+    */
+
+    private IEnumerator Attack()
+    {
+        isAttacking = true;
+
+        agent.enabled = false;
+        rb.isKinematic = false;
+
+        Vector3 dashDir = (playerPos - transform.position).normalized;
+        rb.AddForce(dashDir * 50.0f, ForceMode.Impulse);
+
+        yield return new WaitForSeconds(1.5f);
+
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;
+        agent.enabled = true;
+
+        isAttacking = false;
+    }
 
     // + MJ
 
@@ -119,11 +237,27 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener// Cretur
     [SerializeField] private float _UIHideTime = 3.0f;
     private Coroutine _hideUICoroutine;
 
+
+    // AI 기본 State 
+    // Animal Patrol(), RunAway()
+    // Monster Patrol(), Chase(), Attack()
+    
+    // State Stats DetectionRadius, AttackRadius
+
     protected virtual void Update()
     {
+        playerPos = GameObject.FindWithTag("Player").transform.position;
+        //Debug.Log(playerPos);
+
+        distanceToPlayer = (playerPos-transform.position).magnitude;
+        //Debug.Log(distanceToPlayer);
+
+        if (AnimalState) AnimalAi();
+        else if (MonsterState) MonsterAi();
+
+
         if (_hpCanvas != null)
-       {
-            //Debug.Log("암튼 됨");
+        {
             // UI가 카메라를 바라보도록 방향 전환
             _hpCanvas.transform.rotation = Quaternion.LookRotation(_hpCanvas.transform.position - Camera.main.transform.position);
         }

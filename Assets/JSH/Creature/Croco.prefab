@@ -109,7 +109,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8688624321822278009}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -126,7 +126,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &9077109681948048129
 MonoBehaviour:
@@ -147,7 +147,16 @@ MonoBehaviour:
   animalShape: {fileID: 0}
   MonsterState: 0
   monsterShape: {fileID: 0}
+  isPatrolling: 0
+  isChasing: 0
+  isAttacking: 0
   moveSpeed: 5
+  defense: 0
+  detectionRadius: 6
+  attackableRadius: 3
+  attackDamage: 0
+  attackSpeed: 0
+  distanceToPlayer: 0
   patrolRadius: 10
   _hpUI: {fileID: 8248839253115585323}
   _UIHideTime: 3
