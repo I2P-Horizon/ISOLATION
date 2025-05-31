@@ -9,11 +9,13 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 5.0f; // 이동 속도
+    private float _moveSpeed; // 이동 속도
     [SerializeField] private float _jumpHeight = 2.0f; // 점프 높이
     [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
 
-    private CharacterController _characterController; // 캐릭터 컨트롤러
+    [SerializeField] private float _satietyDecreaseAmount = 0.001f; // 이동에 따른 포만감 감소량
+
+    private CharacterController _characterController; 
     private PlayerInteraction _interaction; 
     private Vector3 _velocity; // 현재 속도
     private bool _isGrounded; // 땅에 닿아 있는지 여부
@@ -22,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
     {
         _characterController = GetComponent<CharacterController>();
         _interaction = GetComponent<PlayerInteraction>();
+
+        _moveSpeed = PlayerState.Instance.MoveSpeed;
     }
 
     void Update()
@@ -61,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
         float x = Input.GetAxis("Horizontal"); // 좌우 이동 (A/D or ←/→)
         float z = Input.GetAxis("Vertical"); // 앞뒤 이동 (W/S or ↑/↓)
 
-        return transform.right * x + transform.forward * z;
+        return new Vector3(x, 0, z);
     }
 
     /// <summary>
@@ -69,8 +73,23 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        Vector3 move = GetInputMovement(); // 입력에 따른 방향 벡터 계산
-        _characterController.Move(move * _moveSpeed * Time.deltaTime); // 이동 처리
+        Vector3 inputDir = GetInputMovement(); // 입력에 따른 방향 벡터 계산
+        
+        if (inputDir.sqrMagnitude > 0.01f)
+        {
+            inputDir = inputDir.normalized;
+
+            // 이동 처리
+            _characterController.Move(inputDir * _moveSpeed *  Time.deltaTime); 
+            
+            // 이동 방향을 바라보도록 회전
+            Quaternion targetRotation = Quaternion.LookRotation(inputDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 7.0f);
+
+            // 이동에 따른 포만감 감소
+            PlayerState.Instance.DecreaseSatiety(_satietyDecreaseAmount);
+        }
+        
 
         // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때
         if(_isGrounded && Input.GetButtonDown("Jump"))
