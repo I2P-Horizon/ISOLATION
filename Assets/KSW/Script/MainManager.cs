@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -10,9 +9,15 @@ public class MainManager : MonoBehaviour
     public Button settingButton;
     public Button exitButton;
 
-    private void NewGame()
+    public GameObject loadingPanel;
+    public Slider loadingBar;
+
+    private void Start()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
+
+        newGameButton.onClick.AddListener(() => StartCoroutine(LoadGameScene()));
+        settingButton.onClick.AddListener(() => Setting());
     }
 
     private void Setting()
@@ -20,16 +25,24 @@ public class MainManager : MonoBehaviour
         GameSettings.Instance.gameSettingsUI.SetActive(true);
     }
 
-    private void Exit()
+    private IEnumerator LoadGameScene()
     {
+        loadingPanel.SetActive(true);
 
-    }
+        AsyncOperation operation = SceneManager.LoadSceneAsync("GameScene");
+        operation.allowSceneActivation = false;
 
-    private void Start()
-    {
-        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
+        while (operation.progress < 0.9f)
+        {
+            float percent = Mathf.Clamp01(operation.progress / 0.9f);
+            loadingBar.value = Mathf.Lerp(1, 100, percent);
+            yield return null;
+        }
 
-        newGameButton.onClick.AddListener(NewGame);
-        settingButton.onClick.AddListener(Setting);
+        loadingBar.value = 100f;
+
+        yield return new WaitForSeconds(0.1f);
+
+        operation.allowSceneActivation = true;
     }
 }

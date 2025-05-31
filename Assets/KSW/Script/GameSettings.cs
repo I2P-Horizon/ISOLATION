@@ -195,8 +195,8 @@ public class GameSettings : MonoBehaviour
 
     public void GameSettingsUI()
     {
-        if (!gameSettingsUI.activeSelf) gameSettingsUI.SetActive(true);
-        else gameSettingsUI.SetActive(false);
+        if (!gameSettingsUI.activeSelf) gameSettingsUI.GetComponent<UIAnimator>().Show();
+        else gameSettingsUI.GetComponent<UIAnimator>().Close();
     }
 
     private void Start()
