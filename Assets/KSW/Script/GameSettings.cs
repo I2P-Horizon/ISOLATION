@@ -137,6 +137,20 @@ public class GraphicsController
 
 public class GameSettings : MonoBehaviour
 {
+    private static GameSettings instance;
+
+    public static GameSettings Instance { get { return instance; } }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+
+        else Destroy(this.gameObject);
+    }
+
     [SerializeField] private ButtonController screenSettings;
     [SerializeField] private ButtonController graphicsSettings;
 
@@ -145,7 +159,7 @@ public class GameSettings : MonoBehaviour
     private ScreenModeController screenModeController;
     private GraphicsController graphicsController;
 
-    [SerializeField] private GameObject gameSettingsUI;
+    public GameObject gameSettingsUI;
     [SerializeField] private Camera mainCamera;
 
     /// <summary>
