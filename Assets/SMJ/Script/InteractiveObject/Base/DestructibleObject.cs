@@ -70,9 +70,7 @@ public abstract class DestructibleObject : MonoBehaviour, IInteractable
             Vector3 dropPosition = transform.position + Random.insideUnitSphere * 2f;
             dropPosition.y = transform.position.y;
 
-            Quaternion dropRotation = _dropItem.transform.rotation;
-
-            Instantiate(_dropItem, dropPosition, dropRotation);
+            Instantiate(_dropItem, dropPosition, Quaternion.identity);
         }
     }
 }

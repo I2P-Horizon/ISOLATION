@@ -1,7 +1,8 @@
 using InventorySystem;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+using System.ComponentModel.Design;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 /// <summary>
@@ -25,12 +26,10 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private float _interactionDistance = 5.0f;
 
     [Header("Gather")]
-    /// <summary>채집 시 오브젝트 내구도 감소량</summary>
+    /// <summary>채집 시 내구도 감소량</summary>
     [SerializeField] private float _gatherStrength = 5.0f;
     /// <summary>지속 채집 간격</summary>
     [SerializeField] private float _gatherInterval = 1.0f;
-    /// <summary>채집 시 포만감 감소량</summary>
-    [SerializeField] private float _satietyDecreaseAmount = 0.05f;
 
     [Header("Attack")]
     /// <summary>공격력</summary>
@@ -123,16 +122,13 @@ public class PlayerInteraction : MonoBehaviour
     {
         target = null;
 
-        // ray에 걸리지 않는 것: trigger collider, 'Ignore Raycast' Layer로 설정된 객체
-        int mask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, mask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, ~0, QueryTriggerInteraction.Ignore))
         {
             Debug.Log($"Camera : {mouseHit.collider.name}");
             Vector3 dir = (mouseHit.point - transform.position);
 
-            if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, mask, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, ~0, QueryTriggerInteraction.Ignore))
             {
                 Debug.Log($"Player {hit.collider.name}");
                 Debug.DrawRay(transform.position, dir * _interactionDistance, Color.green, 1f);
@@ -170,7 +166,6 @@ public class PlayerInteraction : MonoBehaviour
         {
             case InteractionState.Gathering:
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
-                PlayerState.Instance.DecreaseSatiety(_satietyDecreaseAmount);
                 break;
             case InteractionState.Attacking:
                 (_currentTarget as CreatureBase)?.Interact(_attackPower);
@@ -211,64 +206,27 @@ public class PlayerInteraction : MonoBehaviour
     /// </summary>
     private void TryPickupItem()
     {
-        if (!TryFindNearestItem(out PickupItem nearestItem))
-        {
-            return;
-        }
+        if (_ItemsInScope.Count == 0) return;
 
-        if (!CanReachItem(nearestItem))
-        {
-            return;
-        }
-
-        if (_inventory.Add(nearestItem.ItemData) == 0)
-        {
-            nearestItem.Interact();
-            _ItemsInScope.Remove(nearestItem);
-        }
-    }
-
-    /// <summary>
-    /// ItemInScope 중에서 플레이어와 가장 가까이 있는 아이템을 찾아 반환
-    /// </summary>
-    private bool TryFindNearestItem(out PickupItem nearestItem)
-    {
-        nearestItem = null;
-
-        _ItemsInScope.RemoveAll(item => item == null);
-
-        if (_ItemsInScope.Count == 0)
-        {
-            return false;
-        }
-
-        nearestItem = _ItemsInScope[0];
+        PickupItem nearestItem = _ItemsInScope[0];
         for (int i = 0; i < _ItemsInScope.Count; i++)
         {
             if (Vector3.Distance(transform.position, nearestItem.transform.position) >
-            Vector3.Distance(transform.position, _ItemsInScope[i].transform.position))
+                Vector3.Distance(transform.position, _ItemsInScope[i].transform.position))
             {
                 nearestItem = _ItemsInScope[i];
             }
         }
 
-        return true;
-    }
+        // <인벤토리 연결 전 확인용 코드>
+        //nearestItem.Interact();
+        //_ItemsInScope.Remove(nearestItem);
 
-    /// <summary>
-    /// 플레이어 -> 주우려는 아이템 방향으로 Ray를 쏴서 둘 사이에 장애물이 없는지 확인
-    /// </summary>
-    private bool CanReachItem(PickupItem item)
-    {
-        Vector3 dir = (item.transform.position - transform.position).normalized;
-        float dist = Vector3.Distance(transform.position, item.transform.position);
-
-        if (Physics.Raycast(transform.position, dir, out RaycastHit hit, dist, ~0, QueryTriggerInteraction.Ignore))
+        //<인벤토리 연결 시 아래 코드 주석 제거 후 사용>
+        if (_inventory.Add(nearestItem.ItemData) == 0)
         {
-            Debug.DrawRay(transform.position, dir * dist, Color.red, 1f);
-            return hit.collider.gameObject == item.gameObject;
+            nearestItem.Interact();
+            _ItemsInScope.Remove(nearestItem);
         }
-
-        return false;
     }
 }
