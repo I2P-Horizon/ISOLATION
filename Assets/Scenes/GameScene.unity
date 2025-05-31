@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 5adaf6adea316ef499d46e8a3c8ba6bb, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -751,6 +751,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   go: {fileID: 8688624321822278009, guid: c56121b0807424a4481b2d50bd268f08, type: 3}
   goInstance: {fileID: 0}
+  tombStone: {fileID: 8204963781121095822, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+  tombStoneInstance: {fileID: 0}
 --- !u!4 &1351568141
 Transform:
   m_ObjectHideFlags: 0
@@ -785,7 +787,7 @@ GameObject:
   - component: {fileID: 1413267128}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1027,6 +1029,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &8946164413360085611
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.569496
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.948
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5.9004326
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513321077396666249, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8204963781121095822, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+      propertyPath: m_Name
+      value: TombStone
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1037,3 +1096,4 @@ SceneRoots:
   - {fileID: 1413267124}
   - {fileID: 2140624771}
   - {fileID: 1351568141}
+  - {fileID: 8946164413360085611}

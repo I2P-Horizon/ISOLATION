@@ -122,8 +122,17 @@ public class TimeManager : MonoBehaviour
 
         colorAdjustment.colorFilter.value = Color.Lerp(dayColor, nightColor, timeBlend);
 
-        RenderSettings.fogColor = Color.Lerp(dayColor, new Color(0.2f, 0.3f, 0.5f), timeBlend);
-        RenderSettings.fogDensity = Mathf.Lerp(0.001f, 0.005f, timeBlend);
+        if(isNight == true)
+        {
+            RenderSettings.fogColor = Color.Lerp(dayColor, new Color(0.2f, 0.3f, 0.5f), timeBlend);
+            RenderSettings.fogDensity = Mathf.Lerp(0.01f, 0.05f, timeBlend);
+        }
+
+        else if(isNight == false)
+        {
+            RenderSettings.fogColor = Color.Lerp(dayColor, new Color(0.2f, 0.3f, 0.5f), timeBlend);
+            RenderSettings.fogDensity = Mathf.Lerp(0.001f, 0.005f, timeBlend);
+        }
     }
 
     public void Register(ICycleListener listener)
@@ -139,10 +148,11 @@ public class TimeManager : MonoBehaviour
 
     private void NotifyCycleChanged()
     {
-        if (isNight != previousIsNight) {
+        if (isNight != previousIsNight) 
+        {
             Debug.Log("Notify DatCycle Changed");
             foreach (var listener in listeners) listener.OnCycleChanged(isNight);
-            }
+        }
 
         previousIsNight = isNight;
         
