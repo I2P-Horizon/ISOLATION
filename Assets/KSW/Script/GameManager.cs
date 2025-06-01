@@ -13,8 +13,8 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (!pauseUI.activeSelf) pauseUI.SetActive(true);
-            else pauseUI.SetActive(false);
+            if (!pauseUI.activeSelf) pauseUI.GetComponent<UIAnimator>().Show();
+            else pauseUI.GetComponent<UIAnimator>().Close();
         }
     }
 
