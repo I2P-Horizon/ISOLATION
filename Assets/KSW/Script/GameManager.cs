@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     #region Pause
-    private GameSettings gameSettings;
     public GameObject pauseUI;
 
     public Button continueButton;
@@ -30,7 +29,7 @@ public class GameManager : MonoBehaviour
 
     private void Settings()
     {
-        gameSettings.gameSettingsUI.GetComponent<UIAnimator>().Show();
+        GameSettings.Instance.gameSettingsUI.GetComponent<UIAnimator>().Show();
     }
 
     private void Exit()
@@ -46,8 +45,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        gameSettings = FindFirstObjectByType<GameSettings>();
-
         continueButton.onClick.AddListener(Continue);
         settingButton.onClick.AddListener(Settings);
         exitButton.onClick.AddListener(Exit);
