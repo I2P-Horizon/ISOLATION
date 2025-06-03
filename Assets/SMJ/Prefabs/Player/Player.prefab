@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2856861076786332047}
   - component: {fileID: 8235005626280512333}
   - component: {fileID: 9116909022141252373}
+  - component: {fileID: -8885475844461020681}
   - component: {fileID: 8383804600278695288}
   - component: {fileID: 653950395756131959}
   m_Layer: 2
@@ -128,10 +129,23 @@ MonoBehaviour:
   _maxSatiety: 100
   _moveSpeed: 5
   _attackSpeed: 1
+  _jumpHeight: 2
   _hp: 0
   _satiety: 0
   _hpDecreaseInterval: 1
   _hpDecreaseAmount: 0.1
+--- !u!114 &-8885475844461020681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7840925219774901836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c93a83986bdd0042b0cc6b59514bf61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8383804600278695288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,9 +158,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c17886c87fd377e4ea4e4005241a30f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jumpHeight: 2
   _gravity: -9.81
   _satietyDecreaseAmount: 0.001
+  IsMoving: 0
 --- !u!114 &653950395756131959
 MonoBehaviour:
   m_ObjectHideFlags: 0
