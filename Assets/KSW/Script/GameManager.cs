@@ -3,9 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using InventorySystem;
 
 public class GameManager : MonoBehaviour
 {
+    #region ΩÃ±€≈Ê
+    private static GameManager instance;
+
+    public static GameManager Instance { get { return instance; } }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+
+        else Destroy(this.gameObject);
+    }
+    #endregion
+
+    private UIManager uiManager;
+
     #region Pause
     public GameObject pauseUI;
 
@@ -38,6 +57,18 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    public IEnumerator GameOver()
+    {
+        yield return new WaitForSeconds(0.01f);
+        uiManager.PopUpShow(uiManager.gameOverUI);
+        Time.timeScale = 0;
+    }
+
+    public void SceneChange(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+
     private void Update()
     {
         Pause();
@@ -45,13 +76,12 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1;
+
+        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
+        uiManager = FindFirstObjectByType<UIManager>();
         continueButton.onClick.AddListener(Continue);
         settingButton.onClick.AddListener(Settings);
         exitButton.onClick.AddListener(Exit);
-    }
-
-    private void Awake()
-    {
-        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
     }
 }

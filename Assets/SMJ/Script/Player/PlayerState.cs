@@ -68,6 +68,7 @@ public class PlayerState : MonoBehaviour
                 {
                     _hp = 0;
                     _die = true;
+                    StartCoroutine(GameManager.Instance.GameOver());
                     Debug.Log("Die......!");
                 }
             }
