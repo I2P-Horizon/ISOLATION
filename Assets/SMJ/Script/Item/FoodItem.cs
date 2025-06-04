@@ -12,8 +12,10 @@ namespace InventorySystem
 
         public bool Use()
         {
+            if (!Player.Instance.State.IncreaseSatiety(data.Value))
+                return false; 
+
             Amount--;
-            PlayerState.Instance.IncreaseSatiety(data.Value);
 
             return true;
         }

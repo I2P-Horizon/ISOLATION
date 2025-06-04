@@ -5,22 +5,25 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 플레이어의 스탯(체력, 포만감 등)을 관리하는 스크립트.
-/// 싱글톤으로 이루어져 있으며 접근 시 PlayerState.Instance.메서드 사용.
+/// 플레이어의 스탯(체력, 포만감 등)을 관리하는 스크립트
 /// </summary>
 public class PlayerState : MonoBehaviour
 {
+    private Player _player;
+
     // 플레이어 스탯
     [Header("State")]
     [SerializeField] private float _maxHp = 100.0f;
     [SerializeField] private float _maxSatiety = 100.0f;
     [SerializeField] private float _moveSpeed = 5.0f;
     [SerializeField] private float _attackSpeed = 1.0f;
+    [SerializeField] private float _jumpHeight = 2.0f;
 
     public float MaxHp => _maxHp;
     public float MaxSatiety => _maxSatiety;
     public float MoveSpeed => _moveSpeed;
     public float AttackSpeed => _attackSpeed;
+    public float JumpHeight => _jumpHeight;
 
     [SerializeField] private float _hp;
     [SerializeField] private float _satiety;
@@ -32,22 +35,15 @@ public class PlayerState : MonoBehaviour
 
     private float _timeSinceZeroSatiety = 0; // 굶주림 지속 시간
 
+    public bool IsSatietyZero => _satiety <= 0;
+
     [Header("Hunger Penalty Settings")]
     [SerializeField] private float _hpDecreaseInterval = 1.0f;
     [SerializeField] private float _hpDecreaseAmount = 0.1f;
 
-    // 싱글톤
-    public static PlayerState Instance { get; private set; }
-
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
+        _player = GetComponent<Player>();
 
         _hp = MaxHp;
         _satiety = MaxSatiety;
@@ -59,10 +55,12 @@ public class PlayerState : MonoBehaviour
         {
             _timeSinceZeroSatiety += Time.deltaTime;
 
+            float hpLose = _player.Movement.IsMoving ? _hpDecreaseAmount * 2f : _hpDecreaseAmount;
+
             if (_timeSinceZeroSatiety >= _hpDecreaseInterval)
             {
                 _timeSinceZeroSatiety = 0;
-                _hp -= _hpDecreaseAmount;
+                _hp -= hpLose;
 
                 if (_hp <= 0)
                 {
@@ -86,16 +84,28 @@ public class PlayerState : MonoBehaviour
     // Setter
     public void RestoreFullHp() { _hp = _maxHp; }
 
-    public void RestoreHullSatiety() { _satiety -= _maxSatiety; }
+    public void RestoreFullSatiety() { _satiety -= _maxSatiety; }
 
-    public void IncreaseSatiety(float amount)
+    /// <returns>이미 포만감이 가득 차 있으면 false</returns>
+    public bool IncreaseSatiety(float amount)
     {
+        if (_satiety >= _maxSatiety)
+            return false;
+
         _satiety = Mathf.Min(_maxSatiety, _satiety + amount);
+
+        return true;
     }
 
-    public void IncreaseHp(float amount)
+    /// <returns>이미 hp가 가득 차 있으면 false</returns>
+    public bool IncreaseHp(float amount)
     {
+        if (_hp >= _maxHp)
+            return false;
+
         _hp = Mathf.Min(_maxHp, _hp + amount);
+
+        return true;
     }
 
     public void DecreaseSatiety(float amount)

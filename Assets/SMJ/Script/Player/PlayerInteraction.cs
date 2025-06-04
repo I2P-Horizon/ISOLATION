@@ -11,6 +11,8 @@ using UnityEngine;
 /// </summary>
 public class PlayerInteraction : MonoBehaviour
 {
+    private Player _player;
+
     enum InteractionState
     {
         None, // 아무 것도 하지 않는 상태
@@ -40,7 +42,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private List<PickupItem> _ItemsInScope; // 플레이어 주변에 감지된 아이템 목록
 
-    private InteractionState _currentState = InteractionState.None; // 현제 상태
+    private InteractionState _currentState = InteractionState.None; // 현재 상태
     private MonoBehaviour _currentTarget = null; // 현재 상호작용 중인 대상
     private float _lastInteractionTime = 0; // 마지막으로 상호작용한 시간
 
@@ -48,6 +50,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Awake()
     {
+        _player = GetComponent<Player>();
         _ItemsInScope = new List<PickupItem>();
     }
 
@@ -170,7 +173,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             case InteractionState.Gathering:
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
-                PlayerState.Instance.DecreaseSatiety(_satietyDecreaseAmount);
+                _player.State.DecreaseSatiety(_satietyDecreaseAmount);
                 break;
             case InteractionState.Attacking:
                 (_currentTarget as CreatureBase)?.Interact(_attackPower);
@@ -183,12 +186,14 @@ public class PlayerInteraction : MonoBehaviour
     /// </summary>
     private float GetCurrentInterval()
     {
-        return _currentState switch
+        float baseInterval = _currentState switch
         {
             InteractionState.Gathering => _gatherInterval,
             InteractionState.Attacking => _attackInterval,
             _ => float.MaxValue
         };
+
+        return _player.State.IsSatietyZero ? baseInterval * 2f : baseInterval;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -221,10 +226,13 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
-        if (_inventory.Add(nearestItem.ItemData) == 0)
+        if (nearestItem.CanBePickedUp())
         {
-            nearestItem.Interact();
-            _ItemsInScope.Remove(nearestItem);
+            if (_inventory.Add(nearestItem.ItemData) == 0)
+            {
+                nearestItem.Interact();
+                _ItemsInScope.Remove(nearestItem);
+            }
         }
     }
 
