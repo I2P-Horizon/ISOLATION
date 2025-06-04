@@ -226,10 +226,13 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
-        if (_inventory.Add(nearestItem.ItemData) == 0)
+        if (nearestItem.CanBePickedUp())
         {
-            nearestItem.Interact();
-            _ItemsInScope.Remove(nearestItem);
+            if (_inventory.Add(nearestItem.ItemData) == 0)
+            {
+                nearestItem.Interact();
+                _ItemsInScope.Remove(nearestItem);
+            }
         }
     }
 
