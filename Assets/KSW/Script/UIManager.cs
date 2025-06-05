@@ -19,17 +19,17 @@ public class UIManager : MonoBehaviour
         replayButton.onClick.AddListener(() => GameManager.Instance.SceneChange("GameScene"));
         mainButton.onClick.AddListener(() => GameManager.Instance.SceneChange("MainScene"));
 
-        hpSlider.value = PlayerState.Instance.MaxHp;
-        satietySlider.value = PlayerState.Instance.MaxSatiety;
+        hpSlider.value = Player.Instance.State.MaxHp;
+        satietySlider.value = Player.Instance.State.MaxSatiety;
 
-        hpSlider.value = PlayerState.Instance.GetCurrentHp();
-        satietySlider.value = PlayerState.Instance.GetCurrentSatiety();
+        hpSlider.value = Player.Instance.State.GetCurrentHp();
+        satietySlider.value = Player.Instance.State.GetCurrentSatiety();
     }
 
     void Update()
     {
-        hpSlider.value = PlayerState.Instance.GetCurrentHp();
-        satietySlider.value = PlayerState.Instance.GetCurrentSatiety();
+        hpSlider.value = Player.Instance.State.GetCurrentHp();
+        satietySlider.value = Player.Instance.State.GetCurrentSatiety();
     }
 
     public void PopUpShow(GameObject ui)
