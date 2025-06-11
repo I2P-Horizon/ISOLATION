@@ -5,34 +5,7 @@ using UnityEngine;
 public class PlayerItemGroupUI : MonoBehaviour
 {
     [SerializeField] private List<PlayerItemSlotUI> slots = new();           // 슬롯 데이터
-    [SerializeField] private Inventory inventory;
 
-    private void Update()
-    {
-        GetInput();
-    }
-
-    private void GetInput()
-    {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            slots[0].UseItem(inventory);
-        }
-        if(Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            slots[1].UseItem(inventory);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            slots[2].UseItem(inventory);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            slots[3].UseItem(inventory);
-        }
-    }
-
-    // 모든 슬롯 갱신
     public void UpdateSlots()
     {
         for(int i = 0;i<slots.Count;i++)

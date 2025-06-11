@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 ///                             DataManager 
 ///                     1. 각 데이터 로드 및 세이브
-///                     2. 각 데이터에 대한 접근제공
+///                     2. 각 데이터에 대한 접근자 메서드 제공 
 ///                     
 /// </summary>
 public class DataManager : Singleton<DataManager>
@@ -28,11 +28,6 @@ public class DataManager : Singleton<DataManager>
         InitAndLoadData();
     }
 
-    private void Start()
-    {
-        // 5초마다 자동 저장
-        InvokeRepeating("SavePlayerData", 5f, 5f);
-    }
     private void InitAndLoadData()
     {
         playerDataPath = Path.Combine(Application.persistentDataPath, "Playerdata.json");
@@ -242,8 +237,4 @@ public class DataManager : Singleton<DataManager>
         Debug.Log("세이브 완료!!");
     }
 
-    private void OnApplicationQuit()
-    {
-        SavePlayerData();
-    }
 }

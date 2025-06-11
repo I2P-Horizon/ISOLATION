@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] public PlayerController player;
+    //[SerializeField] public PlayerController player;
     [SerializeField] public GameObject profileUI;
-    [SerializeField] public CinemachineVirtualCamera virtualCamera;
 
     protected override void Awake()
     {
@@ -19,13 +17,14 @@ public class GameManager : Singleton<GameManager>
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            UIManager.Instance.ToggleUI(profileUI);
+            profileUI.SetActive(!profileUI.activeSelf);
         }
-        else if (Input.GetKeyDown(KeyCode.CapsLock))
-        {
-            DataManager.Instance.SavePlayerData();
-            Debug.Log("저장완료");
-        }
-     
+        //else if (Input.GetKeyDown(KeyCode.CapsLock))
+        //{
+        //    DataManager.Instance.SavePlayerData();
+        //    Debug.Log("저장완료");
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Space))
+        //    DataManager.Instance.GetPlayerData().GetDamaged(100f);
     }
 }
