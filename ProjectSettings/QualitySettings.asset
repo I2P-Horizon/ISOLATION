@@ -311,7 +311,7 @@ QualitySettings:
     PS4: 5
     PS5: 5
     QNX: 5
-    Server: 5
+    Server: 0
     Stadia: 5
     Standalone: 5
     VisionOS: 5
