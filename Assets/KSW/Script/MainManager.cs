@@ -18,6 +18,7 @@ public class MainManager : MonoBehaviour
 
         newGameButton.onClick.AddListener(() => StartCoroutine(LoadGameScene()));
         settingButton.onClick.AddListener(() => Setting());
+        exitButton.onClick.AddListener(() => Exit());
     }
 
     private void Setting()
@@ -44,5 +45,10 @@ public class MainManager : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         operation.allowSceneActivation = true;
+    }
+
+    private void Exit()
+    {
+        Application.Quit();
     }
 }

@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using InventorySystem;
 
 public class GameManager : MonoBehaviour
 {
+    private UIManager uiManager;
+
+    public GameObject pauseUI;
+
+    public Button continueButton;
+    public Button settingButton;
+    public Button exitButton;
+
     #region ΩÃ±€≈Ê
     private static GameManager instance;
 
@@ -23,38 +30,14 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    private UIManager uiManager;
-
     #region Pause
-    public GameObject pauseUI;
+    public void Pause() { if (!pauseUI.activeSelf) uiManager.PopUpShow(pauseUI); else uiManager.PopUpClose(pauseUI); }
 
-    public Button continueButton;
-    public Button settingButton;
-    public Button exitButton;
+    private void Continue() { Pause(); }
 
-    public void Pause()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (!pauseUI.activeSelf) pauseUI.GetComponent<UIAnimator>().Show();
-            else pauseUI.GetComponent<UIAnimator>().Close();
-        }
-    }
+    private void Settings() { uiManager.PopUpShow(GameSettings.Instance.gameSettingsUI); }
 
-    private void Continue()
-    {
-        pauseUI.GetComponent<UIAnimator>().Close();
-    }
-
-    private void Settings()
-    {
-        GameSettings.Instance.gameSettingsUI.GetComponent<UIAnimator>().Show();
-    }
-
-    private void Exit()
-    {
-        SceneManager.LoadScene("MainScene");
-    }
+    private void Exit() { SceneManager.LoadScene("MainScene"); }
     #endregion
 
     public IEnumerator GameOver()
@@ -71,15 +54,16 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        Pause();
+        if (Input.GetKeyDown(KeyCode.Escape)) Pause();
     }
 
     private void Start()
     {
+        uiManager = FindFirstObjectByType<UIManager>();
+        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
+
         Time.timeScale = 1;
 
-        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
-        uiManager = FindFirstObjectByType<UIManager>();
         continueButton.onClick.AddListener(Continue);
         settingButton.onClick.AddListener(Settings);
         exitButton.onClick.AddListener(Exit);
