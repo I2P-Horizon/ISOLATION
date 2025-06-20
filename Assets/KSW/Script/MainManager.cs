@@ -5,15 +5,18 @@ using UnityEngine.SceneManagement;
 
 public class MainManager : MonoBehaviour
 {
+    public GameObject mainPanel;
+    public GameObject loadingPanel;
+
     public Button newGameButton;
     public Button settingButton;
     public Button exitButton;
 
-    public GameObject loadingPanel;
     public Slider loadingBar;
 
     private void Start()
     {
+        mainPanel.GetComponent<UIAnimator>().Show();
         SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
 
         newGameButton.onClick.AddListener(() => StartCoroutine(LoadGameScene()));
