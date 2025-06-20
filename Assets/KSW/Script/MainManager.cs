@@ -16,11 +16,6 @@ public class MainManager : MonoBehaviour
 
     public Image whiteOverlay;
 
-    private void Setting()
-    {
-        GameSettings.Instance.gameSettingsUI.SetActive(true);
-    }
-
     private IEnumerator LoadGameScene()
     {
         loadingPanel.SetActive(true);
@@ -75,7 +70,7 @@ public class MainManager : MonoBehaviour
         SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
 
         newGameButton.onClick.AddListener(() => StartCoroutine(LoadGameScene()));
-        settingButton.onClick.AddListener(() => Setting());
+        settingButton.onClick.AddListener(() => GameSettings.Instance.GameSettingsUI());
         exitButton.onClick.AddListener(() => Exit());
     }
 }
