@@ -14,15 +14,7 @@ public class MainManager : MonoBehaviour
 
     public Slider loadingBar;
 
-    private void Start()
-    {
-        mainPanel.GetComponent<UIAnimator>().Show();
-        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
-
-        newGameButton.onClick.AddListener(() => StartCoroutine(LoadGameScene()));
-        settingButton.onClick.AddListener(() => Setting());
-        exitButton.onClick.AddListener(() => Exit());
-    }
+    public Image whiteOverlay;
 
     private void Setting()
     {
@@ -53,5 +45,37 @@ public class MainManager : MonoBehaviour
     private void Exit()
     {
         Application.Quit();
+    }
+
+    private IEnumerator StartEffect()
+    {
+        mainPanel.GetComponent<UIAnimator>().Close();
+        whiteOverlay.gameObject.SetActive(true);
+        float duration = 1f;
+        float elapsed = 0f;
+
+        Color startColor = whiteOverlay.color;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
+            whiteOverlay.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+            yield return null;
+        }
+
+        whiteOverlay.gameObject.SetActive(false);
+        whiteOverlay.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
+        mainPanel.GetComponent<UIAnimator>().Show();
+    }
+
+    private void Start()
+    {
+        StartCoroutine(StartEffect());
+        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
+
+        newGameButton.onClick.AddListener(() => StartCoroutine(LoadGameScene()));
+        settingButton.onClick.AddListener(() => Setting());
+        exitButton.onClick.AddListener(() => Exit());
     }
 }
