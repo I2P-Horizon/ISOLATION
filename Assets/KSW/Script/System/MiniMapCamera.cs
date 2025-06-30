@@ -6,7 +6,7 @@ public class MiniMapCamera : MonoBehaviour
 {
     [SerializeField] private Transform player;
 
-    private float height = 50f;
+    private float height = 20f;
 
     void LateUpdate()
     {
