@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region 시계 (Time)
-    private void Time()
+    private void TimeUI()
     {
         if (TimeManager.instance == null || TimeManager.instance.RealTimePerDaySec <= 0) return;
 
@@ -85,10 +85,32 @@ public class UIManager : MonoBehaviour
     #region 미니맵 (MiniMap)
     #endregion
 
+    #region 프레임 표시
+    
+    public Text fpsText;
+
+    float deltaTime = 0.0f;
+
+    private void FPS(int active)
+    {
+        if (active == 1)
+        {
+            fpsText.gameObject.SetActive(true);
+            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
+            float fps = 1.0f / deltaTime;
+            fpsText.text = $"FPS : {Mathf.Ceil(fps)}";
+        }
+
+        else fpsText.gameObject.SetActive(false);
+    }
+    
+    #endregion
+
     private void Update()
     {
         PlayerStats();
-        Time();
+        TimeUI();
+        FPS(GameSettings.Instance.frameText);
     }
 
     private void Start()
