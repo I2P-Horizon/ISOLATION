@@ -23,8 +23,6 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsMoving = false;
 
-    [SerializeField] private Animator animator;
-
     void Start()
     {
         _player = GetComponent<Player>();
@@ -91,7 +89,6 @@ public class PlayerMovement : MonoBehaviour
 
             // 이동 처리
             _characterController.Move(inputDir * _moveSpeed * Time.deltaTime);
-            animator.Play("Walk");
 
             // 이동 방향을 바라보도록 회전
             Quaternion targetRotation = Quaternion.LookRotation(inputDir);
@@ -101,9 +98,6 @@ public class PlayerMovement : MonoBehaviour
             if (!_player.State.IsSatietyZero)
                 _player.State.DecreaseSatiety(_satietyDecreaseAmount);
         }
-
-        else animator.Play("Idle");
-
 
         // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때
         if (_isGrounded && Input.GetButtonDown("Jump"))
