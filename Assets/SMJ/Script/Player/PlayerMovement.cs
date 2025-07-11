@@ -21,7 +21,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _velocity; // 현재 속도
     private bool _isGrounded; // 땅에 닿아 있는지 여부
 
-    public bool IsMoving = false; 
+    public bool IsMoving = false;
+
+    [SerializeField] private Animator animator;
 
     void Start()
     {
@@ -88,8 +90,9 @@ public class PlayerMovement : MonoBehaviour
             _moveSpeed = _player.State.IsSatietyZero ? _player.State.MoveSpeed * 0.5f : _player.State.MoveSpeed;
 
             // 이동 처리
-            _characterController.Move(inputDir * _moveSpeed *  Time.deltaTime); 
-            
+            _characterController.Move(inputDir * _moveSpeed * Time.deltaTime);
+            animator.Play("Walk");
+
             // 이동 방향을 바라보도록 회전
             Quaternion targetRotation = Quaternion.LookRotation(inputDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 7.0f);
@@ -98,10 +101,12 @@ public class PlayerMovement : MonoBehaviour
             if (!_player.State.IsSatietyZero)
                 _player.State.DecreaseSatiety(_satietyDecreaseAmount);
         }
-        
+
+        else animator.Play("Idle");
+
 
         // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때
-        if(_isGrounded && Input.GetButtonDown("Jump"))
+        if (_isGrounded && Input.GetButtonDown("Jump"))
         {
             _jumpHeight = _player.State.IsSatietyZero ? _player.State.JumpHeight * 0.5f : _player.State.JumpHeight;
 
