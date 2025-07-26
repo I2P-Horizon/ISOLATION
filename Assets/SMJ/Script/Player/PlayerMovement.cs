@@ -37,13 +37,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if(_player.Interaction.IsInteracting)
-        {
-            GroundCheck();
-            ApplyGravity();
-            return;
-        }
-
         GroundCheck();
         Move();
     }

@@ -24,7 +24,7 @@ public class PlayerInteraction : MonoBehaviour
 
     [Header("Common")]
     /// <summary>상호작용(채집, 사냥) 가능한 거리</summary>
-    [SerializeField] private float _interactionDistance = 5.0f;
+    [SerializeField] private float _interactionDistance = 2.0f;
 
     [Header("Gather")]
     /// <summary>채집 시 오브젝트 내구도 감소량</summary>
@@ -73,7 +73,6 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            //Debug.Log("F");
             TryPickupItem();
         }
     }
@@ -103,7 +102,20 @@ public class PlayerInteraction : MonoBehaviour
     /// </summary>
     private void OnInteractionHeld()
     {
-        if (_currentState == InteractionState.None || Time.time - _lastInteractionTime < GetCurrentInterval())
+        if (_currentState == InteractionState.None || _currentTarget == null)
+            return;
+
+        // target이 여전히 상호작용 가능한 거리 내에 있는지 확인
+        bool isWithinDistance = Vector3.Distance(
+            _currentTarget.GetComponent<Collider>().ClosestPoint(transform.position), 
+            transform.position) <= _interactionDistance;
+        if (!isWithinDistance) // 대상과 멀어졌으면 상호작용 중단
+        {
+            StopInteraction();
+            return;
+        }
+
+        if (Time.time - _lastInteractionTime < GetCurrentInterval())
             return;
 
         ProcessInteraction();
