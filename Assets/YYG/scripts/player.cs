@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class player : MonoBehaviour
 {
+    public GameObject ui;
     public float speed;
     float hAxis;
     float vAxis;
@@ -18,6 +19,7 @@ public class player : MonoBehaviour
     bool isMoving = false;
     bool hungerInvoked = false;
     bool hpInvoked = false;
+    bool Trigger = false;
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +56,11 @@ public class player : MonoBehaviour
         }
 
         isMoving = nowMoving;
+
+        if(Input.GetKeyDown(KeyCode.F) && Trigger)
+        {
+            ui.SetActive(true);
+        }
     }
 
     public void hungerdecrease()
@@ -66,5 +73,21 @@ public class player : MonoBehaviour
     {
         hp -= 1;
         Debug.Log("HP: " + hp);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "box")
+        {
+            Trigger = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "box")
+        {
+            Trigger = false;
+        }
     }
 }
