@@ -9,37 +9,37 @@ public class IslandGenerator : MonoBehaviour
     public GameObject sandBlock;
 
     [Header("섬 설정")]
-    public int size = 250;
-    public float beachSize = 15f;
-    public float noiseScale = 5f;
+    [Tooltip("섬의 크기")] public int size = 250;
+    [Tooltip("해변의 크기")] public float beachSize = 15f;
+    [Tooltip("노이즈 규모")] public float noiseScale = 5f;
+
+    [Header("지형 계단 설정")]
+    [Tooltip("최대 잔디 높이")] public int maxGrassHeight = 4;
+    [Tooltip("최소 잔디 높이")] public int minGrassHeight = 1;
+    [Tooltip("최대 노이즈 규모")] public float heightNoiseScale = 8f;
 
     [Header("블록 크기 설정")]
     public Vector3 targetSize = new Vector3(1, 1, 1);
 
-    [Header("지형 계단 설정")]
-    public int maxGrassHeight = 4;
-    public float heightNoiseScale = 8f;
-    public int minGrassHeight = 1;
-
     [Header("블록 높이 기준선")]
     public float sandHeight = 0f;
 
-    [Header("나무 배치")]
+    [Header("기본 나무 배치")]
     public GameObject treePrefab;
-    public float treeSpawnChance = 0.04f;
+    [Tooltip("배치될 확률")] public float treeSpawnChance = 0.04f;
 
     [Header("파인애플 줄기 배치")]
     public GameObject pineapplePrefab;
-    public float pineappleSpawnChance = 0.005f;
+    [Tooltip("배치될 확률")] public float pineappleSpawnChance = 0.005f;
 
     [Header("부모 오브젝트 (섬 전체)")]
     public Transform islandParent;
 
-    // 랜덤 시드 변수
-    private float seedX;
-    private float seedZ;
-    private float heightSeedX;
-    private float heightSeedZ;
+    [Header("랜덤 시드 값")]
+    [SerializeField] private float seedX;
+    [SerializeField] private float seedZ;
+    [SerializeField] private float heightSeedX;
+    [SerializeField] private float heightSeedZ;
 
     void Start()
     {
@@ -49,11 +49,7 @@ public class IslandGenerator : MonoBehaviour
         heightSeedX = Random.Range(0f, 10000f);
         heightSeedZ = Random.Range(0f, 10000f);
 
-        Vector3 islandOrigin = islandParent.position + new Vector3(
-            -size / 2f * targetSize.x,
-            0,
-            -size / 2f * targetSize.z
-        );
+        Vector3 islandOrigin = islandParent.position + new Vector3(-size / 2f * targetSize.x, 0, -size / 2f * targetSize.z);
 
         Vector3 grassScale = GetScaleToFit(grassBlock, targetSize);
         Vector3 sandScale = GetScaleToFit(sandBlock, targetSize);
@@ -70,8 +66,7 @@ public class IslandGenerator : MonoBehaviour
                 float islandNoise = Mathf.PerlinNoise((x + seedX) / noiseScale, (z + seedZ) / noiseScale) * 5f;
                 float finalDist = dist - islandNoise;
 
-                if (finalDist > size / 2f)
-                    continue;
+                if (finalDist > size / 2f) continue;
 
                 int sandLayers = 1;
                 if (finalDist <= size / 2f && finalDist > size / 2f - beachSize)
@@ -80,10 +75,8 @@ public class IslandGenerator : MonoBehaviour
                     float t = Mathf.Clamp01(beachDepth / beachSize);
                     sandLayers = (t > 0.5f) ? 2 : 1;
                 }
-                else if (finalDist <= size / 2f - beachSize)
-                {
-                    sandLayers = 2;
-                }
+
+                else if (finalDist <= size / 2f - beachSize) sandLayers = 2;
 
                 // 모래 쌓기
                 for (int i = 0; i < sandLayers; i++)
@@ -108,6 +101,7 @@ public class IslandGenerator : MonoBehaviour
                     grassLayers = Mathf.Clamp(grassLayers + noiseLayers - (maxGrassHeight - minGrassHeight) / 2, minGrassHeight, maxGrassHeight);
 
                     GameObject lastGrassBlock = null;
+
                     for (int i = 0; i < grassLayers; i++)
                     {
                         float y = sandHeight + sandLayers * targetSize.y + i * targetSize.y;
@@ -115,24 +109,23 @@ public class IslandGenerator : MonoBehaviour
                         GameObject grass = Instantiate(grassBlock, grassPos, Quaternion.identity, islandParent);
                         grass.transform.localScale = grassScale;
 
-                        if (i == grassLayers - 1)
-                            lastGrassBlock = grass;
+                        if (i == grassLayers - 1) lastGrassBlock = grass;
                     }
 
-                    // 나무 심기
-                    if (lastGrassBlock != null && treePrefab != null)
+                    // 오브젝트 배치
+                    if (lastGrassBlock != null)
                     {
-                        if (Random.value < treeSpawnChance)
+                        float rand = Random.value;
+
+                        // 기본 나무 배치
+                        if (treePrefab != null && rand < treeSpawnChance)
                         {
                             Vector3 treePos = lastGrassBlock.transform.position + new Vector3(0, targetSize.y, 0);
                             Instantiate(treePrefab, treePos, Quaternion.identity, islandParent);
                         }
-                    }
 
-                    // 파인애플 줄기 심기
-                    if (lastGrassBlock != null && pineapplePrefab != null)
-                    {
-                        if (Random.value < pineappleSpawnChance)
+                        // 파인애플 줄기 배치
+                        else if (pineapplePrefab != null && rand >= treeSpawnChance && rand < treeSpawnChance + pineappleSpawnChance)
                         {
                             Vector3 pineapplePos = lastGrassBlock.transform.position + new Vector3(0, targetSize.y, 0);
                             Instantiate(pineapplePrefab, pineapplePos, Quaternion.identity, islandParent);
@@ -143,6 +136,12 @@ public class IslandGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 프리팹의 실제 크기를 측정하여 원하는 크기에 맞도록 스케일 비율을 계산
+    /// </summary>
+    /// <param name="prefab"></param>
+    /// <param name="desiredSize"></param>
+    /// <returns></returns>
     Vector3 GetScaleToFit(GameObject prefab, Vector3 desiredSize)
     {
         GameObject temp = Instantiate(prefab);
