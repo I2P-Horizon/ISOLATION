@@ -7741,9 +7741,12 @@ MonoBehaviour:
     grass: {fileID: 1784206446667002742, guid: cbe2eba3308ec58459024c5892708459, type: 3}
     dirt: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
     sand: {fileID: 2739551521495890618, guid: bebbdb476ec66ed499c664d6f6240513, type: 3}
+    swamp: {fileID: 1386933832549134375, guid: 8f9e75665fc94054fa0b62d4db6d40d8, type: 3}
   mapScale:
     total: 250
     beach: 15
+    lake: 20
+    swamp: 30
     noise: 5
     block: {x: 1, y: 1, z: 1}
   mapHight:

@@ -18,6 +18,7 @@ public class MapScale
 {
     [Tooltip("섬의 크기")] public int total = 250;
     [Tooltip("해변의 크기")] public float beach = 15f;
+    [Tooltip("호수의 크기")] public float lake = 20f;
     [Tooltip("노이즈 크기")] public float noise = 5f;
     [Tooltip("블록 크기")] public Vector3 block = new Vector3(1, 1, 1);
 }
@@ -78,6 +79,8 @@ public class IslandManager : MonoBehaviour
     [Header("시드 값")] public MapSeed mapSeed;
     [Header("맵 오브젝트")] public MapObject[] mapObjects;
 
+    private Vector2 lakeCenter;
+
     private List<Vector3> uniqueObjectPositions = new List<Vector3>();
 
     /// <summary>
@@ -89,6 +92,11 @@ public class IslandManager : MonoBehaviour
         mapSeed.z = Random.Range(0f, 10000f);
         mapSeed.heightX = Random.Range(0f, 10000f);
         mapSeed.heightZ = Random.Range(0f, 10000f);
+
+        // 호수
+        lakeCenter = new Vector2(
+            Random.Range(mapScale.total * 0.3f, mapScale.total * 0.7f),
+            Random.Range(mapScale.total * 0.3f, mapScale.total * 0.7f));
     }
 
     /// <summary>
@@ -126,6 +134,18 @@ public class IslandManager : MonoBehaviour
 
                 if (finalDist > mapScale.total / 2f) continue;
 
+                if (IsLakeArea(x, z))
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float y = mapHight.sandHeight + i * mapScale.block.y;
+                        Vector3 pos = islandOrigin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
+                        GameObject dirt = Instantiate(block.dirt, pos, Quaternion.identity, islandParent);
+                        dirt.transform.localScale = dirtScale;
+                    }
+                    continue;
+                }
+
                 int sandLayers = 1;
                 if (finalDist <= mapScale.total / 2f && finalDist > mapScale.total / 2f - mapScale.beach)
                 {
@@ -133,8 +153,8 @@ public class IslandManager : MonoBehaviour
                     float t = Mathf.Clamp01(beachDepth / mapScale.beach);
                     sandLayers = (t > 0.5f) ? 2 : 1;
                 }
-                else if (finalDist <= mapScale.total / 2f - mapScale.beach)
-                    sandLayers = 2;
+
+                else if (finalDist <= mapScale.total / 2f - mapScale.beach) sandLayers = 2;
 
                 bool isGrass = finalDist <= mapScale.total / 2f - mapScale.beach;
                 bool placeSand = true;
@@ -150,6 +170,7 @@ public class IslandManager : MonoBehaviour
                     int noiseLayers = Mathf.RoundToInt(noise * (mapHight.maxGrass - mapHight.minGrass));
 
                     grassLayers = Mathf.Clamp(grassLayers + noiseLayers - (mapHight.maxGrass - mapHight.minGrass) / 2, mapHight.minGrass, mapHight.maxGrass);
+                    
                     if (grassLayers > 0) placeSand = false;
                 }
 
@@ -219,6 +240,13 @@ public class IslandManager : MonoBehaviour
         }
     }
 
+    bool IsLakeArea(int x, int z)
+    {
+        Vector2 pos = new Vector2(x, z);
+        float dist = Vector2.Distance(pos, lakeCenter);
+        return dist < mapScale.lake;
+    }
+
     /// <summary>
     /// 유니크 오브젝트와 충분히 떨어져 있는지 확인
     /// </summary>
@@ -255,6 +283,8 @@ public class IslandManager : MonoBehaviour
                 Vector2 pos2D = new Vector2(randX, randZ);
                 float dist = Vector2.Distance(pos2D, center);
 
+                if (IsLakeArea(randX, randZ)) continue;
+
                 bool valid = false;
                 switch (mapObj.placementType)
                 {
@@ -263,7 +293,7 @@ public class IslandManager : MonoBehaviour
 
                     // 가장가리 쪽 랜덤 위치 (수정 필요)
                     case UniquePlacementType.EdgeArea: valid = (dist >= mapScale.total / 2f - 40f); break;
-                    
+
                     // 임의 랜덤 위치 (수정 필요)
                     case UniquePlacementType.Custom: valid = true; break;
                 }
@@ -272,6 +302,7 @@ public class IslandManager : MonoBehaviour
 
                 float islandNoise = Mathf.PerlinNoise((randX + mapSeed.x) / mapScale.noise, (randZ + mapSeed.z) / mapScale.noise) * 5f;
                 float finalDist = dist - islandNoise;
+
                 if (finalDist > mapScale.total / 2f - mapScale.beach) continue;
 
                 float innerDistance = finalDist - (mapScale.total / 2f - mapScale.beach);
