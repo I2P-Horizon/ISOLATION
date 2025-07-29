@@ -6,6 +6,7 @@ public class IslandGenerator : MonoBehaviour
 {
     [Header("블록 프리팹")]
     public GameObject grassBlock;
+    public GameObject dirtBlock;
     public GameObject sandBlock;
 
     [Header("섬 설정")]
@@ -52,6 +53,7 @@ public class IslandGenerator : MonoBehaviour
         Vector3 islandOrigin = islandParent.position + new Vector3(-size / 2f * targetSize.x, 0, -size / 2f * targetSize.z);
 
         Vector3 grassScale = GetScaleToFit(grassBlock, targetSize);
+        Vector3 dirtScale = GetScaleToFit(dirtBlock, targetSize);
         Vector3 sandScale = GetScaleToFit(sandBlock, targetSize);
 
         Vector2 center = new Vector2(size / 2f, size / 2f);
@@ -78,11 +80,33 @@ public class IslandGenerator : MonoBehaviour
 
                 else if (finalDist <= size / 2f - beachSize) sandLayers = 2;
 
-                // 모래 쌓기
-                for (int i = 0; i < sandLayers; i++)
+                bool isGrass = finalDist <= size / 2f - beachSize;
+                bool placeSand = true;
+
+                if (isGrass)
                 {
-                    float y = sandHeight + i * targetSize.y;
+                    float innerDistance = finalDist - (size / 2f - beachSize);
+                    float maxInnerDistance = size / 2f - beachSize;
+                    float t = Mathf.Clamp01(innerDistance / maxInnerDistance);
+
+                    int grassLayers = Mathf.RoundToInt(Mathf.Lerp(minGrassHeight, maxGrassHeight, t));
+                    float noise = Mathf.PerlinNoise((x + heightSeedX) / heightNoiseScale, (z + heightSeedZ) / heightNoiseScale);
+                    int noiseLayers = Mathf.RoundToInt(noise * (maxGrassHeight - minGrassHeight));
+
+                    grassLayers = Mathf.Clamp(grassLayers + noiseLayers - (maxGrassHeight - minGrassHeight) / 2, minGrassHeight, maxGrassHeight);
+
+                    if (grassLayers > 0) placeSand = false;
+                }
+
+                // 모래 쌓기
+                // + 맨 위층에만 모래가 생성되도록
+                if (placeSand && sandLayers > 0)
+                {
+                    int topIndex = sandLayers - 1;
+                    float y = sandHeight + topIndex * targetSize.y;
+
                     Vector3 sandPos = islandOrigin + new Vector3(x * targetSize.x, y, z * targetSize.z);
+
                     GameObject sand = Instantiate(sandBlock, sandPos, Quaternion.identity, islandParent);
                     sand.transform.localScale = sandScale;
                 }
@@ -105,11 +129,22 @@ public class IslandGenerator : MonoBehaviour
                     for (int i = 0; i < grassLayers; i++)
                     {
                         float y = sandHeight + sandLayers * targetSize.y + i * targetSize.y;
-                        Vector3 grassPos = islandOrigin + new Vector3(x * targetSize.x, y, z * targetSize.z);
-                        GameObject grass = Instantiate(grassBlock, grassPos, Quaternion.identity, islandParent);
-                        grass.transform.localScale = grassScale;
+                        Vector3 blockPos = islandOrigin + new Vector3(x * targetSize.x, y, z * targetSize.z);
 
-                        if (i == grassLayers - 1) lastGrassBlock = grass;
+                        GameObject block;
+
+                        if (i == grassLayers - 1)
+                        {
+                            block = Instantiate(grassBlock, blockPos, Quaternion.identity, islandParent);
+                            block.transform.localScale = grassScale;
+                            lastGrassBlock = block;
+                        }
+
+                        else
+                        {
+                            block = Instantiate(dirtBlock, blockPos, Quaternion.identity, islandParent);
+                            block.transform.localScale = dirtScale;
+                        }
                     }
 
                     // 오브젝트 배치
