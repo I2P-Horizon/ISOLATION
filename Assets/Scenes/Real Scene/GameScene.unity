@@ -453,8 +453,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 50
   field of view: 150
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 30
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -7651,16 +7651,20 @@ MonoBehaviour:
   size: 250
   beachSize: 20
   noiseScale: 5
-  targetSize: {x: 1, y: 1, z: 1}
   maxGrassHeight: 4
-  heightNoiseScale: 8
   minGrassHeight: 1
+  heightNoiseScale: 8
+  targetSize: {x: 1, y: 1, z: 1}
   sandHeight: 0
   treePrefab: {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
   treeSpawnChance: 0.04
   pineapplePrefab: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
   pineappleSpawnChance: 0.005
   islandParent: {fileID: 1026859752}
+  seedX: 0
+  seedZ: 0
+  heightSeedX: 0
+  heightSeedZ: 0
 --- !u!4 &1836063579
 Transform:
   m_ObjectHideFlags: 0
