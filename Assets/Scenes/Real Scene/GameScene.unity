@@ -2392,7 +2392,7 @@ GameObject:
   - component: {fileID: 509022693}
   - component: {fileID: 509022692}
   m_Layer: 0
-  m_Name: sea water
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7701,46 +7701,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1836063579}
-  - component: {fileID: 1836063578}
+  - component: {fileID: 1836063580}
   m_Layer: 0
-  m_Name: Island Generator
+  m_Name: Island Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1836063578
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1836063577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: beb5a44e0204f284185bac91328d5570, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  grassBlock: {fileID: 1784206446667002742, guid: cbe2eba3308ec58459024c5892708459, type: 3}
-  dirtBlock: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
-  sandBlock: {fileID: 2739551521495890618, guid: bebbdb476ec66ed499c664d6f6240513, type: 3}
-  size: 250
-  beachSize: 20
-  noiseScale: 5
-  maxGrassHeight: 4
-  minGrassHeight: 1
-  heightNoiseScale: 8
-  targetSize: {x: 1, y: 1, z: 1}
-  sandHeight: 0
-  treePrefab: {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
-  treeSpawnChance: 0.04
-  pineapplePrefab: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
-  pineappleSpawnChance: 0.005
-  islandParent: {fileID: 1026859752}
-  seedX: 0
-  seedZ: 0
-  heightSeedX: 0
-  heightSeedZ: 0
 --- !u!4 &1836063579
 Transform:
   m_ObjectHideFlags: 0
@@ -7756,6 +7724,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1836063580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836063577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb5a44e0204f284185bac91328d5570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  islandParent: {fileID: 1026859752}
+  block:
+    grass: {fileID: 1784206446667002742, guid: cbe2eba3308ec58459024c5892708459, type: 3}
+    dirt: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
+    sand: {fileID: 2739551521495890618, guid: bebbdb476ec66ed499c664d6f6240513, type: 3}
+  mapScale:
+    total: 250
+    beach: 15
+    noise: 5
+    block: {x: 1, y: 1, z: 1}
+  mapHight:
+    maxGrass: 4
+    minGrass: 1
+    noiseScale: 8
+    sandHeight: 0
+  mapSeed:
+    x: 0
+    z: 0
+    heightX: 0
+    heightZ: 0
+  mapObjects:
+  - mapObject: {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
+    spawnChance: 0.035
+    isUnique: 0
+    placementType: 0
+  - mapObject: {fileID: 6091739994827031229, guid: 8be4d495e4f5d154cb3e398be3bcf557, type: 3}
+    spawnChance: 0.003
+    isUnique: 0
+    placementType: 0
+  - mapObject: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
+    spawnChance: 0.005
+    isUnique: 0
+    placementType: 0
+  - mapObject: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
+    spawnChance: 100
+    isUnique: 1
+    placementType: 0
 --- !u!1 &1842278520
 GameObject:
   m_ObjectHideFlags: 0
@@ -9414,6 +9431,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1130444414}
   - {fileID: 679389586}
   - {fileID: 15781021}
   - {fileID: 1978927457}
@@ -9426,7 +9444,6 @@ SceneRoots:
   - {fileID: 556847263}
   - {fileID: 214975701}
   - {fileID: 1743473160}
-  - {fileID: 509022695}
-  - {fileID: 1130444414}
   - {fileID: 1836063579}
+  - {fileID: 509022695}
   - {fileID: 1026859752}
