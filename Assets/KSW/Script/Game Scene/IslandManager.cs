@@ -9,6 +9,7 @@ public class Block
     public GameObject grass;
     public GameObject dirt;
     public GameObject sand;
+    public GameObject water;
 }
 #endregion
 
@@ -118,6 +119,7 @@ public class IslandManager : MonoBehaviour
         Vector3 grassScale = GetScaleToFit(block.grass, mapScale.block);
         Vector3 dirtScale = GetScaleToFit(block.dirt, mapScale.block);
         Vector3 sandScale = GetScaleToFit(block.sand, mapScale.block);
+        Vector3 waterScale = GetScaleToFit(block.water, mapScale.block);
 
         Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
 
@@ -134,15 +136,27 @@ public class IslandManager : MonoBehaviour
 
                 if (finalDist > mapScale.total / 2f) continue;
 
-                if (IsLakeArea(x, z))
+                // 호수
+                if (IsLakeEdge(x, z) || IsLakeInner(x, z))
                 {
-                    for (int i = 0; i < 2; i++)
+                    int dirtLayers = 0;
+
+                    if (IsLakeInner(x, z)) dirtLayers = 1;
+                    else dirtLayers = 2;
+
+                    for (int i = 0; i < dirtLayers; i++)
                     {
                         float y = mapHight.sandHeight + i * mapScale.block.y;
                         Vector3 pos = islandOrigin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
                         GameObject dirt = Instantiate(block.dirt, pos, Quaternion.identity, islandParent);
                         dirt.transform.localScale = dirtScale;
                     }
+
+                    float waterY = mapHight.sandHeight + 2 * mapScale.block.y + 0.5f * mapScale.block.y;
+                    Vector3 waterPos = islandOrigin + new Vector3(x * mapScale.block.x, waterY, z * mapScale.block.z);
+                    GameObject water = Instantiate(block.water, waterPos, Quaternion.identity, islandParent);
+                    water.transform.localScale = waterScale;
+
                     continue;
                 }
 
@@ -245,6 +259,20 @@ public class IslandManager : MonoBehaviour
         Vector2 pos = new Vector2(x, z);
         float dist = Vector2.Distance(pos, lakeCenter);
         return dist < mapScale.lake;
+    }
+
+    bool IsLakeEdge(int x, int z)
+    {
+        Vector2 pos = new Vector2(x, z);
+        float dist = Vector2.Distance(pos, lakeCenter);
+        return dist < mapScale.lake && dist >= mapScale.lake * 0.5f;
+    }
+
+    bool IsLakeInner(int x, int z)
+    {
+        Vector2 pos = new Vector2(x, z);
+        float dist = Vector2.Distance(pos, lakeCenter);
+        return dist < mapScale.lake * 0.5f;
     }
 
     /// <summary>
@@ -350,9 +378,11 @@ public class IslandManager : MonoBehaviour
 
         if (originalSize == Vector3.zero) return Vector3.one;
 
+        float yScale = (originalSize.y < 0.01f) ? 1f : desiredSize.y / originalSize.y;
+
         return new Vector3(
             desiredSize.x / originalSize.x,
-            desiredSize.y / originalSize.y,
+            yScale,
             desiredSize.z / originalSize.z
         );
     }
