@@ -252,8 +252,6 @@ public class IslandManager : MonoBehaviour
                 }
             }
         }
-
-        CreateSeaWater();
     }
 
     bool IsLakeArea(int x, int z)
@@ -387,39 +385,6 @@ public class IslandManager : MonoBehaviour
             yScale,
             desiredSize.z / originalSize.z
         );
-    }
-
-    /// <summary>
-    /// 바다 생성
-    /// </summary>
-    void CreateSeaWater()
-    {
-        Vector3 islandOrigin = islandParent.position + new Vector3(-mapScale.total / 2f * mapScale.block.x, 0, -mapScale.total / 2f * mapScale.block.z);
-        Vector3 waterScale = GetScaleToFit(block.water, mapScale.block);
-
-        Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
-        float islandRadius = mapScale.total / 2f;
-        float waterRadius = islandRadius + 100f;
-
-        int totalSize = (int)(mapScale.total + 50 * 2);
-
-        for (int x = 0; x < totalSize; x++)
-        {
-            for (int z = 0; z < totalSize; z++)
-            {
-                Vector2 pos2D = new Vector2(x, z);
-                float dist = Vector2.Distance(pos2D, center + new Vector2(50f, 50f));
-
-                if (dist <= islandRadius) continue;
-                if (dist > waterRadius) continue;
-
-                float y = mapHight.sandHeight + 0.5f * mapScale.block.y;
-                Vector3 pos = islandOrigin + new Vector3((x - 50) * mapScale.block.x, y, (z - 50) * mapScale.block.z);
-
-                GameObject water = Instantiate(block.water, pos, Quaternion.identity, islandParent);
-                water.transform.localScale = waterScale;
-            }
-        }
     }
 
     void Start()
