@@ -240,11 +240,12 @@ public class PlayerInteraction : MonoBehaviour
 
         if (nearestItem.CanBePickedUp())
         {
+            /* _inventory.Add 함수 미정의.
             if (_inventory.Add(nearestItem.ItemData) == 0)
             {
                 nearestItem.Interact();
                 _ItemsInScope.Remove(nearestItem);
-            }
+            }*/
         }
     }
 
