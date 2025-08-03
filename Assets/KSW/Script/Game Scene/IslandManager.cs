@@ -82,7 +82,10 @@ public class IslandManager : MonoBehaviour
     [Header("맵 오브젝트")]
     public MapObject[] mapObjects;
 
-    private Vector2 lakePos;
+    public int totalBlocks { get; set; }
+
+    public Vector2 lakePos {  get; set; }
+
     private List<Vector3> uniqueObjectPositions = new List<Vector3>();
 
     void Start()
@@ -121,6 +124,8 @@ public class IslandManager : MonoBehaviour
     public void Create()
     {
         Clear();
+
+        totalBlocks = 0;
 
         lakePos = new Vector2(
             Random.Range(mapScale.total * 0.2f, mapScale.total * 0.8f),
@@ -199,6 +204,7 @@ public class IslandManager : MonoBehaviour
             Vector3 pos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
             GameObject dirt = Instantiate(block.dirt, pos, Quaternion.identity, islandParent);
             dirt.transform.localScale = dirtScale;
+            totalBlocks++;
         }
 
         Vector3 waterPos = origin + new Vector3(x * mapScale.block.x, lakeWaterHeight, z * mapScale.block.z);
@@ -220,6 +226,7 @@ public class IslandManager : MonoBehaviour
         Vector3 sandPos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
         GameObject sandBlock = Instantiate(block.sand, sandPos, Quaternion.identity, islandParent);
         sandBlock.transform.localScale = sandScale;
+        totalBlocks++;
     }
 
     /// <summary>
@@ -253,6 +260,7 @@ public class IslandManager : MonoBehaviour
             GameObject blockToPlace = (i == grassLayers - 1) ? block.grass : block.dirt;
             GameObject placedBlock = Instantiate(blockToPlace, blockPos, Quaternion.identity, islandParent);
             placedBlock.transform.localScale = (i == grassLayers - 1) ? grassScale : dirtScale;
+            totalBlocks++;
 
             if (i == grassLayers - 1) lastGrassBlock = placedBlock;
         }
