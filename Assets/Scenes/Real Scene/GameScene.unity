@@ -5940,9 +5940,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd347083a75615f448ffa248fb2c97d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _initalCapacity: 32
-  _maxCapacity: 64
-  _inventoryUI: {fileID: 2112395437}
 --- !u!4 &1401792834
 Transform:
   m_ObjectHideFlags: 0
@@ -7475,7 +7472,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1836063579}
   - component: {fileID: 1836063580}
-  - component: {fileID: 1836063581}
   m_Layer: 0
   m_Name: Island Manager
   m_TagString: Untagged
@@ -7522,7 +7518,7 @@ MonoBehaviour:
     lake: 20
     noise: 5
     block: {x: 1, y: 1, z: 1}
-  mapHight:
+  mapHeight:
     maxGrass: 4
     minGrass: 1
     noiseScale: 8
@@ -7534,29 +7530,25 @@ MonoBehaviour:
     heightZ: 0
   mapObjects:
   - mapObject: {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
-    spawnChance: 0.035
+    spawnChance: 0.03
     isUnique: 0
-    placementType: 0
+    placementType: 2
   - mapObject: {fileID: 6091739994827031229, guid: 8be4d495e4f5d154cb3e398be3bcf557, type: 3}
     spawnChance: 0.003
     isUnique: 0
-    placementType: 0
+    placementType: 2
+  - mapObject: {fileID: 2814076585106460190, guid: 7c5e62986dca2c14c99281849829cc4d, type: 3}
+    spawnChance: 0.001
+    isUnique: 0
+    placementType: 2
   - mapObject: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
     spawnChance: 0.005
     isUnique: 0
-    placementType: 0
+    placementType: 2
   - mapObject: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
-    spawnChance: 100
+    spawnChance: 1
     isUnique: 1
     placementType: 0
---- !u!33 &1836063581
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1836063577}
-  m_Mesh: {fileID: 0}
 --- !u!1 &1842278520
 GameObject:
   m_ObjectHideFlags: 0
@@ -9074,7 +9066,7 @@ MonoBehaviour:
   _contentAreaRT: {fileID: 910967702}
   _slotUiPrefab: {fileID: 888984461}
   _itemTooltip: {fileID: 1929561623}
-  _popup: {fileID: 2015774858}
+  _popup: {fileID: 0}
   _trimButton: {fileID: 1307273149}
   _sortButton: {fileID: 600769234}
   _toggleFilterAll: {fileID: 1877345273}
