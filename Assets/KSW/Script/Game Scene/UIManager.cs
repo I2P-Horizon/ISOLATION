@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,11 @@ public class UIManager : MonoBehaviour
 
     public GameObject timeValue1;
     public GameObject timeValue2;
+
+    public GameObject worldMap;
+    public WorldMapMarker worldMapMarker;
+
+    public GameObject inventoryUI;
 
     #region 플레이어 스텟 (PlayerStats)
     private void PlayerStats()
@@ -98,18 +104,62 @@ public class UIManager : MonoBehaviour
             fpsText.gameObject.SetActive(true);
             deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
             float fps = 1.0f / deltaTime;
-            fpsText.text = $"FPS : {Mathf.Ceil(fps)}";
+            fpsText.text = ""+Mathf.Ceil(fps);
         }
 
         else fpsText.gameObject.SetActive(false);
     }
-    
+
+    #endregion
+
+    #region 월드 맵
+
+    private float lastRenderTime;
+    public float renderCooldown = 1f;
+
+    public void WorldMapUI()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            bool isActive = worldMap.activeSelf;
+            worldMap.SetActive(!isActive);
+
+            if (!isActive)
+            {
+                worldMapMarker.enabled = true;
+
+                if (Time.time - lastRenderTime > renderCooldown)
+                {
+                    worldMapMarker.mapCamera.Render();
+                    lastRenderTime = Time.time;
+                }
+            }
+
+            else worldMapMarker.enabled = false;
+        }
+    }
+
+    #endregion
+
+    #region 인벤토리
+
+    public void InventoryUI()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (inventoryUI.activeSelf) inventoryUI.SetActive(false);
+            else inventoryUI.SetActive(true);
+        }
+    }
+
     #endregion
 
     private void Update()
     {
         PlayerStats();
         TimeUI();
+        WorldMapUI();
+        InventoryUI();
         FPS(GameSettings.Instance.frameText);
     }
 

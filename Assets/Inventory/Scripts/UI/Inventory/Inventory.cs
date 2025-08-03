@@ -64,10 +64,11 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (Input.GetButtonDown("Inventory"))
         {
             inventoryGo.SetActive(!inventoryGo.activeSelf);
-        }
+        }*/
     }
 
     #endregion
