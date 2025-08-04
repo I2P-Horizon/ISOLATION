@@ -9444,10 +9444,6 @@ MonoBehaviour:
     spawnChance: 0.003
     isUnique: 0
     placementType: 2
-  - mapObject: {fileID: 2814076585106460190, guid: 7c5e62986dca2c14c99281849829cc4d, type: 3}
-    spawnChance: 0.001
-    isUnique: 0
-    placementType: 2
   - mapObject: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
     spawnChance: 0.005
     isUnique: 0

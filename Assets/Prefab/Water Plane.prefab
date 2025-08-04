@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5957665248648816690}
   - component: {fileID: 4465873897168258423}
   - component: {fileID: 1455851663324529510}
+  - component: {fileID: 1093356304657906370}
   m_Layer: 0
   m_Name: Water Plane
   m_TagString: Untagged
@@ -119,6 +120,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f5913326ad8c0d4996ed5fc4ce1562b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1093356304657906370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5855107597074241161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ead13ff5989f58549a1f9d5da7fdd831, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  makeStatic: 1
+  enableGPUInstancing: 1
+  disableShadows: 1
+  removeUnneededComponents: 1
 --- !u!1 &6492228295775410654
 GameObject:
   m_ObjectHideFlags: 0
