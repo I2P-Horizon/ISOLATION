@@ -140,6 +140,16 @@ public class IslandManager : MonoBehaviour
 
         Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
 
+        Transform grassParent = new GameObject("Grass Parent").transform;
+        Transform dirtParent = new GameObject("Dirt Parent").transform;
+        Transform sandParent = new GameObject("Sand Parent").transform;
+        Transform waterParent = new GameObject("Water Parent").transform;
+
+        grassParent.SetParent(islandParent);
+        dirtParent.SetParent(islandParent);
+        sandParent.SetParent(islandParent);
+        waterParent.SetParent(islandParent);
+
         PlaceUniqueObjects();
 
         for (int x = 0; x < mapScale.total; x++)
@@ -155,15 +165,15 @@ public class IslandManager : MonoBehaviour
 
                 if (IsLakeEdge(x, z) || IsLakeInner(x, z))
                 {
-                    PlaceLakeBlocks(origin, x, z, dirtScale, waterScale);
+                    PlaceLakeBlocks(origin, x, z, dirtScale, waterScale, dirtParent, waterParent);
                     continue;
                 }
 
                 bool isGrassArea = finalDist <= mapScale.total / 2f - mapScale.beach;
 
                 int sandLayers = CalculateSandLayers(finalDist);
-                if (sandLayers > 0 && !isGrassArea) PlaceSand(origin, x, z, sandLayers, sandScale);
-                if (isGrassArea) PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale);
+                if (sandLayers > 0 && !isGrassArea) PlaceSand(origin, x, z, sandLayers, sandScale, sandParent);
+                if (isGrassArea) PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale, grassParent, dirtParent);
             }
         }
     }
@@ -193,7 +203,7 @@ public class IslandManager : MonoBehaviour
     /// <param name="z"></param>
     /// <param name="dirtScale"></param>
     /// <param name="waterScale"></param>
-    void PlaceLakeBlocks(Vector3 origin, int x, int z, Vector3 dirtScale, Vector3 waterScale)
+    void PlaceLakeBlocks(Vector3 origin, int x, int z, Vector3 dirtScale, Vector3 waterScale, Transform dirtParent, Transform waterParent)
     {
         int dirtLayers = IsLakeInner(x, z) ? 1 : 2;
         float lakeWaterHeight = mapHeight.sandHeight + mapScale.block.y * 2.5f;
@@ -202,13 +212,13 @@ public class IslandManager : MonoBehaviour
         {
             float y = mapHeight.sandHeight + i * mapScale.block.y;
             Vector3 pos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
-            GameObject dirt = Instantiate(block.dirt, pos, Quaternion.identity, islandParent);
+            GameObject dirt = Instantiate(block.dirt, pos, Quaternion.identity, dirtParent);
             dirt.transform.localScale = dirtScale;
             totalBlocks++;
         }
 
         Vector3 waterPos = origin + new Vector3(x * mapScale.block.x, lakeWaterHeight, z * mapScale.block.z);
-        GameObject water = Instantiate(block.water, waterPos, Quaternion.identity, islandParent);
+        GameObject water = Instantiate(block.water, waterPos, Quaternion.identity, waterParent);
         water.transform.localScale = waterScale;
     }
 
@@ -220,11 +230,11 @@ public class IslandManager : MonoBehaviour
     /// <param name="z"></param>
     /// <param name="layers"></param>
     /// <param name="sandScale"></param>
-    void PlaceSand(Vector3 origin, int x, int z, int layers, Vector3 sandScale)
+    void PlaceSand(Vector3 origin, int x, int z, int layers, Vector3 sandScale, Transform sandParent)
     {
         float y = mapHeight.sandHeight + (layers - 1) * mapScale.block.y;
         Vector3 sandPos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
-        GameObject sandBlock = Instantiate(block.sand, sandPos, Quaternion.identity, islandParent);
+        GameObject sandBlock = Instantiate(block.sand, sandPos, Quaternion.identity, sandParent);
         sandBlock.transform.localScale = sandScale;
         totalBlocks++;
     }
@@ -238,7 +248,7 @@ public class IslandManager : MonoBehaviour
     /// <param name="sandLayers"></param>
     /// <param name="grassScale"></param>
     /// <param name="dirtScale"></param>
-    void PlaceGrassAndDirt(Vector3 origin, int x, int z, int sandLayers, Vector3 grassScale, Vector3 dirtScale)
+    void PlaceGrassAndDirt(Vector3 origin, int x, int z, int sandLayers, Vector3 grassScale, Vector3 dirtScale, Transform grassParent, Transform dirtParent)
     {
         float innerDist = Vector2.Distance(new Vector2(x, z), new Vector2(mapScale.total / 2f, mapScale.total / 2f)) - (mapScale.total / 2f - mapScale.beach);
         float maxInnerDist = mapScale.total / 2f - mapScale.beach;
@@ -258,8 +268,11 @@ public class IslandManager : MonoBehaviour
             Vector3 blockPos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
 
             GameObject blockToPlace = (i == grassLayers - 1) ? block.grass : block.dirt;
-            GameObject placedBlock = Instantiate(blockToPlace, blockPos, Quaternion.identity, islandParent);
-            placedBlock.transform.localScale = (i == grassLayers - 1) ? grassScale : dirtScale;
+            Transform parentToUse = (i == grassLayers - 1) ? grassParent : dirtParent;
+            Vector3 scaleToUse = (i == grassLayers - 1) ? grassScale : dirtScale;
+
+            GameObject placedBlock = Instantiate(blockToPlace, blockPos, Quaternion.identity, parentToUse);
+            placedBlock.transform.localScale = scaleToUse;
             totalBlocks++;
 
             if (i == grassLayers - 1) lastGrassBlock = placedBlock;

@@ -10,8 +10,8 @@ public class WorldMapMarker : MonoBehaviour
     public Camera mapCamera;
 
     [Header("·»´õ ¼³Á¤")]
-    public int renderWidth = 128;
-    public int renderHeight = 128;
+    public int renderWidth = 100;
+    public int renderHeight = 100;
 
     private RenderTexture mapTexture;
 
@@ -33,7 +33,7 @@ public class WorldMapMarker : MonoBehaviour
         if (mapCamera != null) mapCamera.Render();
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (player == null || mapCamera == null || mapRect == null || playerIcon == null) return;
 
@@ -41,11 +41,7 @@ public class WorldMapMarker : MonoBehaviour
 
         if (viewportPos.z < 0f) return;
 
-        Vector2 uiPos = new Vector2(
-            (viewportPos.x - 0.5f) * mapRect.rect.width,
-            (viewportPos.y - 0.5f) * mapRect.rect.height
-        );
-
+        Vector2 uiPos = new Vector2((viewportPos.x - 0.5f) * mapRect.rect.width, (viewportPos.y - 0.5f) * mapRect.rect.height);
         playerIcon.anchoredPosition = uiPos;
     }
 }
