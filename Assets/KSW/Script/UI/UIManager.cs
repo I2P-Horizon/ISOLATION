@@ -1,61 +1,102 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    public GameObject background;
+    private static UIManager instance;
+    public static UIManager Instance => instance;
+
+    [Header("일시 정지 UI")]
+    public GameObject pauseUI;
+
+    [Header("Game Over UI")]
     public GameObject gameOverUI;
 
+    [Header("팝업 반투명 배경")]
+    public GameObject background;
+
+    [Header("버튼 연결")]
+    public Button continueButton;
+    public Button settingButton;
+    public Button exitButton;
     public Button replayButton;
     public Button mainButton;
 
+    [Header("Hp, Satiety")]
     public Slider hpSlider;
     public Slider satietySlider;
 
+    [Header("시간")]
     public GameObject timeValue1;
     public GameObject timeValue2;
 
+    [Header("월드 맵")]
     public GameObject worldMap;
     public WorldMapMarker worldMapMarker;
 
+    [Header("인벤토리")]
     public GameObject inventoryUI;
 
-    #region 플레이어 스텟 (PlayerStats)
-    private void PlayerStats()
-    {
-        // 플레이어 스텟 실시간 반영
-        hpSlider.value = Player.Instance.State.GetCurrentHp();
-        satietySlider.value = Player.Instance.State.GetCurrentSatiety();
-    }
-    #endregion
+    private int backgroundCount = 0;
 
-    #region 버튼 연결 (ButtonConnection)
-    private void ButtonConnection()
-    {
-        // Button 연결
-        replayButton.onClick.AddListener(() => GameManager.Instance.SceneChange("GameScene"));
-        mainButton.onClick.AddListener(() => GameManager.Instance.SceneChange("MainScene"));
-    }
-    #endregion
+    private float lastRenderTime;
+    public float renderCooldown = 1f;
 
-    #region 팝업 (PopUpShow/PopUpClose)
+    /// <summary>
+    /// 반투명 배경 컨트롤
+    /// </summary>
+    public void ShowBackground()
+    {
+        backgroundCount++;
+        background.SetActive(true);
+    }
+
+    public void HideBackground()
+    {
+        backgroundCount--;
+        if (backgroundCount <= 0)
+        {
+            backgroundCount = 0;
+            background.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 팝업창 컨트롤
+    /// </summary>
+    /// <param name="ui"></param>
     public void PopUpShow(GameObject ui)
     {
-        background.SetActive(true);
+        ShowBackground();
         ui.GetComponent<UIAnimator>().Show();
     }
 
     public void PopUpClose(GameObject ui)
     {
-        background.SetActive(false);
-        ui.GetComponent<UIAnimator>().Close();
+        StartCoroutine(PopUpCloseRoutine(ui));
     }
-    #endregion
 
-    #region 시계 (Time)
+    private IEnumerator PopUpCloseRoutine(GameObject ui)
+    {
+        ui.GetComponent<UIAnimator>().Close();
+        yield return new WaitForSeconds(0f);
+        HideBackground();
+    }
+
+    /// <summary>
+    /// 플레이어 상태 실시간 반영
+    /// </summary>
+    private void PlayerStats()
+    {
+        hpSlider.value = Player.Instance.State.GetCurrentHp();
+        satietySlider.value = Player.Instance.State.GetCurrentSatiety();
+    }
+
+    /// <summary>
+    /// 시간 UI
+    /// </summary>
     private void TimeUI()
     {
         if (TimeManager.instance == null || TimeManager.instance.RealTimePerDaySec <= 0) return;
@@ -86,47 +127,17 @@ public class UIManager : MonoBehaviour
         timeValue1.GetComponent<Image>().fillAmount = fill1;
         timeValue2.GetComponent<Image>().fillAmount = fill2;
     }
-    #endregion
 
-    #region 미니맵 (MiniMap)
-    #endregion
-
-    #region 프레임 표시
-    
-    public Text fpsText;
-
-    float deltaTime = 0.0f;
-
-    private void FPS(int active)
-    {
-        if (active == 1)
-        {
-            fpsText.gameObject.SetActive(true);
-            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-            float fps = 1.0f / deltaTime;
-            fpsText.text = ""+Mathf.Ceil(fps);
-        }
-
-        else fpsText.gameObject.SetActive(false);
-    }
-
-    #endregion
-
-    #region 월드 맵
-
-    private float lastRenderTime;
-    public float renderCooldown = 1f;
-
+    /// <summary>
+    /// 월드 맵
+    /// </summary>
     public void WorldMapUI()
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            bool isActive = worldMap.activeSelf;
-            worldMap.SetActive(!isActive);
-
-            if (!isActive)
+            if (!worldMap.activeSelf)
             {
-                worldMapMarker.enabled = true;
+                GlobalUIController.Instance.PopUpShow(worldMap);
 
                 if (Time.time - lastRenderTime > renderCooldown)
                 {
@@ -135,24 +146,72 @@ public class UIManager : MonoBehaviour
                 }
             }
 
-            else worldMapMarker.enabled = false;
+            else
+            {
+                GlobalUIController.Instance.PopUpClose(worldMap);
+            }
         }
     }
-
-    #endregion
-
-    #region 인벤토리
 
     public void InventoryUI()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (inventoryUI.activeSelf) inventoryUI.SetActive(false);
-            else inventoryUI.SetActive(true);
+            inventoryUI.SetActive(!inventoryUI.activeSelf);
         }
     }
 
-    #endregion
+    public void Pause()
+    {
+        if (!pauseUI.activeSelf && !GameSettings.Instance.gameSettingsUI.activeSelf)
+        {
+            GlobalUIController.Instance.PopUpShow(pauseUI);
+        }
+
+        else if(pauseUI.activeSelf && !GameSettings.Instance.gameSettingsUI.activeSelf)
+        {
+            GlobalUIController.Instance.PopUpClose(pauseUI);
+        }
+
+        else
+        {
+            GlobalUIController.Instance.PopUpClose(GameSettings.Instance.gameSettingsUI);
+        }
+    }
+
+    private void Continue()
+    {
+        GlobalUIController.Instance.PopUpClose(pauseUI);
+    }
+
+    private void Settings()
+    {
+        GlobalUIController.Instance.PopUpShow(GameSettings.Instance.gameSettingsUI);
+        GlobalUIController.Instance.PopUpClose(pauseUI);
+    }
+
+    private void Exit()
+    {
+        GlobalUIController.Instance.PopUpClose(pauseUI);
+        SceneManager.LoadScene("MainScene");
+    }
+
+    public IEnumerator GameOver()
+    {
+        yield return new WaitForSeconds(0.01f);
+        GlobalUIController.Instance.PopUpShow(gameOverUI);
+        Time.timeScale = 0;
+    }
+
+    private void ButtonConnection()
+    {
+        replayButton.onClick.AddListener(() => GameManager.Instance.SceneChange("GameScene"));
+        mainButton.onClick.AddListener(() => GameManager.Instance.SceneChange("MainScene"));
+
+        continueButton.onClick.AddListener(Continue);
+        settingButton.onClick.AddListener(Settings);
+        exitButton.onClick.AddListener(Exit);
+    }
 
     private void Update()
     {
@@ -160,7 +219,11 @@ public class UIManager : MonoBehaviour
         TimeUI();
         WorldMapUI();
         InventoryUI();
-        FPS(GameSettings.Instance.frameText);
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Pause();
+        }
     }
 
     private void Start()
@@ -169,5 +232,18 @@ public class UIManager : MonoBehaviour
 
         hpSlider.value = Player.Instance.State.MaxHp;
         satietySlider.value = Player.Instance.State.MaxSatiety;
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

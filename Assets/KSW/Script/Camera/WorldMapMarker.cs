@@ -15,7 +15,7 @@ public class WorldMapMarker : MonoBehaviour
 
     private RenderTexture mapTexture;
 
-    void Awake()
+    void Start()
     {
         mapTexture = new RenderTexture(renderWidth, renderHeight, 16);
         mapTexture.filterMode = FilterMode.Point;

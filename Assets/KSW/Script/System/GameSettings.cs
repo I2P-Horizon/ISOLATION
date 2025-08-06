@@ -156,6 +156,8 @@ public class GameSettings : MonoBehaviour
         frameTextOFF.onClick.AddListener(() => FrameTextSetting(0, frameTextOFF));
     }
 
+    public Text fpsText;
+
     private void FrameTextSetting(int active, Button selected)
     {
         switch(active)
@@ -333,7 +335,6 @@ public class GameSettings : MonoBehaviour
 
     [Header("UI 관리 & 초기화")]
     public GameObject gameSettingsUI;
-    public GameObject background;
 
     [SerializeField] private Camera mainCamera;
 
@@ -381,8 +382,15 @@ public class GameSettings : MonoBehaviour
 
     public void GameSettingsUI()
     {
-        if (!gameSettingsUI.activeSelf) { gameSettingsUI.GetComponent<UIAnimator>().Show(); background.SetActive(true); }
-        else { gameSettingsUI.GetComponent<UIAnimator>().Close(); background.SetActive(false); }
+        if (!gameSettingsUI.activeSelf)
+        {
+            GlobalUIController.Instance.PopUpShow(gameSettingsUI);
+        }
+
+        else
+        {
+            GlobalUIController.Instance.PopUpClose(gameSettingsUI);
+        }
     }
 
     private void Init()
