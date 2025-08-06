@@ -41,8 +41,7 @@ public class UIManager : MonoBehaviour
 
     private int backgroundCount = 0;
 
-    private float lastRenderTime;
-    public float renderCooldown = 1f;
+    public GameObject renderLoding;
 
     /// <summary>
     /// 반투명 배경 컨트롤
@@ -138,12 +137,6 @@ public class UIManager : MonoBehaviour
             if (!worldMap.activeSelf)
             {
                 GlobalUIController.Instance.PopUpShow(worldMap);
-
-                if (Time.time - lastRenderTime > renderCooldown)
-                {
-                    worldMapMarker.mapCamera.Render();
-                    lastRenderTime = Time.time;
-                }
             }
 
             else
@@ -241,9 +234,7 @@ public class UIManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
-        else
-        {
-            Destroy(this.gameObject);
-        }
+
+        else Destroy(this.gameObject);
     }
 }

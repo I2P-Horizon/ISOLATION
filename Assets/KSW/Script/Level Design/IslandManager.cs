@@ -128,8 +128,8 @@ public class IslandManager : MonoBehaviour
         totalBlocks = 0;
 
         lakePos = new Vector2(
-            Random.Range(mapScale.total * 0.2f, mapScale.total * 0.8f),
-            Random.Range(mapScale.total * 0.2f, mapScale.total * 0.8f));
+            Random.Range(mapScale.total * 0.3f, mapScale.total * 0.7f),
+            Random.Range(mapScale.total * 0.3f, mapScale.total * 0.7f));
 
         Vector3 origin = islandParent.position + new Vector3(-mapScale.total / 2f * mapScale.block.x, 0, -mapScale.total / 2f * mapScale.block.z);
 

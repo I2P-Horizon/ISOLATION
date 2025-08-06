@@ -11,11 +11,15 @@ public class GameSettings : MonoBehaviour
 
     private static GameSettings instance;
 
-    public static GameSettings Instance { get { return instance; } }
+    public static GameSettings Instance => instance;
 
     private void Awake()
     {
-        if (instance == null) instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        
         else Destroy(this.gameObject);
     }
 

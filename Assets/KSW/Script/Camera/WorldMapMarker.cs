@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,27 +11,24 @@ public class WorldMapMarker : MonoBehaviour
     public Camera mapCamera;
 
     [Header("·»´õ ¼³Á¤")]
-    public int renderWidth = 100;
-    public int renderHeight = 100;
+    public int renderWidth = 64;
+    public int renderHeight = 64;
 
     private RenderTexture mapTexture;
 
-    void Start()
+    public IEnumerator DelayedRender()
     {
-        mapTexture = new RenderTexture(renderWidth, renderHeight, 16);
-        mapTexture.filterMode = FilterMode.Point;
+        UIManager.Instance.renderLoding.SetActive(true);
 
-        mapCamera.targetTexture = mapTexture;
+        yield return new WaitForSeconds(0.1f);
 
-        RawImage mapImage = mapRect.GetComponent<RawImage>();
-        mapCamera.enabled = false;
-        if (mapImage != null) mapImage.texture = mapTexture;
-        mapCamera.Render();
-    }
+        for (int i = 0; i < 20; i++)
+        {
+            mapCamera.Render();
+            yield return new WaitForEndOfFrame();
+        }
 
-    void OnEnable()
-    {
-        if (mapCamera != null) mapCamera.Render();
+        UIManager.Instance.renderLoding.SetActive(false);
     }
 
     void LateUpdate()
@@ -43,5 +41,19 @@ public class WorldMapMarker : MonoBehaviour
 
         Vector2 uiPos = new Vector2((viewportPos.x - 0.5f) * mapRect.rect.width, (viewportPos.y - 0.5f) * mapRect.rect.height);
         playerIcon.anchoredPosition = uiPos;
+    }
+
+    void Start()
+    {
+        mapTexture = new RenderTexture(renderWidth, renderHeight, 16);
+        mapTexture.filterMode = FilterMode.Point;
+
+        mapCamera.targetTexture = mapTexture;
+
+        RawImage mapImage = mapRect.GetComponent<RawImage>();
+        mapCamera.enabled = false;
+        if (mapImage != null) mapImage.texture = mapTexture;
+        mapCamera.Render();
+        StartCoroutine(DelayedRender());
     }
 }
