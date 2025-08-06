@@ -9,6 +9,9 @@ public class GlobalUIController : MonoBehaviour
     [Header("반투명 배경")]
     public GameObject background;
 
+    private float fpsUpdateInterval = 0.1f;
+    private float fpsTimer = 0f;
+
     public void PopUpShow(GameObject ui)
     {
         ui.SetActive(true);
@@ -39,9 +42,14 @@ public class GlobalUIController : MonoBehaviour
         GameSettings.Instance.fpsText.text = Mathf.Ceil(fps).ToString();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
-        UpdateFPS();
+        fpsTimer += Time.unscaledDeltaTime;
+        if (fpsTimer >= fpsUpdateInterval)
+        {
+            UpdateFPS();
+            fpsTimer = 0f;
+        }
     }
 
     private void Awake()
