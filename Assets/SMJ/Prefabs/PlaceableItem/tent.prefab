@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8920575287977044040, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}
       propertyPath: m_LocalScale.x
       value: 8
@@ -60,10 +64,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3317160905861980608, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -3193949048872190891, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7422c44fc2df4f542b182aeedffe5975, type: 2}
+    - target: {fileID: -383975260612577445, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -383975260612577445, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

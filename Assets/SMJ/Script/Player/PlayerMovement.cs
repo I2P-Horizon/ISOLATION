@@ -11,22 +11,25 @@ public class PlayerMovement : MonoBehaviour
 {
     private Player _player;
 
+    private CharacterController _characterController;
+    private Animator _animator;
+
     private float _moveSpeed; // 이동 속도
     private float _jumpHeight; // 점프 높이
     [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
 
     [SerializeField] private float _satietyDecreaseAmount = 0.001f; // 이동에 따른 포만감 감소량
 
-    private CharacterController _characterController; 
     private Vector3 _velocity; // 현재 속도
     private bool _isGrounded; // 땅에 닿아 있는지 여부
 
-    public bool IsMoving = false; 
+    public bool IsMoving = false;
 
     void Start()
     {
         _player = GetComponent<Player>();
         _characterController = GetComponent<CharacterController>();
+        _animator = GetComponent<Animator>();
 
         _moveSpeed = _player.State.MoveSpeed;
         _jumpHeight = _player.State.JumpHeight;
@@ -34,13 +37,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if(_player.Interaction.IsInteracting)
-        {
-            GroundCheck();
-            ApplyGravity();
-            return;
-        }
-
         GroundCheck();
         Move();
     }
@@ -66,8 +62,8 @@ public class PlayerMovement : MonoBehaviour
     /// <returns>이동 방향 벡터</returns>
     private Vector3 GetInputMovement()
     {
-        float x = Input.GetAxis("Horizontal"); // 좌우 이동 (A/D or ←/→)
-        float z = Input.GetAxis("Vertical"); // 앞뒤 이동 (W/S or ↑/↓)
+        float x = Input.GetAxisRaw("Horizontal"); // 좌우 이동 (A/D or ←/→)
+        float z = Input.GetAxisRaw("Vertical"); // 앞뒤 이동 (W/S or ↑/↓)
 
         return new Vector3(x, 0, z);
     }
@@ -79,7 +75,10 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 inputDir = GetInputMovement(); // 입력에 따른 방향 벡터 계산
 
-        IsMoving = inputDir.sqrMagnitude > 0.01f;
+        IsMoving = inputDir.sqrMagnitude != 0f;
+
+        _velocity.x = 0f; // x축 속도 초기화
+        _velocity.z = 0f; // z축 속도 초기화
 
         if (IsMoving)
         {
@@ -88,20 +87,19 @@ public class PlayerMovement : MonoBehaviour
             _moveSpeed = _player.State.IsSatietyZero ? _player.State.MoveSpeed * 0.5f : _player.State.MoveSpeed;
 
             // 이동 처리
-            _characterController.Move(inputDir * _moveSpeed *  Time.deltaTime); 
-            
+            _characterController.Move(inputDir * _moveSpeed * Time.deltaTime);
+
             // 이동 방향을 바라보도록 회전
             Quaternion targetRotation = Quaternion.LookRotation(inputDir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 7.0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10.0f);
 
             // 이동에 따른 포만감 감소
             if (!_player.State.IsSatietyZero)
                 _player.State.DecreaseSatiety(_satietyDecreaseAmount);
         }
-        
 
         // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때
-        if(_isGrounded && Input.GetButtonDown("Jump"))
+        if (_isGrounded && Input.GetButtonDown("Jump"))
         {
             _jumpHeight = _player.State.IsSatietyZero ? _player.State.JumpHeight * 0.5f : _player.State.JumpHeight;
 
@@ -110,6 +108,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         ApplyGravity();
+
+        _animator.SetBool("isMoving", IsMoving); // 애니메이션 상태 업데이트
     }
 
     /// <summary>

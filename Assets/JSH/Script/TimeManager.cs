@@ -15,6 +15,9 @@ public class TimeManager : MonoBehaviour
 
     public bool IsNight => isNight;
 
+    public float CurrentTime => currentTime;
+    public float RealTimePerDaySec => realTimePerDaySec;
+
     // Time
     [Header("Time")]
     [SerializeField] private float realTimePerDay;
