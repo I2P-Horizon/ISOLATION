@@ -60,7 +60,7 @@ public enum UniquePlacementType
 public class MapObject
 {
     [Tooltip("맵 오브젝트")] public GameObject mapObject;
-    [Tooltip("스폰 확률")] [Range(0, 1)] public float spawnChance;
+    [Tooltip("스폰 확률")][Range(0, 1)] public float spawnChance;
     [Tooltip("유니크 오브젝트")] public bool isUnique;
     [Tooltip("배치 타입")] public UniquePlacementType placementType;
 }
@@ -84,11 +84,11 @@ public class IslandManager : MonoBehaviour
 
     public int totalBlocks { get; set; }
 
-    public Vector2 lakePos {  get; set; }
+    public Vector2 lakePos { get; set; }
 
     private List<Vector3> uniqueObjectPositions = new List<Vector3>();
 
-    void Start()
+    void Awake()
     {
         Init();
         Create();
@@ -176,6 +176,10 @@ public class IslandManager : MonoBehaviour
                 if (isGrassArea) PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale, grassParent, dirtParent);
             }
         }
+
+        CombineMeshes(grassParent, block.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Grass");
+        CombineMeshes(dirtParent, block.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Dirt");
+        CombineMeshes(sandParent, block.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Sand");
     }
 
     /// <summary>
@@ -350,7 +354,8 @@ public class IslandManager : MonoBehaviour
                 {
                     UniquePlacementType.CenterArea => dist >= 10f && dist <= 30f,
                     UniquePlacementType.EdgeArea => dist >= mapScale.total / 2f - 40f,
-                    UniquePlacementType.Custom => true, _ => false
+                    UniquePlacementType.Custom => true,
+                    _ => false
                 };
 
                 if (!valid) continue;
@@ -423,5 +428,57 @@ public class IslandManager : MonoBehaviour
         float yScale = originalSize.y < 0.01f ? 1f : targetSize.y / originalSize.y;
 
         return new Vector3(targetSize.x / originalSize.x, yScale, targetSize.z / originalSize.z);
+    }
+
+    /// <summary>
+    /// 특정 부모 오브젝트 하위의 모든 블록을 병합하여 하나의 메쉬로 만든다.
+    /// </summary>
+    /// <param name="parent">병합 대상 부모 트랜스폼</param>
+    /// <param name="material">적용할 머티리얼</param>
+    /// <param name="mergedName">결과 오브젝트 이름</param>
+    void CombineMeshes(Transform parent, Material originalMaterial, string mergedName)
+    {
+        MeshFilter[] meshFilters = parent.GetComponentsInChildren<MeshFilter>();
+
+        List<CombineInstance> combine = new List<CombineInstance>();
+        foreach (var mf in meshFilters)
+        {
+            if (mf == null || mf.sharedMesh == null) continue;
+
+            CombineInstance ci = new CombineInstance();
+            ci.mesh = mf.sharedMesh;
+            ci.transform = mf.transform.localToWorldMatrix;
+            combine.Add(ci);
+        }
+
+        if (combine.Count == 0) return;
+
+        GameObject combinedObject = new GameObject(mergedName);
+        combinedObject.transform.SetParent(parent.parent);
+        combinedObject.transform.position = parent.position;
+        combinedObject.transform.rotation = parent.rotation;
+        combinedObject.transform.localScale = Vector3.one;
+
+        Mesh combinedMesh = new Mesh();
+        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        combinedMesh.CombineMeshes(combine.ToArray());
+
+        MeshFilter mfCombined = combinedObject.AddComponent<MeshFilter>();
+        mfCombined.sharedMesh = combinedMesh;
+
+        MeshRenderer mrCombined = combinedObject.AddComponent<MeshRenderer>();
+
+        mrCombined.sharedMaterial = originalMaterial;
+
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            Transform child = parent.GetChild(i);
+            if (child == combinedObject.transform) continue;
+            DestroyImmediate(child.gameObject);
+        }
+
+        MeshCollider meshCollider = combinedObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = combinedMesh;
+        meshCollider.convex = false;
     }
 }
