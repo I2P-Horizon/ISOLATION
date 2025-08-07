@@ -55,7 +55,7 @@ public class IslandEditor : Editor
 
         EditorGUILayout.BeginVertical("box");
         {
-            EditorGUILayout.LabelField($"생성된 블록 수: "+manager.totalBlocks + "개", seedLabelStyle);
+            EditorGUILayout.LabelField($"생성된 블록 수: "+manager.TotalBlocks + "개", seedLabelStyle);
         }
         EditorGUILayout.EndVertical();
 
@@ -83,7 +83,7 @@ public class IslandEditor : Editor
                 manager.mapSeed.z = 0;
                 manager.mapSeed.heightX = 0;
                 manager.mapSeed.heightZ = 0;
-                manager.totalBlocks = 0;
+                manager.TotalBlocks = 0;
                 manager.Clear();
             }
 

@@ -3001,7 +3001,7 @@ Transform:
   m_GameObject: {fileID: 1026859751}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 123}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3029,7 +3029,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -123
       objectReference: {fileID: 0}
     - target: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4119,7 +4119,7 @@ Transform:
   m_GameObject: {fileID: 1665878765}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 30, z: 123}
+  m_LocalPosition: {x: 0, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4479,8 +4479,12 @@ MonoBehaviour:
     spawnChance: 0.0025
     isUnique: 0
     placementType: 2
+  - mapObject: {fileID: 2814076585106460190, guid: 7c5e62986dca2c14c99281849829cc4d, type: 3}
+    spawnChance: 0.001
+    isUnique: 0
+    placementType: 2
   - mapObject: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
-    spawnChance: 0.005
+    spawnChance: 0.002
     isUnique: 0
     placementType: 2
   - mapObject: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
@@ -4671,7 +4675,7 @@ Transform:
   m_GameObject: {fileID: 1978927452}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13052616, y: -0, z: -0, w: 0.9914449}
-  m_LocalPosition: {x: 0, y: 4.13, z: -5.47}
+  m_LocalPosition: {x: 0, y: 4.8, z: -128}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
