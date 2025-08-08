@@ -11,11 +11,15 @@ public class GameSettings : MonoBehaviour
 
     private static GameSettings instance;
 
-    public static GameSettings Instance { get { return instance; } }
+    public static GameSettings Instance => instance;
 
     private void Awake()
     {
-        if (instance == null) instance = this;
+        if (instance == null)
+        {
+            instance = this;
+        }
+        
         else Destroy(this.gameObject);
     }
 
@@ -77,7 +81,6 @@ public class GameSettings : MonoBehaviour
     /// <param name="selected"></param>
     private void UpdateGraphicButton(Button selected)
     {
-        SetButtonColor(Graphic_VeryHigh, selected == Graphic_VeryHigh);
         SetButtonColor(Graphic_High, selected == Graphic_High);
         SetButtonColor(Graphic_Middle, selected == Graphic_Middle);
         SetButtonColor(Graphic_Low, selected == Graphic_Low);
@@ -157,6 +160,8 @@ public class GameSettings : MonoBehaviour
         frameTextOFF.onClick.AddListener(() => FrameTextSetting(0, frameTextOFF));
     }
 
+    public Text fpsText;
+
     private void FrameTextSetting(int active, Button selected)
     {
         switch(active)
@@ -195,7 +200,6 @@ public class GameSettings : MonoBehaviour
     #region 그래픽 설정
 
     [Header("그래픽 설정")]
-    [SerializeField] private Button Graphic_VeryHigh;
     [SerializeField] private Button Graphic_High;
     [SerializeField] private Button Graphic_Middle;
     [SerializeField] private Button Graphic_Low;
@@ -243,41 +247,39 @@ public class GameSettings : MonoBehaviour
         switch (level)
         {
             case 5:
-                urpAsset.renderScale = 1.2f; // 렌더 스케일
-                urpAsset.shadowDistance = 60f; // 그림자 최대 거리
-                urpAsset.shadowCascadeCount = 4; // 그림자 정밀도
-                SetShadowsForAllLights(LightShadows.Soft); // 그림자 활성화
-                SetAllLightsShadowStrength(1f); // 그림자 스케일
+                urpAsset.renderScale = 1.0f; // 렌더 스케일
+                urpAsset.shadowDistance = 40f; // 그림자 최대 거리
+                urpAsset.shadowCascadeCount = 2; // 그림자 정밀도
+
+                SetShadowsForAllLights(LightShadows.Hard); // 그림자 타입
+                SetAllLightsShadowStrength(0.6f); // 그림자 스케일
+                SetURPAntiAliasing(8); // 안티앨리어싱 설정
                 break;
 
             case 4:
-                urpAsset.renderScale = 1.0f;
-                urpAsset.shadowDistance = 40f;
+                urpAsset.renderScale = 0.8f;
+                urpAsset.shadowDistance = 30f;
                 urpAsset.shadowCascadeCount = 2;
-                SetShadowsForAllLights(LightShadows.Soft);
-                SetAllLightsShadowStrength(0.8f);
+
+                SetShadowsForAllLights(LightShadows.Hard);
+                SetAllLightsShadowStrength(0.4f);
+                SetURPAntiAliasing(4);
                 break;
 
             case 3:
-                urpAsset.renderScale = 0.8f;
-                urpAsset.shadowDistance = 20f;
-                urpAsset.shadowCascadeCount = 2;
-                SetShadowsForAllLights(LightShadows.Hard);
-                SetAllLightsShadowStrength(0.5f);
-                break;
-
-            case 2:
                 urpAsset.renderScale = 0.6f;
-                urpAsset.shadowDistance = 10f;
+                urpAsset.shadowDistance = 1f;
                 urpAsset.shadowCascadeCount = 1;
-                SetShadowsForAllLights(LightShadows.None);
-                SetAllLightsShadowStrength(0f);
+
+                SetShadowsForAllLights(LightShadows.Hard);
+                SetAllLightsShadowStrength(0.2f);
+                SetURPAntiAliasing(4);
                 break;
         }
     }
 
     /// <summary>
-    /// 그림자 켜기/끄기
+    /// 그림자 타입 변경
     /// </summary>
     /// <param name="mode"></param>
     private void SetShadowsForAllLights(LightShadows mode)
@@ -311,27 +313,11 @@ public class GameSettings : MonoBehaviour
     private void SetGraphic(int level, Button selected)
     {
         savedGraphicLevel = level;
+        AntialiasingMode aaMode = (level >= 4)
+            ? AntialiasingMode.FastApproximateAntialiasing
+            : AntialiasingMode.None;
 
-        switch (level)
-        {
-            case 5: // Very High
-                SetURPAntiAliasing(8);
-                SetAllCameraAntialiasing(AntialiasingMode.FastApproximateAntialiasing);
-                break;
-            case 4: // High
-                SetURPAntiAliasing(4);
-                SetAllCameraAntialiasing(AntialiasingMode.FastApproximateAntialiasing);
-                break;
-            case 3: // Medium
-                SetURPAntiAliasing(2);
-                SetAllCameraAntialiasing(AntialiasingMode.None);
-                break;
-            case 2: // Low
-                SetURPAntiAliasing(0);
-                SetAllCameraAntialiasing(AntialiasingMode.None);
-                break;
-        }
-
+        SetAllCameraAntialiasing(aaMode);
         SetURPQualityOptions(level);
         UpdateGraphicButton(selected);
         SaveSettings();
@@ -339,10 +325,9 @@ public class GameSettings : MonoBehaviour
 
     private void Graphic()
     {
-        Graphic_VeryHigh.onClick.AddListener(() => SetGraphic(5, Graphic_VeryHigh));
-        Graphic_High.onClick.AddListener(() => SetGraphic(4, Graphic_High));
-        Graphic_Middle.onClick.AddListener(() => SetGraphic(3, Graphic_Middle));
-        Graphic_Low.onClick.AddListener(() => SetGraphic(2, Graphic_Low));
+        Graphic_High.onClick.AddListener(() => SetGraphic(5, Graphic_High));
+        Graphic_Middle.onClick.AddListener(() => SetGraphic(4, Graphic_Middle));
+        Graphic_Low.onClick.AddListener(() => SetGraphic(3, Graphic_Low));
     }
 
     #endregion
@@ -354,7 +339,6 @@ public class GameSettings : MonoBehaviour
 
     [Header("UI 관리 & 초기화")]
     public GameObject gameSettingsUI;
-    public GameObject background;
 
     [SerializeField] private Camera mainCamera;
 
@@ -402,8 +386,15 @@ public class GameSettings : MonoBehaviour
 
     public void GameSettingsUI()
     {
-        if (!gameSettingsUI.activeSelf) { gameSettingsUI.GetComponent<UIAnimator>().Show(); background.SetActive(true); }
-        else { gameSettingsUI.GetComponent<UIAnimator>().Close(); background.SetActive(false); }
+        if (!gameSettingsUI.activeSelf)
+        {
+            GlobalUIController.Instance.PopUpShow(gameSettingsUI);
+        }
+
+        else
+        {
+            GlobalUIController.Instance.PopUpClose(gameSettingsUI);
+        }
     }
 
     private void Init()
@@ -449,7 +440,7 @@ public class GameSettings : MonoBehaviour
         savedResolution = new Vector2Int(width, height);
         savedFrameRate = frameRate;
         savedScreenMode = mode;
-        savedGraphicLevel = PlayerPrefs.GetInt(KEY_GRAPHIC_LEVEL, 4);
+        savedGraphicLevel = PlayerPrefs.GetInt(KEY_GRAPHIC_LEVEL, 5);
         frameText = frameTextLoad;
     }
 
@@ -472,7 +463,7 @@ public class GameSettings : MonoBehaviour
         if (savedScreenMode == FullScreenMode.FullScreenWindow) UpdateScreenButton(FullScreen);
         else UpdateScreenButton(WindowScreen);
 
-        SetGraphic(savedGraphicLevel,savedGraphicLevel == 5 ? Graphic_VeryHigh : savedGraphicLevel == 4 ? Graphic_High : savedGraphicLevel == 3 ? Graphic_Middle : Graphic_Low);
+        SetGraphic(savedGraphicLevel, savedGraphicLevel == 5 ? Graphic_High : savedGraphicLevel == 4 ? Graphic_Middle : Graphic_Low);
     }
 
     #endregion
