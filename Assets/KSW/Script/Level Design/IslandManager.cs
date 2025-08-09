@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.AI;
+using Unity.AI.Navigation;
 
 #region 블록 관리
 [System.Serializable]
@@ -508,5 +511,15 @@ public class IslandManager : MonoBehaviour
         MeshCollider meshCollider = combinedObject.AddComponent<MeshCollider>();
         meshCollider.sharedMesh = combinedMesh;
         meshCollider.convex = false;
+
+        // JSH
+        if (combinedObject.name == "Merged Grass")
+        {
+            NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
+            navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+            navMeshSurface.collectObjects = CollectObjects.Children;
+
+            navMeshSurface.BuildNavMesh();
+        }
     }
 }
