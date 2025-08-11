@@ -86,7 +86,6 @@ public class IslandManager : MonoBehaviour
     public MapObject[] mapObjects;
 
     public int TotalBlocks { get; set; }
-
     public Vector2 lakePos { get; set; }
     public Vector2 mountainPos { get; set; }
 
@@ -136,8 +135,8 @@ public class IslandManager : MonoBehaviour
 
         // 호수 위치
         lakePos = new Vector2(
-            Random.Range(mapScale.total * 0.1f, mapScale.total * 0.55f),
-            Random.Range(mapScale.total * 0.1f, mapScale.total * 0.7f));
+            Random.Range(mapScale.total * 0.2f, mapScale.total * 0.55f),
+            Random.Range(mapScale.total * 0.2f, mapScale.total * 0.7f));
 
         // 산 위치
         mountainPos = new Vector2(
@@ -190,9 +189,9 @@ public class IslandManager : MonoBehaviour
             }
         }
 
-        CombineMeshes(grassParent, block.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Grass");
-        CombineMeshes(dirtParent, block.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Dirt");
-        CombineMeshes(sandParent, block.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Sand");
+        GetComponent<CombineMesh>().Combine(grassParent, block.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Grass");
+        GetComponent<CombineMesh>().Combine(dirtParent, block.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Dirt");
+        GetComponent<CombineMesh>().Combine(sandParent, block.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Sand");
     }
 
     /// <summary>
@@ -459,67 +458,5 @@ public class IslandManager : MonoBehaviour
         float yScale = originalSize.y < 0.01f ? 1f : targetSize.y / originalSize.y;
 
         return new Vector3(targetSize.x / originalSize.x, yScale, targetSize.z / originalSize.z);
-    }
-
-    /// <summary>
-    /// 특정 부모 오브젝트 하위의 모든 블록을 병합하여 하나의 메쉬로 만든다.
-    /// </summary>
-    /// <param name="parent">병합 대상 부모 트랜스폼</param>
-    /// <param name="material">적용할 머티리얼</param>
-    /// <param name="mergedName">결과 오브젝트 이름</param>
-    void CombineMeshes(Transform parent, Material originalMaterial, string mergedName)
-    {
-        MeshFilter[] meshFilters = parent.GetComponentsInChildren<MeshFilter>();
-
-        List<CombineInstance> combine = new List<CombineInstance>();
-        foreach (var mf in meshFilters)
-        {
-            if (mf == null || mf.sharedMesh == null) continue;
-
-            CombineInstance ci = new CombineInstance();
-            ci.mesh = mf.sharedMesh;
-            ci.transform = mf.transform.localToWorldMatrix;
-            combine.Add(ci);
-        }
-
-        if (combine.Count == 0) return;
-
-        GameObject combinedObject = new GameObject(mergedName);
-        combinedObject.transform.SetParent(parent.parent);
-        combinedObject.transform.position = parent.position;
-        combinedObject.transform.rotation = parent.rotation;
-        combinedObject.transform.localScale = Vector3.one;
-
-        Mesh combinedMesh = new Mesh();
-        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        combinedMesh.CombineMeshes(combine.ToArray());
-
-        MeshFilter mfCombined = combinedObject.AddComponent<MeshFilter>();
-        mfCombined.sharedMesh = combinedMesh;
-
-        MeshRenderer mrCombined = combinedObject.AddComponent<MeshRenderer>();
-
-        mrCombined.sharedMaterial = originalMaterial;
-
-        for (int i = parent.childCount - 1; i >= 0; i--)
-        {
-            Transform child = parent.GetChild(i);
-            if (child == combinedObject.transform) continue;
-            DestroyImmediate(child.gameObject);
-        }
-
-        MeshCollider meshCollider = combinedObject.AddComponent<MeshCollider>();
-        meshCollider.sharedMesh = combinedMesh;
-        meshCollider.convex = false;
-
-        // JSH
-        if (combinedObject.name == "Merged Grass")
-        {
-            NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
-            navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-            navMeshSurface.collectObjects = CollectObjects.Children;
-
-            navMeshSurface.BuildNavMesh();
-        }
     }
 }
