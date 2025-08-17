@@ -98,10 +98,10 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void TimeUI()
     {
-        if (TimeManager.instance == null || TimeManager.instance.RealTimePerDaySec <= 0) return;
+        if (TimeManager.Instance == null || TimeManager.Instance.RealTimePerDaySec <= 0) return;
 
-        float currentTime = TimeManager.instance.CurrentTime;
-        float halfDay = TimeManager.instance.RealTimePerDaySec / 2f;
+        float currentTime = TimeManager.Instance.CurrentTime;
+        float halfDay = TimeManager.Instance.RealTimePerDaySec / 2f;
 
         float fill1 = 0f;
         float fill2 = 0f;
