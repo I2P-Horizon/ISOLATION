@@ -6,7 +6,7 @@ public class IslandManager : MonoBehaviour
 {
     [Header("부모 오브젝트 (섬 전체)")] public Transform islandParent;
 
-    [Header("블록")] public Block block;
+    [Header("블록")] public Block block = new Block();
     [Header("맵 크기")] public MapScale mapScale;
     [Header("맵 높이")] public MapHeight mapHeight;
     [Header("시드 값")] public MapSeed mapSeed;
