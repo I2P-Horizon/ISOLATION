@@ -1,89 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.AI;
-using Unity.AI.Navigation;
-
-#region 블록 관리
-[System.Serializable]
-public class Block
-{
-    public GameObject grass;
-    public GameObject dirt;
-    public GameObject sand;
-    public GameObject water;
-}
-#endregion
-
-#region 맵 크기 관리
-[System.Serializable]
-public class MapScale
-{
-    [Tooltip("섬의 크기")] public int total = 250;
-    [Tooltip("해변의 크기")] public float beach = 15f;
-    [Tooltip("호수의 크기")] public float lake = 20f;
-    [Tooltip("노이즈 크기")] public float noise = 5f;
-    [Tooltip("블록 크기")] public Vector3 block = new Vector3(1, 1, 1);
-}
-#endregion
-
-#region 맵 높이 관리
-[System.Serializable]
-public class MapHeight
-{
-    [Tooltip("최대 잔디 높이")] public int maxGrass = 4;
-    [Tooltip("최소 잔디 높이")] public int minGrass = 1;
-    [Tooltip("최대 노이즈 규모")] public float noiseScale = 8f;
-    [Header("블록 높이 기준선")] public float sandHeight = 0f;
-}
-#endregion
-
-#region 시드 값 관리
-[System.Serializable]
-public class MapSeed
-{
-    public float x;
-    public float z;
-    public float heightX;
-    public float heightZ;
-}
-#endregion
-
-#region 맵 오브젝트 관리
-
-public enum UniquePlacementType
-{
-    CenterArea,
-    EdgeArea,
-    Custom
-}
-
-[System.Serializable]
-public class MapObject
-{
-    [Tooltip("맵 오브젝트")] public GameObject mapObject;
-    [Tooltip("스폰 확률")][Range(0, 1)] public float spawnChance;
-    [Tooltip("유니크 오브젝트")] public bool isUnique;
-    [Tooltip("배치 타입")] public UniquePlacementType placementType;
-}
-#endregion
 
 public class IslandManager : MonoBehaviour
 {
-    [Header("부모 오브젝트 (섬 전체)")]
-    public Transform islandParent;
+    [Header("부모 오브젝트 (섬 전체)")] public Transform islandParent;
 
-    [Header("블록")]
-    public Block block;
-    [Header("맵 크기")]
-    public MapScale mapScale;
-    [Header("맵 높이")]
-    public MapHeight mapHeight;
-    [Header("시드 값")]
-    public MapSeed mapSeed;
-    [Header("맵 오브젝트")]
-    public MapObject[] mapObjects;
+    [Header("블록")] public Block block;
+    [Header("맵 크기")] public MapScale mapScale;
+    [Header("맵 높이")] public MapHeight mapHeight;
+    [Header("시드 값")] public MapSeed mapSeed;
+    [Header("맵 오브젝트")] public MapObject[] mapObjects;
 
     public int TotalBlocks { get; set; }
     public Vector2 lakePos { get; set; }
@@ -145,10 +72,10 @@ public class IslandManager : MonoBehaviour
 
         Vector3 origin = islandParent.position + new Vector3(-mapScale.total / 2f * mapScale.block.x, 0, -mapScale.total / 2f * mapScale.block.z);
 
-        Vector3 grassScale = GetScaleToFit(block.grass, mapScale.block);
-        Vector3 dirtScale = GetScaleToFit(block.dirt, mapScale.block);
-        Vector3 sandScale = GetScaleToFit(block.sand, mapScale.block);
-        Vector3 waterScale = GetScaleToFit(block.water, mapScale.block);
+        Vector3 grassScale = block.GetScaleToFit(block.grass, mapScale.block);
+        Vector3 dirtScale = block.GetScaleToFit(block.dirt, mapScale.block);
+        Vector3 sandScale = block.GetScaleToFit(block.sand, mapScale.block);
+        Vector3 waterScale = block.GetScaleToFit(block.water, mapScale.block);
 
         Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
 
@@ -434,29 +361,5 @@ public class IslandManager : MonoBehaviour
     {
         Vector2 pos = new Vector2(x, z);
         return Vector2.Distance(pos, lakePos) < mapScale.lake * 0.5f;
-    }
-
-    /// <summary>
-    /// 프리팹 실제 크기에 맞춰 스케일 조정
-    /// </summary>
-    Vector3 GetScaleToFit(GameObject prefab, Vector3 targetSize)
-    {
-        GameObject temp = Instantiate(prefab);
-        Renderer rend = temp.GetComponentInChildren<Renderer>();
-
-        if (rend == null)
-        {
-            DestroyImmediate(temp);
-            return Vector3.one;
-        }
-
-        Vector3 originalSize = rend.bounds.size;
-        DestroyImmediate(temp);
-
-        if (originalSize == Vector3.zero) return Vector3.one;
-
-        float yScale = originalSize.y < 0.01f ? 1f : targetSize.y / originalSize.y;
-
-        return new Vector3(targetSize.x / originalSize.x, yScale, targetSize.z / originalSize.z);
     }
 }
