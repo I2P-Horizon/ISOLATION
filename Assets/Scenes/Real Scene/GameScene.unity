@@ -4838,6 +4838,7 @@ GameObject:
   - component: {fileID: 1836063579}
   - component: {fileID: 1836063580}
   - component: {fileID: 1836063581}
+  - component: {fileID: 1836063582}
   m_Layer: 0
   m_Name: Island Manager
   m_TagString: Untagged
@@ -4921,6 +4922,7 @@ MonoBehaviour:
   mountain:
     radius: 60
     height: 20
+  chunkArray: []
 --- !u!114 &1836063581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4933,6 +4935,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d346dc0b39f89614ca3ad1173c812455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1836063582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836063577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 061550950176af24e84120bb6edc9559, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  islandManager: {fileID: 1836063580}
+  mainCamera: {fileID: 1978927456}
 --- !u!1 &1895617657
 GameObject:
   m_ObjectHideFlags: 0

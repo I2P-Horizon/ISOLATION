@@ -59,7 +59,6 @@ public class IslandManager : MonoBehaviour
         Clear();
 
         lake.Create();
-
         mountain.Create();
         jungle.SetMountain(mountain);
 
@@ -67,53 +66,70 @@ public class IslandManager : MonoBehaviour
         jungle.SetMapObjectManager(mapObjectManager);
 
         Vector3 origin = islandParent.position + new Vector3(-mapScale.total / 2f * mapScale.block.x, 0, -mapScale.total / 2f * mapScale.block.z);
-
-        Vector3 grassScale = block.GetScaleToFit(jungle.grass, mapScale.block);
-        Vector3 dirtScale = block.GetScaleToFit(jungle.dirt, mapScale.block);
-        Vector3 sandScale = block.GetScaleToFit(beach.sand, mapScale.block);
-        Vector3 waterScale = block.GetScaleToFit(lake.water, mapScale.block);
-
         Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
-
-        Transform grassParent = new GameObject("Grass Parent").transform;
-        Transform dirtParent = new GameObject("Dirt Parent").transform;
-        Transform sandParent = new GameObject("Sand Parent").transform;
-        Transform waterParent = new GameObject("Water Parent").transform;
-
-        grassParent.SetParent(islandParent);
-        dirtParent.SetParent(islandParent);
-        sandParent.SetParent(islandParent);
-        waterParent.SetParent(islandParent);
 
         mapObjectManager.PlaceUniqueObjects();
 
-        for (int x = 0; x < mapScale.total; x++)
+        int chunkSize = 64;
+        int chunksX = Mathf.CeilToInt((float)mapScale.total / chunkSize);
+        int chunksZ = Mathf.CeilToInt((float)mapScale.total / chunkSize);
+
+        for (int cx = 0; cx < chunksX; cx++)
         {
-            for (int z = 0; z < mapScale.total; z++)
+            for (int cz = 0; cz < chunksZ; cz++)
             {
-                Vector2 pos2D = new Vector2(x, z);
-                float distToCenter = Vector2.Distance(pos2D, center);
-                float noiseOffset = Mathf.PerlinNoise((x + mapSeed.x) / mapScale.noise, (z + mapSeed.z) / mapScale.noise) * 5f;
-                float finalDist = distToCenter - noiseOffset;
+                Transform chunkParent = new GameObject($"Chunk_{cx}_{cz}").transform;
+                chunkParent.SetParent(islandParent);
 
-                if (finalDist > mapScale.total / 2f) continue;
+                Transform grassParent = new GameObject("Grass").transform;
+                Transform dirtParent = new GameObject("Dirt").transform;
+                Transform sandParent = new GameObject("Sand").transform;
+                Transform waterParent = new GameObject("Water").transform;
 
-                if (lake.IsLakeEdge(x, z) || lake.IsLakeInner(x, z))
+                grassParent.SetParent(chunkParent);
+                dirtParent.SetParent(chunkParent);
+                sandParent.SetParent(chunkParent);
+
+                int startX = cx * chunkSize;
+                int startZ = cz * chunkSize;
+                int endX = Mathf.Min(startX + chunkSize, mapScale.total);
+                int endZ = Mathf.Min(startZ + chunkSize, mapScale.total);
+
+                for (int x = startX; x < endX; x++)
                 {
-                    lake.PlaceLakeBlocks(origin, x, z, dirtScale, waterScale, dirtParent, waterParent);
-                    continue;
+                    for (int z = startZ; z < endZ; z++)
+                    {
+                        Vector2 pos2D = new Vector2(x, z);
+                        float distToCenter = Vector2.Distance(pos2D, center);
+                        float noiseOffset = Mathf.PerlinNoise((x + mapSeed.x) / mapScale.noise, (z + mapSeed.z) / mapScale.noise) * 5f;
+                        float finalDist = distToCenter - noiseOffset;
+
+                        if (finalDist > mapScale.total / 2f) continue;
+
+                        bool isGrassArea = finalDist <= mapScale.total / 2f - mapScale.beach;
+                        int sandLayers = beach.CalculateSandLayers(finalDist);
+
+                        Vector3 grassScale = block.GetScaleToFit(jungle.grass, mapScale.block);
+                        Vector3 dirtScale = block.GetScaleToFit(jungle.dirt, mapScale.block);
+                        Vector3 sandScale = block.GetScaleToFit(beach.sand, mapScale.block);
+                        Vector3 waterScale = block.GetScaleToFit(lake.water, mapScale.block);
+
+                        if (lake.IsLakeEdge(x, z) || lake.IsLakeInner(x, z))
+                        {
+                            lake.PlaceLakeBlocks(origin, x, z, dirtScale, waterScale, dirtParent, waterParent);
+                            continue;
+                        }
+
+                        if (sandLayers > 0 && !isGrassArea) beach.PlaceSand(origin, x, z, sandLayers, sandScale, sandParent);
+                        if (isGrassArea) jungle.PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale, grassParent, dirtParent);
+                    }
                 }
 
-                bool isGrassArea = finalDist <= mapScale.total / 2f - mapScale.beach;
-
-                int sandLayers = beach.CalculateSandLayers(finalDist);
-                if (sandLayers > 0 && !isGrassArea) beach.PlaceSand(origin, x, z, sandLayers, sandScale, sandParent);
-                if (isGrassArea) jungle.PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale, grassParent, dirtParent);
+                CombineMesh combine = GetComponent<CombineMesh>();
+                combine.Combine(grassParent, jungle.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"Chunk_{cx}_{cz}_Grass");
+                combine.Combine(dirtParent, jungle.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"Chunk_{cx}_{cz}_Dirt");
+                combine.Combine(sandParent, beach.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"Chunk_{cx}_{cz}_Sand");
             }
         }
-
-        GetComponent<CombineMesh>().Combine(grassParent, jungle.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Grass");
-        GetComponent<CombineMesh>().Combine(dirtParent, jungle.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Dirt");
-        GetComponent<CombineMesh>().Combine(sandParent, beach.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Sand");
     }
 }
