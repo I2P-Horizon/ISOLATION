@@ -5,11 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class Block
 {
-    public GameObject grass;
-    public GameObject dirt;
-    public GameObject sand;
-    public GameObject water;
-
     /// <summary>
     /// 블록 프리팹 실제 크기에 맞춰 스케일 조정
     /// </summary>

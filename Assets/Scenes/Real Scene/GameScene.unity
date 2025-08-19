@@ -4876,8 +4876,6 @@ MonoBehaviour:
   block:
     grass: {fileID: 1784206446667002742, guid: cbe2eba3308ec58459024c5892708459, type: 3}
     dirt: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
-    sand: {fileID: 2739551521495890618, guid: bebbdb476ec66ed499c664d6f6240513, type: 3}
-    water: {fileID: 6492228295775410654, guid: f117407826827c840a1bd62ec3909e88, type: 3}
   mapScale:
     total: 250
     beach: 15
@@ -4915,6 +4913,14 @@ MonoBehaviour:
     spawnChance: 1
     isUnique: 1
     placementType: 0
+  beach:
+    sand: {fileID: 2739551521495890618, guid: bebbdb476ec66ed499c664d6f6240513, type: 3}
+  lake:
+    water: {fileID: 6492228295775410654, guid: f117407826827c840a1bd62ec3909e88, type: 3}
+    dirt: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
+  mountain:
+    radius: 60
+    height: 20
 --- !u!114 &1836063581
 MonoBehaviour:
   m_ObjectHideFlags: 0

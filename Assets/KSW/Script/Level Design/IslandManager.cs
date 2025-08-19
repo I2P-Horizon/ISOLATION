@@ -12,14 +12,12 @@ public class IslandManager : MonoBehaviour
     [Header("시드 값")] public MapSeed mapSeed;
     [Header("맵 오브젝트")] public MapObject[] mapObjects;
 
-    public int TotalBlocks { get; set; }
-    public Vector2 lakePos { get; set; }
-    public Vector2 mountainPos { get; set; }
+    [Header("정글")] public Jungle jungle;
+    [Header("해변")] public Beach beach;
+    [Header("호수")] public Lake lake;
+    [Header("산")] public Mountain mountain;
 
     private List<Vector3> uniqueObjectPositions = new List<Vector3>();
-
-    private float mountainRadius = 60f;
-    private float mountainHeight = 20f;
 
     void Awake()
     {
@@ -57,25 +55,15 @@ public class IslandManager : MonoBehaviour
     public void Create()
     {
         Clear();
-
-        TotalBlocks = 0;
-
-        // 호수 위치
-        lakePos = new Vector2(
-            Random.Range(mapScale.total * 0.2f, mapScale.total * 0.55f),
-            Random.Range(mapScale.total * 0.2f, mapScale.total * 0.7f));
-
-        // 산 위치
-        mountainPos = new Vector2(
-            Random.Range(mapScale.total * 0.65f, mapScale.total * 0.7f),
-            Random.Range(mapScale.total * 0.5f, mapScale.total * 0.7f));
+        lake.Create();
+        mountain.Create();
 
         Vector3 origin = islandParent.position + new Vector3(-mapScale.total / 2f * mapScale.block.x, 0, -mapScale.total / 2f * mapScale.block.z);
 
-        Vector3 grassScale = block.GetScaleToFit(block.grass, mapScale.block);
-        Vector3 dirtScale = block.GetScaleToFit(block.dirt, mapScale.block);
-        Vector3 sandScale = block.GetScaleToFit(block.sand, mapScale.block);
-        Vector3 waterScale = block.GetScaleToFit(block.water, mapScale.block);
+        Vector3 grassScale = block.GetScaleToFit(jungle.grass, mapScale.block);
+        Vector3 dirtScale = block.GetScaleToFit(jungle.dirt, mapScale.block);
+        Vector3 sandScale = block.GetScaleToFit(beach.sand, mapScale.block);
+        Vector3 waterScale = block.GetScaleToFit(lake.water, mapScale.block);
 
         Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
 
@@ -102,140 +90,30 @@ public class IslandManager : MonoBehaviour
 
                 if (finalDist > mapScale.total / 2f) continue;
 
-                if (IsLakeEdge(x, z) || IsLakeInner(x, z))
+                if (lake.IsLakeEdge(x, z) || lake.IsLakeInner(x, z))
                 {
-                    PlaceLakeBlocks(origin, x, z, dirtScale, waterScale, dirtParent, waterParent);
+                    lake.PlaceLakeBlocks(origin, x, z, dirtScale, waterScale, dirtParent, waterParent);
                     continue;
                 }
 
                 bool isGrassArea = finalDist <= mapScale.total / 2f - mapScale.beach;
 
-                int sandLayers = CalculateSandLayers(finalDist);
-                if (sandLayers > 0 && !isGrassArea) PlaceSand(origin, x, z, sandLayers, sandScale, sandParent);
-                if (isGrassArea) PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale, grassParent, dirtParent);
+                int sandLayers = beach.CalculateSandLayers(finalDist);
+                if (sandLayers > 0 && !isGrassArea) beach.PlaceSand(origin, x, z, sandLayers, sandScale, sandParent);
+                if (isGrassArea) jungle.PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale, grassParent, dirtParent);
             }
         }
 
-        GetComponent<CombineMesh>().Combine(grassParent, block.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Grass");
-        GetComponent<CombineMesh>().Combine(dirtParent, block.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Dirt");
-        GetComponent<CombineMesh>().Combine(sandParent, block.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Sand");
-    }
-
-    /// <summary>
-    /// 모래는 따로 쌓기
-    /// </summary>
-    /// <param name="finalDist"></param>
-    /// <returns></returns>
-    int CalculateSandLayers(float finalDist)
-    {
-        if (finalDist > mapScale.total / 2f - mapScale.beach)
-        {
-            float beachDepth = mapScale.total / 2f - finalDist;
-            float t = Mathf.Clamp01(beachDepth / mapScale.beach);
-            return (t > 0.5f) ? 2 : 1;
-        }
-
-        else return 2;
-    }
-
-    /// <summary>
-    /// 호수 블록 생성
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
-    /// <param name="dirtScale"></param>
-    /// <param name="waterScale"></param>
-    void PlaceLakeBlocks(Vector3 origin, int x, int z, Vector3 dirtScale, Vector3 waterScale, Transform dirtParent, Transform waterParent)
-    {
-        int dirtLayers = IsLakeInner(x, z) ? 1 : 2;
-        float lakeWaterHeight = mapHeight.sandHeight + mapScale.block.y * 2.5f;
-
-        for (int i = 0; i < dirtLayers; i++)
-        {
-            float y = mapHeight.sandHeight + i * mapScale.block.y;
-            Vector3 pos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
-            GameObject dirt = Instantiate(block.dirt, pos, Quaternion.identity, dirtParent);
-            dirt.transform.localScale = dirtScale;
-            TotalBlocks++;
-        }
-
-        Vector3 waterPos = origin + new Vector3(x * mapScale.block.x, lakeWaterHeight, z * mapScale.block.z);
-        GameObject water = Instantiate(block.water, waterPos, Quaternion.identity, waterParent);
-        water.transform.localScale = waterScale;
-    }
-
-    /// <summary>
-    /// 모래 블록 생성
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
-    /// <param name="layers"></param>
-    /// <param name="sandScale"></param>
-    void PlaceSand(Vector3 origin, int x, int z, int layers, Vector3 sandScale, Transform sandParent)
-    {
-        float y = mapHeight.sandHeight + (layers - 1) * mapScale.block.y;
-        Vector3 sandPos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
-        GameObject sandBlock = Instantiate(block.sand, sandPos, Quaternion.identity, sandParent);
-        sandBlock.transform.localScale = sandScale;
-        TotalBlocks++;
-    }
-
-    /// <summary>
-    /// 잔디 & 흙 배치
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <param name="x"></param>
-    /// <param name="z"></param>
-    /// <param name="sandLayers"></param>
-    /// <param name="grassScale"></param>
-    /// <param name="dirtScale"></param>
-    void PlaceGrassAndDirt(Vector3 origin, int x, int z, int sandLayers, Vector3 grassScale, Vector3 dirtScale, Transform grassParent, Transform dirtParent)
-    {
-        float innerDist = Vector2.Distance(new Vector2(x, z), new Vector2(mapScale.total / 2f, mapScale.total / 2f)) - (mapScale.total / 2f - mapScale.beach);
-        float maxInnerDist = mapScale.total / 2f - mapScale.beach;
-        float t = Mathf.Clamp01(innerDist / maxInnerDist);
-
-        int grassLayersBase = Mathf.RoundToInt(Mathf.Lerp(mapHeight.minGrass, mapHeight.maxGrass, t));
-        float noise = Mathf.PerlinNoise((x + mapSeed.heightX) / mapHeight.noiseScale, (z + mapSeed.heightZ) / mapHeight.noiseScale);
-        int noiseLayers = Mathf.RoundToInt(noise * (mapHeight.maxGrass - mapHeight.minGrass));
-
-        float mountainBoost = GetMountainHeight(x, z);
-        int mountainExtraLayers = Mathf.RoundToInt(mountainBoost);
-
-        int grassLayers = Mathf.Clamp(
-            grassLayersBase + noiseLayers + mountainExtraLayers - (mapHeight.maxGrass - mapHeight.minGrass) / 2,
-            mapHeight.minGrass,
-            mapHeight.maxGrass + Mathf.RoundToInt(mountainHeight)
-        );
-
-        GameObject lastGrassBlock = null;
-
-        for (int i = 0; i < grassLayers; i++)
-        {
-            float y = mapHeight.sandHeight + sandLayers * mapScale.block.y + i * mapScale.block.y;
-            Vector3 blockPos = origin + new Vector3(x * mapScale.block.x, y, z * mapScale.block.z);
-
-            GameObject blockToPlace = (i == grassLayers - 1) ? block.grass : block.dirt;
-            Transform parentToUse = (i == grassLayers - 1) ? grassParent : dirtParent;
-            Vector3 scaleToUse = (i == grassLayers - 1) ? grassScale : dirtScale;
-
-            GameObject placedBlock = Instantiate(blockToPlace, blockPos, Quaternion.identity, parentToUse);
-            placedBlock.transform.localScale = scaleToUse;
-            TotalBlocks++;
-
-            if (i == grassLayers - 1) lastGrassBlock = placedBlock;
-        }
-
-        TryPlaceMapObjects(lastGrassBlock);
+        GetComponent<CombineMesh>().Combine(grassParent, jungle.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Grass");
+        GetComponent<CombineMesh>().Combine(dirtParent, jungle.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Dirt");
+        GetComponent<CombineMesh>().Combine(sandParent, beach.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Sand");
     }
 
     /// <summary>
     /// 확률적으로 잔디 위에 오브젝트 배치
     /// </summary>
     /// <param name="grassBlock"></param>
-    void TryPlaceMapObjects(GameObject grassBlock)
+    public void TryPlaceMapObjects(GameObject grassBlock)
     {
         if (grassBlock == null || mapObjects == null) return;
 
@@ -294,7 +172,7 @@ public class IslandManager : MonoBehaviour
                 Vector2 pos2D = new Vector2(randX, randZ);
                 float dist = Vector2.Distance(pos2D, center);
 
-                if (IsLakeArea(randX, randZ)) continue;
+                if (lake.IsLakeArea(randX, randZ)) continue;
 
                 bool valid = mapObj.placementType switch
                 {
@@ -331,35 +209,5 @@ public class IslandManager : MonoBehaviour
                 break;
             }
         }
-    }
-
-    float GetMountainHeight(int x, int z)
-    {
-        Vector2 pos = new Vector2(x, z);
-        float dist = Vector2.Distance(pos, mountainPos);
-
-        if (dist > mountainRadius) return 0f;
-
-        float t = 1f - (dist / mountainRadius);
-        return t * mountainHeight;
-    }
-
-    bool IsLakeArea(int x, int z)
-    {
-        Vector2 pos = new Vector2(x, z);
-        return Vector2.Distance(pos, lakePos) < mapScale.lake;
-    }
-
-    bool IsLakeEdge(int x, int z)
-    {
-        Vector2 pos = new Vector2(x, z);
-        float dist = Vector2.Distance(pos, lakePos);
-        return dist < mapScale.lake && dist >= mapScale.lake * 0.5f;
-    }
-
-    bool IsLakeInner(int x, int z)
-    {
-        Vector2 pos = new Vector2(x, z);
-        return Vector2.Distance(pos, lakePos) < mapScale.lake * 0.5f;
     }
 }

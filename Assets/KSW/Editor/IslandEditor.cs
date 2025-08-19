@@ -39,23 +39,17 @@ public class IslandEditor : Editor
         EditorGUILayout.LabelField("디버깅 툴", titleStyle);
         GUILayout.Space(5);
 
-        IslandManager manager = (IslandManager)target;
+        IslandManager islandManager = (IslandManager)target;
 
         GUILayout.Space(10);
         EditorGUILayout.LabelField("시드 값", titleStyle);
 
         EditorGUILayout.BeginVertical("box");
         {
-            EditorGUILayout.LabelField("Noise Seed X: "+manager.mapSeed.x, seedLabelStyle);
-            EditorGUILayout.LabelField("Noise Seed Z: "+manager.mapSeed.z, seedLabelStyle);
-            EditorGUILayout.LabelField("Height Seed X: "+manager.mapSeed.heightX, seedLabelStyle);
-            EditorGUILayout.LabelField("Height Seed Z: "+manager.mapSeed.heightZ, seedLabelStyle);
-        }
-        EditorGUILayout.EndVertical();
-
-        EditorGUILayout.BeginVertical("box");
-        {
-            EditorGUILayout.LabelField($"생성된 블록 수: "+manager.TotalBlocks + "개", seedLabelStyle);
+            EditorGUILayout.LabelField("Noise Seed X: "+ islandManager.mapSeed.x, seedLabelStyle);
+            EditorGUILayout.LabelField("Noise Seed Z: "+ islandManager.mapSeed.z, seedLabelStyle);
+            EditorGUILayout.LabelField("Height Seed X: "+ islandManager.mapSeed.heightX, seedLabelStyle);
+            EditorGUILayout.LabelField("Height Seed Z: "+ islandManager.mapSeed.heightZ, seedLabelStyle);
         }
         EditorGUILayout.EndVertical();
 
@@ -64,27 +58,26 @@ public class IslandEditor : Editor
             GUI.backgroundColor = Color.yellow;
             if (GUILayout.Button("시드 생성", buttonStyle))
             {
-                Undo.RecordObject(manager, "Init Seed");
-                manager.Init();
+                Undo.RecordObject(islandManager, "Init Seed");
+                islandManager.Init();
             }
 
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("섬 생성", buttonStyle))
             {
-                Undo.RecordObject(manager, "Generate Island");
-                manager.Create();
+                Undo.RecordObject(islandManager, "Generate Island");
+                islandManager.Create();
             }
 
             GUI.backgroundColor = Color.red;
             if (GUILayout.Button("섬 삭제", buttonStyle))
             {
-                Undo.RecordObject(manager, "Clear Island");
-                manager.mapSeed.x = 0;
-                manager.mapSeed.z = 0;
-                manager.mapSeed.heightX = 0;
-                manager.mapSeed.heightZ = 0;
-                manager.TotalBlocks = 0;
-                manager.Clear();
+                Undo.RecordObject(islandManager, "Clear Island");
+                islandManager.mapSeed.x = 0;
+                islandManager.mapSeed.z = 0;
+                islandManager.mapSeed.heightX = 0;
+                islandManager.mapSeed.heightZ = 0;
+                islandManager.Clear();
             }
 
             GUI.backgroundColor = Color.white;
