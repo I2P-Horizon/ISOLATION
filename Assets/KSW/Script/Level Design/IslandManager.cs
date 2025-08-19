@@ -17,6 +17,8 @@ public class IslandManager : MonoBehaviour
     [Header("호수")] public Lake lake;
     [Header("산")] public Mountain mountain;
 
+    private MapObjectManager mapObjectManager;
+
     private List<Vector3> uniqueObjectPositions = new List<Vector3>();
 
     void Awake()
@@ -55,8 +57,14 @@ public class IslandManager : MonoBehaviour
     public void Create()
     {
         Clear();
+
         lake.Create();
+
         mountain.Create();
+        jungle.SetMountain(mountain);
+
+        mapObjectManager = new MapObjectManager(islandParent, mapObjects, mapScale, mapHeight, mapSeed, lake);
+        jungle.SetMapObjectManager(mapObjectManager);
 
         Vector3 origin = islandParent.position + new Vector3(-mapScale.total / 2f * mapScale.block.x, 0, -mapScale.total / 2f * mapScale.block.z);
 
@@ -77,7 +85,7 @@ public class IslandManager : MonoBehaviour
         sandParent.SetParent(islandParent);
         waterParent.SetParent(islandParent);
 
-        PlaceUniqueObjects();
+        mapObjectManager.PlaceUniqueObjects();
 
         for (int x = 0; x < mapScale.total; x++)
         {
@@ -107,107 +115,5 @@ public class IslandManager : MonoBehaviour
         GetComponent<CombineMesh>().Combine(grassParent, jungle.grass.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Grass");
         GetComponent<CombineMesh>().Combine(dirtParent, jungle.dirt.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Dirt");
         GetComponent<CombineMesh>().Combine(sandParent, beach.sand.GetComponentInChildren<MeshRenderer>().sharedMaterial, "Merged Sand");
-    }
-
-    /// <summary>
-    /// 확률적으로 잔디 위에 오브젝트 배치
-    /// </summary>
-    /// <param name="grassBlock"></param>
-    public void TryPlaceMapObjects(GameObject grassBlock)
-    {
-        if (grassBlock == null || mapObjects == null) return;
-
-        float rand = Random.value;
-        float cumulativeChance = 0f;
-
-        foreach (var mapObj in mapObjects)
-        {
-            if (mapObj.isUnique || mapObj.mapObject == null) continue;
-            if (!IsFarFromUniqueObjects(grassBlock.transform.position, 10f)) continue;
-
-            cumulativeChance += mapObj.spawnChance;
-            if (rand < cumulativeChance)
-            {
-                Vector3 objPos = grassBlock.transform.position + new Vector3(0, mapScale.block.y, 0);
-                Instantiate(mapObj.mapObject, objPos, Quaternion.identity, islandParent);
-                break;
-            }
-        }
-    }
-
-    /// <summary>
-    /// 유니크 오브젝트들과 일정 거리 이상 떨어져 있는지 검사
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <param name="minDist"></param>
-    /// <returns></returns>
-    bool IsFarFromUniqueObjects(Vector3 pos, float minDist)
-    {
-        Vector2 pos2D = new Vector2(pos.x, pos.z);
-
-        foreach (var uniquePos in uniqueObjectPositions)
-        {
-            Vector2 uniquePos2D = new Vector2(uniquePos.x, uniquePos.z);
-            if (Vector2.Distance(pos2D, uniquePos2D) < minDist) return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// 유니크 오브젝트 배치
-    /// </summary>
-    void PlaceUniqueObjects()
-    {
-        Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
-
-        foreach (var mapObj in mapObjects)
-        {
-            if (!mapObj.isUnique || mapObj.mapObject == null) continue;
-
-            for (int attempt = 0; attempt < 100; attempt++)
-            {
-                int randX = Random.Range(0, mapScale.total);
-                int randZ = Random.Range(0, mapScale.total);
-                Vector2 pos2D = new Vector2(randX, randZ);
-                float dist = Vector2.Distance(pos2D, center);
-
-                if (lake.IsLakeArea(randX, randZ)) continue;
-
-                bool valid = mapObj.placementType switch
-                {
-                    UniquePlacementType.CenterArea => dist >= 10f && dist <= 30f,
-                    UniquePlacementType.EdgeArea => dist >= mapScale.total / 2f - 40f,
-                    UniquePlacementType.Custom => true,
-                    _ => false
-                };
-
-                if (!valid) continue;
-
-                float noiseOffset = Mathf.PerlinNoise((randX + mapSeed.x) / mapScale.noise, (randZ + mapSeed.z) / mapScale.noise) * 5f;
-                float finalDist = dist - noiseOffset;
-
-                if (finalDist > mapScale.total / 2f - mapScale.beach) continue;
-
-                float innerDist = finalDist - (mapScale.total / 2f - mapScale.beach);
-                float maxInnerDist = mapScale.total / 2f - mapScale.beach;
-                float t = Mathf.Clamp01(innerDist / maxInnerDist);
-
-                int sandLayers = 2;
-                int grassLayersBase = Mathf.RoundToInt(Mathf.Lerp(mapHeight.minGrass, mapHeight.maxGrass, t));
-                float noise = Mathf.PerlinNoise((randX + mapSeed.heightX) / mapHeight.noiseScale, (randZ + mapSeed.heightZ) / mapHeight.noiseScale);
-                int noiseLayers = Mathf.RoundToInt(noise * (mapHeight.maxGrass - mapHeight.minGrass));
-
-                int grassLayers = Mathf.Clamp(grassLayersBase + noiseLayers - (mapHeight.maxGrass - mapHeight.minGrass) / 2, mapHeight.minGrass, mapHeight.maxGrass);
-
-                float y = mapHeight.sandHeight + sandLayers * mapScale.block.y + (grassLayers - 1) * mapScale.block.y + mapScale.block.y;
-
-                Vector3 uniquePos = islandParent.position + new Vector3((randX - mapScale.total / 2f) * mapScale.block.x, y, (randZ - mapScale.total / 2f) * mapScale.block.z);
-
-                Instantiate(mapObj.mapObject, uniquePos, Quaternion.identity, islandParent);
-                uniqueObjectPositions.Add(uniquePos);
-                break;
-            }
-        }
     }
 }

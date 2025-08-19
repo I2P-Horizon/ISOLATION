@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Jungle
 {
     public GameObject grass;
@@ -11,7 +12,18 @@ public class Jungle
     private MapHeight mapHeight = new MapHeight();
     private MapSeed mapSeed = new MapSeed();
 
-    private Mountain mountain = new Mountain();
+    private Mountain mountain;
+    private MapObjectManager mapObjectManager;
+
+    public void SetMountain(Mountain mountain)
+    {
+        this.mountain = mountain;
+    }
+
+    public void SetMapObjectManager(MapObjectManager manager)
+    {
+        mapObjectManager = manager;
+    }
 
     /// <summary>
     /// ÀÜµð & Èë ¹èÄ¡
@@ -58,6 +70,6 @@ public class Jungle
             if (i == grassLayers - 1) lastGrassBlock = placedBlock;
         }
 
-        TryPlaceMapObjects(lastGrassBlock);
+        mapObjectManager.TryPlaceMapObjects(lastGrassBlock);
     }
 }

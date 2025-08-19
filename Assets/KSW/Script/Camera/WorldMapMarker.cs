@@ -22,7 +22,7 @@ public class WorldMapMarker : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        for (int i = 0; i < 80; i++)
+        for (int i = 0; i < 100; i++)
         {
             mapCamera.Render();
             yield return new WaitForEndOfFrame();
