@@ -52,7 +52,7 @@ public class CombineMesh : MonoBehaviour
         meshCollider.convex = false;
 
         // JSH
-        if (combinedObject.name == "Merged Grass")
+        if (combinedObject.name.EndsWith("_Grass"))
         {
             NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
             navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
