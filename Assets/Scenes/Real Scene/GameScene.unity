@@ -4894,23 +4894,18 @@ MonoBehaviour:
   - mapObject: {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
     spawnChance: 0.025
     isUnique: 0
-    placementType: 2
   - mapObject: {fileID: 6091739994827031229, guid: 8be4d495e4f5d154cb3e398be3bcf557, type: 3}
     spawnChance: 0.0025
     isUnique: 0
-    placementType: 2
   - mapObject: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
     spawnChance: 0.002
     isUnique: 0
-    placementType: 2
   - mapObject: {fileID: 2814076585106460190, guid: 7c5e62986dca2c14c99281849829cc4d, type: 3}
     spawnChance: 0.001
     isUnique: 0
-    placementType: 2
   - mapObject: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
     spawnChance: 1
     isUnique: 1
-    placementType: 0
   jungle:
     grass: {fileID: 1784206446667002742, guid: cbe2eba3308ec58459024c5892708459, type: 3}
     dirt: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
@@ -4922,7 +4917,6 @@ MonoBehaviour:
   mountain:
     radius: 60
     height: 20
-  chunkArray: []
 --- !u!114 &1836063581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4942,12 +4936,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836063577}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 061550950176af24e84120bb6edc9559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  islandManager: {fileID: 1836063580}
+  chunks: []
   mainCamera: {fileID: 1978927456}
 --- !u!1 &1895617657
 GameObject:

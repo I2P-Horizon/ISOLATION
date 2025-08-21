@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4442119053716651215}
   m_Layer: 0
   m_Name: Grass Ground
-  m_TagString: Untagged
+  m_TagString: Grass
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4
@@ -157,4 +157,3 @@ MonoBehaviour:
   makeStatic: 1
   enableGPUInstancing: 1
   disableShadows: 0
-  removeUnneededComponents: 1

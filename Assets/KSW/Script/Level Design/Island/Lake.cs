@@ -16,7 +16,7 @@ public class Lake
     public void Create()
     {
         Pos = new Vector2(
-            Random.Range(mapScale.total * 0.25f, mapScale.total * 0.55f),
+            Random.Range(mapScale.total * 0.25f, mapScale.total * 0.45f),
             Random.Range(mapScale.total * 0.25f, mapScale.total * 0.7f));
     }
 

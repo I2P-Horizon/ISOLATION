@@ -11,6 +11,7 @@ public class IslandManager : MonoBehaviour
     [Header("맵 높이")] public MapHeight mapHeight;
     [Header("시드 값")] public MapSeed mapSeed;
     [Header("맵 오브젝트")] public MapObject[] mapObjects;
+    [Header("유니크 오브젝트")] public UniqueArea uniqueArea;
 
     [Header("정글")] public Jungle jungle;
     [Header("해변")] public Beach beach;
@@ -62,13 +63,14 @@ public class IslandManager : MonoBehaviour
         mountain.Create();
         jungle.SetMountain(mountain);
 
+        uniqueArea = new UniqueArea(mapScale);
+        uniqueArea.Create();
+
         mapObjectManager = new MapObjectManager(islandParent, mapObjects, mapScale, mapHeight, mapSeed, lake);
         jungle.SetMapObjectManager(mapObjectManager);
 
         Vector3 origin = islandParent.position + new Vector3(-mapScale.total / 2f * mapScale.block.x, 0, -mapScale.total / 2f * mapScale.block.z);
         Vector2 center = new Vector2(mapScale.total / 2f, mapScale.total / 2f);
-
-        mapObjectManager.PlaceUniqueObjects();
 
         int chunkSize = 64;
         int chunksX = Mathf.CeilToInt((float)mapScale.total / chunkSize);
@@ -89,6 +91,7 @@ public class IslandManager : MonoBehaviour
                 grassParent.SetParent(chunkParent);
                 dirtParent.SetParent(chunkParent);
                 sandParent.SetParent(chunkParent);
+                waterParent.SetParent(islandParent);
 
                 int startX = cx * chunkSize;
                 int startZ = cz * chunkSize;
@@ -114,12 +117,21 @@ public class IslandManager : MonoBehaviour
                         Vector3 sandScale = block.GetScaleToFit(beach.sand, mapScale.block);
                         Vector3 waterScale = block.GetScaleToFit(lake.water, mapScale.block);
 
+                        // 고대 사원 처리
+                        if (uniqueArea.IsUniqueArea(x, z))
+                        {
+                            uniqueArea.PlaceUniqueBlocks(origin, x, z, jungle.dirt, dirtScale, dirtParent, mapObjectManager, mapHeight, mapScale);
+                            continue;
+                        }
+
+                        // 호수 처리
                         if (lake.IsLakeEdge(x, z) || lake.IsLakeInner(x, z))
                         {
                             lake.PlaceLakeBlocks(origin, x, z, dirtScale, waterScale, dirtParent, waterParent);
                             continue;
                         }
 
+                        // 일반 지형 처리
                         if (sandLayers > 0 && !isGrassArea) beach.PlaceSand(origin, x, z, sandLayers, sandScale, sandParent);
                         if (isGrassArea) jungle.PlaceGrassAndDirt(origin, x, z, sandLayers, grassScale, dirtScale, grassParent, dirtParent);
                     }
