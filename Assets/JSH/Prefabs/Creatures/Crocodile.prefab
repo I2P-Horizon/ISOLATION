@@ -74,8 +74,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1052548979792412689}
+  - component: {fileID: -1219814308916709680}
   - component: {fileID: 7600909721983573666}
-  - component: {fileID: 9077109681948048129}
   - component: {fileID: 1912763324784384275}
   m_Layer: 0
   m_Name: Crocodile
@@ -101,6 +101,40 @@ Transform:
   - {fileID: 434766890341511163}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-1219814308916709680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8688624321822278009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3ad6410723cbcd4cb77ff8252b07f26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hp: 0
+  _dropItem: {fileID: 0}
+  _dropAmount: 5
+  _animalState: 0
+  _animalShape: {fileID: 4897959907874394734}
+  _monsterState: 0
+  _monsterShape: {fileID: 6095599088504428576}
+  _moveSpeed: 0
+  _defense: 0
+  _detectionRadius: 0
+  _attackableRadius: 0
+  _attackDamage: 0
+  _attackSpeed: 0
+  _distanceToPlayer: 0
+  _animalStateDropItem: {fileID: 0}
+  _monsterStateDropItem: {fileID: 0}
+  _animalStateHp: 0
+  _monsterStateHp: 0
+  _isPatrolling: 0
+  _isChasing: 0
+  _isAttacking: 0
+  _hpUI: {fileID: 8248839253115585323}
 --- !u!54 &7600909721983573666
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -128,42 +162,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &9077109681948048129
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8688624321822278009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc4d2c1d319c8cc43b07454f87b66e31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hp: 50
-  _dropItem: {fileID: 8992916093723219132, guid: a50527626768f684f95883fa223c0d48, type: 3}
-  _dropAmount: 5
-  _animalState: 0
-  _animalShape: {fileID: 4897959907874394734}
-  _monsterState: 0
-  _monsterShape: {fileID: 6095599088504428576}
-  _isPatrolling: 0
-  _isChasing: 0
-  _isAttacking: 0
-  _moveSpeed: 5
-  _defense: 0
-  _detectionRadius: 10
-  _attackableRadius: 5
-  _attackDamage: 0
-  _attackSpeed: 0
-  _distanceToPlayer: 0
-  _animalStateDropItem: {fileID: 6276204957535943105, guid: 6a387bf0cee72af4c8b2aff301ebf77d, type: 3}
-  _monsterStateDropItem: {fileID: 6276204957535943105, guid: 6a387bf0cee72af4c8b2aff301ebf77d, type: 3}
-  _animalHp: 80
-  _monsterHp: 160
-  patrolRadius: 10
-  _hpUI: {fileID: 8248839253115585323}
-  _UIHideTime: 3
 --- !u!195 &1912763324784384275
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -392,7 +390,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4044842287539796994, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5550836465626057156, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -400,11 +398,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6195920642657744267, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6195920642657744267, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9107873640576528371, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_IsActive

@@ -14,8 +14,6 @@ public class MainManager : MonoBehaviour
 
     public Slider loadingBar;
 
-    public Image whiteOverlay;
-
     private IEnumerator LoadGameScene()
     {
         loadingPanel.SetActive(true);
@@ -45,22 +43,8 @@ public class MainManager : MonoBehaviour
     private IEnumerator StartEffect()
     {
         mainPanel.GetComponent<UIAnimator>().Close();
-        whiteOverlay.gameObject.SetActive(true);
-        float duration = 1f;
-        float elapsed = 0f;
-
-        Color startColor = whiteOverlay.color;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
-            whiteOverlay.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
-            yield return null;
-        }
-
-        whiteOverlay.gameObject.SetActive(false);
-        whiteOverlay.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
+        StartCoroutine(Fade.Instance.FadeOut(Color.white));
+        yield return new WaitForSeconds(0.5f);
         mainPanel.GetComponent<UIAnimator>().Show();
     }
 
