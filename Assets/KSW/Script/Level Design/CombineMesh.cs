@@ -47,6 +47,7 @@ public class CombineMesh : MonoBehaviour
             DestroyImmediate(child.gameObject);
         }
 
+        if (combinedObject.name.EndsWith("_Water")) return;
         MeshCollider meshCollider = combinedObject.AddComponent<MeshCollider>();
         meshCollider.sharedMesh = combinedMesh;
         meshCollider.convex = false;

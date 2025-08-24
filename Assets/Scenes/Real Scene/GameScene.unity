@@ -3333,11 +3333,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.08
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -123
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3975,6 +3975,96 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
   m_PrefabInstance: {fileID: 1092240662}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1425729659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1425729661}
+  - component: {fileID: 1425729660}
+  - component: {fileID: 1425729662}
+  m_Layer: 0
+  m_Name: Island Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1425729660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425729659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94cc7436aafcc9646a7bcff260bb7308, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  islandParent: {fileID: 1026859752}
+  width: 600
+  height: 600
+  chunkSize: 64
+  noiseScale: 80
+  octaves: 4
+  persistence: 0.5
+  lacunarity: 2
+  seed: 0
+  islandRadius: 200
+  falloffPower: 0.15
+  beachWidth: 3
+  maxHeight: 16
+  seaLevel: 4
+  grassBlock: {fileID: 1784206446667002742, guid: cbe2eba3308ec58459024c5892708459, type: 3}
+  dirtBlock: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
+  sandBlock: {fileID: 2739551521495890618, guid: bebbdb476ec66ed499c664d6f6240513, type: 3}
+  waterPlane: {fileID: 6492228295775410654, guid: f117407826827c840a1bd62ec3909e88, type: 3}
+  templePrefab: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
+  templeFloorBlock: {fileID: 7670950037535107308, guid: 7dcd8ec621ab9ac4d9343099b40ecf64, type: 3}
+  player: {fileID: 1344258696}
+  treePrefabs:
+  - {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
+  - {fileID: 6091739994827031229, guid: 8be4d495e4f5d154cb3e398be3bcf557, type: 3}
+  forestCount: 20
+  minTreesPerForest: 80
+  maxTreesPerForest: 150
+  forestRadius: 50
+  pineapplePrefab: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
+  pineappleSpawnChance: 0.0015
+  templeRadius: 10
+  templeY: 5
+  templeMaxDistanceFromCenter: 50
+--- !u!4 &1425729661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425729659}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1447601746}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1425729662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425729659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d346dc0b39f89614ca3ad1173c812455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1439304739
 GameObject:
   m_ObjectHideFlags: 0
@@ -4130,6 +4220,7 @@ Transform:
   - {fileID: 1743473160}
   - {fileID: 1836063579}
   - {fileID: 595531230}
+  - {fileID: 1425729661}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1498614510
@@ -4517,7 +4608,7 @@ Camera:
   far clip plane: 30
   field of view: 150
   orthographic: 1
-  orthographic size: 130
+  orthographic size: 300
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -4564,8 +4655,8 @@ MonoBehaviour:
   mapRect: {fileID: 729640906}
   playerIcon: {fileID: 1683333413}
   mapCamera: {fileID: 1665878769}
-  renderWidth: 64
-  renderHeight: 64
+  renderWidth: 100
+  renderHeight: 100
 --- !u!1 &1683333412
 GameObject:
   m_ObjectHideFlags: 0
@@ -4652,6 +4743,10 @@ PrefabInstance:
     - target: {fileID: 6492228295775410654, guid: f117407826827c840a1bd62ec3909e88, type: 3}
       propertyPath: m_Name
       value: Water Plane
+      objectReference: {fileID: 0}
+    - target: {fileID: 6492228295775410654, guid: f117407826827c840a1bd62ec3909e88, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7140231926416362227, guid: f117407826827c840a1bd62ec3909e88, type: 3}
       propertyPath: m_LocalScale.x
@@ -4845,7 +4940,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1836063579
 Transform:
   m_ObjectHideFlags: 0
@@ -5013,7 +5108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetTransform: {fileID: 1344258696}
-  _offset: {x: 0, y: 4, z: -5.5}
+  _offset: {x: 0, y: 5, z: -6.5}
   _smoothTime: 0.1
 --- !u!114 &1978927454
 MonoBehaviour:
@@ -5126,13 +5221,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1978927452}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13052616, y: -0, z: -0, w: 0.9914449}
+  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
   m_LocalPosition: {x: 0, y: 4.8, z: -128}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 15, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!114 &1978927458
 MonoBehaviour:
   m_ObjectHideFlags: 0

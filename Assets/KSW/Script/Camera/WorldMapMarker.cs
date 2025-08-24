@@ -11,8 +11,8 @@ public class WorldMapMarker : MonoBehaviour
     public Camera mapCamera;
 
     [Header("·»´õ ¼³Á¤")]
-    public int renderWidth = 64;
-    public int renderHeight = 64;
+    public int renderWidth = 100;
+    public int renderHeight = 100;
 
     private RenderTexture mapTexture;
 
