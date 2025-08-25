@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class IslandGenerator3D : MonoBehaviour
+public class IslandGenerator : MonoBehaviour
 {
     [Header("Parent Object")]
     public Transform islandParent;
@@ -63,6 +64,8 @@ public class IslandGenerator3D : MonoBehaviour
     private bool templeExists = false;
     private Vector3 templePos;
 
+    [HideInInspector] public float generationProgress = 0f;
+
     void Start()
     {
         if (seed == 0) seed = Random.Range(1, 100000);
@@ -112,7 +115,7 @@ public class IslandGenerator3D : MonoBehaviour
         }
     }
 
-    IEnumerator GenerateIsland()
+    public IEnumerator GenerateIsland()
     {
         if (islandParent == null)
             islandParent = new GameObject("Island").transform;
@@ -126,8 +129,12 @@ public class IslandGenerator3D : MonoBehaviour
 
         float halfW = width / 2f;
         float halfH = height / 2f;
+
         int chunkXCount = Mathf.CeilToInt((float)width / chunkSize);
         int chunkZCount = Mathf.CeilToInt((float)height / chunkSize);
+
+        int totalBlocks = chunkXCount * chunkZCount * chunkSize * chunkSize;
+        int blocksGenerated = 0;
 
         float waterY = seaLevel + 1.5f;
         sandPositions.Clear();
@@ -161,7 +168,7 @@ public class IslandGenerator3D : MonoBehaviour
 
                         float dist = Mathf.Sqrt(worldX * worldX + worldZ * worldZ) / islandRadius;
                         float noiseMask = Mathf.PerlinNoise((worldX + seed) / noiseScale, (worldZ + seed) / noiseScale);
-                        float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.5f);
+                        float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
                         islandMask = Mathf.Pow(islandMask, falloffPower);
 
                         float heightNoise = 0f;
@@ -236,6 +243,9 @@ public class IslandGenerator3D : MonoBehaviour
                         }
 
                         PlaceBlock(waterPlane, new Vector3(worldX, waterY, worldZ), waterParent);
+
+                        blocksGenerated++;
+                        generationProgress = (float)blocksGenerated / totalBlocks;
                     }
                 }
 
@@ -266,6 +276,12 @@ public class IslandGenerator3D : MonoBehaviour
         SpawnPlayer();
         SpawnForests();
         SpawnPineapples();
+
+        yield return null;
+        SceneManager.UnloadSceneAsync("MainScene");
+        yield return new WaitForSeconds(1f);
+        Loading.Instance.loadingPanel.SetActive(false);
+        Loading.Instance.isLoading = false;
     }
 
     void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)

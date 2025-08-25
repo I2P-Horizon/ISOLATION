@@ -18,18 +18,13 @@ public class WorldMapMarker : MonoBehaviour
 
     public IEnumerator DelayedRender()
     {
-        UIManager.Instance.renderLoding.SetActive(true);
-
-        yield return new WaitForSeconds(0.1f);
-
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 150; i++)
         {
             mapCamera.Render();
             yield return new WaitForEndOfFrame();
         }
 
         yield return null;
-        UIManager.Instance.renderLoding.SetActive(false);
     }
 
     void LateUpdate()
@@ -55,6 +50,5 @@ public class WorldMapMarker : MonoBehaviour
         mapCamera.enabled = false;
         if (mapImage != null) mapImage.texture = mapTexture;
         mapCamera.Render();
-        StartCoroutine(DelayedRender());
     }
 }

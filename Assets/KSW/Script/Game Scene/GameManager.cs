@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
+        //SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
         Time.timeScale = 1;
 
         playerState = FindFirstObjectByType<PlayerState>();

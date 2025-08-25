@@ -208,15 +208,16 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        PlayerStats();
         TimeUI();
-        WorldMapUI();
-        InventoryUI();
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (!Loading.Instance.isLoading)
         {
-            Pause();
+            PlayerStats();
+            WorldMapUI();
+            InventoryUI();
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && !Loading.Instance.isLoading) Pause();
     }
 
     private void Start()
