@@ -3,33 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[System.Serializable]
+public class ObjectData
+{
+    public GameObject ObjectPrefab;
+    [Range(0, 1)] public float spawnChance;
+}
+
 public class IslandGenerator : MonoBehaviour
 {
     [Header("Parent Object")]
     public Transform islandParent;
 
-    [Header("Grid (Sea Area)")]
-    public int width = 800;
-    public int height = 800;
-    public int chunkSize = 64;
+    [Header("Player")]
+    public Transform player;
 
-    [Header("Noise")]
-    public float noiseScale = 30f;
-    public int octaves = 4;
-    public float persistence = 0.5f;
-    public float lacunarity = 2f;
-    public int seed = 0;
-
-    [Header("Shape")]
-    public float islandRadius = 200f;
-    public float falloffPower = 0.5f;
-    public float beachWidth = 5f;
-
-    [Header("Heights")]
-    public int maxHeight = 16;
-    public int seaLevel = 4;
-
-    [Header("Prefabs")]
+    [Header("Block Prefabs")]
     public GameObject grassBlock;
     public GameObject dirtBlock;
     public GameObject sandBlock;
@@ -37,25 +26,41 @@ public class IslandGenerator : MonoBehaviour
     public GameObject templePrefab;
     public GameObject templeFloorBlock;
 
-    [Header("Player")]
-    public Transform player;
+    [Header("Grid (Sea Area)")]
+    public int width = 800;
+    public int height = 800;
+    public int chunkSize = 64;
 
-    [Header("Forest Settings")]
+    [Header("Noise")]
+    public float noiseScale = 80f;
+    public int octaves = 4;
+    public float persistence = 0.5f;
+    public float lacunarity = 2f;
+    public int seed = 0;
+
+    [Header("Shape")]
+    public float islandRadius = 200f;
+    public float falloffPower = 0.15f;
+    public float beachWidth = 3f;
+
+    [Header("Heights")]
+    public int maxHeight = 16;
+    public int seaLevel = 4;
+
+    [Header("Jungle Settings")]
+    public int JungleCount = 20;
+    public int minTreesPerJungle = 60;
+    public int maxTreesPerJungle = 80;
+    public float JungleRadius = 80f;
     public GameObject[] treePrefabs;
-    public int forestCount = 5;
-    public int minTreesPerForest = 20;
-    public int maxTreesPerForest = 50;
-    public float forestRadius = 15f;
-
-    [Header("Pineapple Settings")]
-    public GameObject pineapplePrefab;
-    [Range(0f, 1f)]
-    public float pineappleSpawnChance = 0.2f;
 
     [Header("Temple Settings")]
     public float templeRadius = 10f;
     public float templeY = 5f;
     public float templeMaxDistanceFromCenter = 50f;
+
+    [Header("Object Settings")]
+    public ObjectData[] objectData;
 
     private Dictionary<GameObject, Vector3> _scaleCache = new Dictionary<GameObject, Vector3>();
     private List<Vector3> sandPositions = new List<Vector3>();
@@ -66,7 +71,7 @@ public class IslandGenerator : MonoBehaviour
 
     [HideInInspector] public float generationProgress = 0f;
 
-    void Start()
+    private void Start()
     {
         if (seed == 0) seed = Random.Range(1, 100000);
 
@@ -74,7 +79,7 @@ public class IslandGenerator : MonoBehaviour
         StartCoroutine(GenerateIsland());
     }
 
-    void DetermineTemplePosition()
+    private void DetermineTemplePosition()
     {
         if (templePrefab == null) return;
 
@@ -86,13 +91,15 @@ public class IslandGenerator : MonoBehaviour
 
             float dist = Mathf.Sqrt(testX * testX + testZ * testZ) / islandRadius;
             float noiseMask = Mathf.PerlinNoise((testX + seed) / noiseScale, (testZ + seed) / noiseScale);
-            float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.5f);
+            float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
             islandMask = Mathf.Pow(islandMask, falloffPower);
+            islandMask = Mathf.Max(islandMask, 0.05f);
 
             float heightNoise = 0f;
             float amplitude = 1f;
             float frequency = 1f;
             float maxAmp = 0f;
+
             for (int o = 0; o < octaves; o++)
             {
                 float sampleX = (testX + seed) / noiseScale * frequency;
@@ -102,9 +109,12 @@ public class IslandGenerator : MonoBehaviour
                 amplitude *= persistence;
                 frequency *= lacunarity;
             }
+
             if (maxAmp > 0f) heightNoise /= maxAmp;
 
             int landHeight = Mathf.RoundToInt(heightNoise * islandMask * maxHeight);
+
+            if (landHeight <= seaLevel) landHeight = seaLevel + 1;
 
             if (islandMask > 0f && landHeight > seaLevel + 1)
             {
@@ -115,17 +125,13 @@ public class IslandGenerator : MonoBehaviour
         }
     }
 
-    public IEnumerator GenerateIsland()
+    private IEnumerator GenerateIsland()
     {
-        if (islandParent == null)
-            islandParent = new GameObject("Island").transform;
+        if (islandParent == null) islandParent = new GameObject("Island").transform;
 
         Vector3 targetSize = Vector3.one;
         foreach (var p in new[] { grassBlock, dirtBlock, sandBlock, waterPlane, templeFloorBlock })
-        {
-            if (p != null && !_scaleCache.ContainsKey(p))
-                _scaleCache[p] = GetScaleToFit(p, targetSize);
-        }
+            if (p != null && !_scaleCache.ContainsKey(p)) _scaleCache[p] = GetScaleToFit(p, targetSize);
 
         float halfW = width / 2f;
         float halfH = height / 2f;
@@ -175,6 +181,7 @@ public class IslandGenerator : MonoBehaviour
                         float amplitude = 1f;
                         float frequency = 1f;
                         float maxAmp = 0f;
+
                         for (int o = 0; o < octaves; o++)
                         {
                             float sampleX = (worldX + seed) / noiseScale * frequency;
@@ -184,12 +191,14 @@ public class IslandGenerator : MonoBehaviour
                             amplitude *= persistence;
                             frequency *= lacunarity;
                         }
+
                         if (maxAmp > 0f) heightNoise /= maxAmp;
 
                         int landHeight = Mathf.RoundToInt(heightNoise * islandMask * maxHeight);
 
                         int sandLayers = 0;
                         float distanceToEdge = islandRadius - dist * islandRadius * islandMask;
+
                         if (distanceToEdge < beachWidth)
                         {
                             float t = Mathf.Clamp01(distanceToEdge / beachWidth);
@@ -205,12 +214,7 @@ public class IslandGenerator : MonoBehaviour
                             {
                                 float floorY = Mathf.Max(templePos.y, templeY);
                                 PlaceBlock(templeFloorBlock, new Vector3(worldX, floorY, worldZ), templeParent);
-
-                                for (int y = seaLevel + 1; y < floorY; y++)
-                                {
-                                    PlaceBlock(dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
-                                }
-
+                                for (int y = seaLevel + 1; y < floorY; y++) PlaceBlock(dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
                                 continue;
                             }
 
@@ -225,6 +229,7 @@ public class IslandGenerator : MonoBehaviour
                                         sandPositions.Add(pos);
                                     }
                                 }
+
                                 if (landHeight > sandLayers)
                                 {
                                     Vector3 grassPos = new Vector3(worldX, sandLayers, worldZ);
@@ -232,6 +237,7 @@ public class IslandGenerator : MonoBehaviour
                                     topGrassPositions.Add(grassPos);
                                 }
                             }
+
                             else
                             {
                                 GameObject topBlock = (landHeight == seaLevel + 1) ? sandBlock : grassBlock;
@@ -269,42 +275,48 @@ public class IslandGenerator : MonoBehaviour
         }
 
         if (templeExists && templePrefab != null)
-        {
             Instantiate(templePrefab, new Vector3(templePos.x, Mathf.Max(templePos.y, templeY), templePos.z), Quaternion.identity, islandParent);
-        }
 
         SpawnPlayer();
-        SpawnForests();
-        SpawnPineapples();
+        SpawnJungles();
+        SpawnObject();
 
-        yield return null;
+        /* юс╫ц */
+        WorldMapMarker worldMapMarker = FindFirstObjectByType<WorldMapMarker>();
+        while (worldMapMarker.isRender) yield return null;
         SceneManager.UnloadSceneAsync("MainScene");
         yield return new WaitForSeconds(1f);
         Loading.Instance.loadingPanel.SetActive(false);
         Loading.Instance.isLoading = false;
     }
 
-    void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
+    private void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
     {
         if (prefab == null) return;
+
         GameObject block = Instantiate(prefab, pos, Quaternion.identity, parent);
-        if (_scaleCache.TryGetValue(prefab, out Vector3 s))
-            block.transform.localScale = s;
+
+        if (_scaleCache.TryGetValue(prefab, out Vector3 s)) block.transform.localScale = s;
     }
 
-    public Vector3 GetScaleToFit(GameObject prefab, Vector3 targetSize)
+    private Vector3 GetScaleToFit(GameObject prefab, Vector3 targetSize)
     {
         GameObject temp = Instantiate(prefab);
         Renderer rend = temp.GetComponentInChildren<Renderer>();
+
         if (rend == null) { DestroyImmediate(temp); return Vector3.one; }
+
         Vector3 originalSize = rend.bounds.size;
         DestroyImmediate(temp);
+
         if (originalSize == Vector3.zero) return Vector3.one;
+
         float yScale = originalSize.y < 0.01f ? 1f : targetSize.y / originalSize.y;
+
         return new Vector3(targetSize.x / originalSize.x, yScale, targetSize.z / originalSize.z);
     }
 
-    void SpawnPlayer()
+    private void SpawnPlayer()
     {
         if (player == null || sandPositions.Count == 0) return;
         Vector3 spawnPos = sandPositions[0];
@@ -312,7 +324,9 @@ public class IslandGenerator : MonoBehaviour
         foreach (var pos in sandPositions)
         {
             if (pos.y <= seaLevel) continue;
+
             float distFromCenter = new Vector2(pos.x, pos.z).magnitude;
+
             if (distFromCenter >= islandRadius - beachWidth * 2)
             {
                 float diff = Mathf.Abs(distFromCenter - (islandRadius - beachWidth / 2));
@@ -323,13 +337,14 @@ public class IslandGenerator : MonoBehaviour
                 }
             }
         }
+
         player.position = spawnPos + Vector3.up * 1f;
     }
 
-    void SpawnForests()
+    private void SpawnJungles()
     {
         if (treePrefabs == null || treePrefabs.Length == 0) return;
-        for (int i = 0; i < forestCount; i++)
+        for (int i = 0; i < JungleCount; i++)
         {
             float angle = Random.Range(0f, Mathf.PI * 2f);
             float dist = Random.Range(islandRadius * 0.3f, islandRadius * 0.8f);
@@ -343,31 +358,34 @@ public class IslandGenerator : MonoBehaviour
                     if (templeExists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius)
                         continue;
 
-                    SpawnForestCluster(hit.point, islandParent);
+                    SpawnJungleCluster(hit.point, islandParent);
                 }
             }
         }
     }
 
-    void SpawnForestCluster(Vector3 centerPos, Transform parent)
+    private void SpawnJungleCluster(Vector3 centerPos, Transform parent)
     {
         Transform clusterParent = new GameObject("ForestCluster").transform;
         clusterParent.SetParent(parent);
         clusterParent.position = centerPos;
 
         GameObject selectedTreePrefab = treePrefabs[Random.Range(0, treePrefabs.Length)];
-        int treeCount = Random.Range(minTreesPerForest, maxTreesPerForest + 1);
+        int treeCount = Random.Range(minTreesPerJungle, maxTreesPerJungle + 1);
 
         for (int i = 0; i < treeCount; i++)
         {
-            Vector2 offset2D = Random.insideUnitCircle * forestRadius;
+            Vector2 offset2D = Random.insideUnitCircle * JungleRadius;
             Vector3 spawnPos = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
 
             RaycastHit hit;
+
             if (Physics.Raycast(spawnPos + Vector3.up * 50f, Vector3.down, out hit, 100f))
             {
                 string groundName = hit.collider.gameObject.name.ToLower();
+
                 if (groundName.Contains("sand")) continue;
+
                 if (hit.point.y > seaLevel + 1f)
                 {
                     if (templeExists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius)
@@ -380,16 +398,24 @@ public class IslandGenerator : MonoBehaviour
         }
     }
 
-    void SpawnPineapples()
+    private void SpawnObject()
     {
-        if (pineapplePrefab == null) return;
+        if (objectData == null || objectData.Length == 0) return;
+
         foreach (var grassPos in topGrassPositions)
         {
-            if (templeExists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius)
-                continue;
+            if (templeExists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius) continue;
 
-            if (Random.value < pineappleSpawnChance)
-                Instantiate(pineapplePrefab, grassPos + Vector3.up * 1f, Quaternion.identity, islandParent);
+            foreach (var obj in objectData)
+            {
+                if (obj.ObjectPrefab == null) continue;
+
+                if (Random.value < obj.spawnChance)
+                {
+                    Instantiate(obj.ObjectPrefab, grassPos + Vector3.up * 1f, Quaternion.identity, islandParent);
+                    break;
+                }
+            }
         }
     }
 }

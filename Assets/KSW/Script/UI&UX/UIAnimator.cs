@@ -73,7 +73,7 @@ public class ScaleAnimator
 /// <summary>
 /// UI 확장/축소 애니메이션을 관리하는 컴포넌트
 /// </summary>
-[RequireComponent(typeof(RectTransform))]
+[RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
 public class UIAnimator : MonoBehaviour
 {
     [Header("Animation Settings")]
@@ -90,14 +90,20 @@ public class UIAnimator : MonoBehaviour
     public Vector3 positionShown = Vector3.zero;
     public Vector3 positionHidden = new Vector3(0f, 200f, 0f);
 
-    private Coroutine currentScaleRoutine;
-    private Coroutine currentMoveRoutine;
+    [Header("Fade Settings")]
+    public bool useFade = true;
 
+    private CanvasGroup canvasGroup;
     private ScaleAnimator scaleAnimator;
     private MoveAnimator moveAnimator;
 
+    private Coroutine currentScaleRoutine;
+    private Coroutine currentMoveRoutine;
+    private Coroutine currentFadeRoutine;
+
     private void Awake()
     {
+        canvasGroup = GetComponent<CanvasGroup>();
         scaleAnimator = new ScaleAnimator(transform);
         moveAnimator = new MoveAnimator(transform);
     }
@@ -106,6 +112,7 @@ public class UIAnimator : MonoBehaviour
     {
         if (useScale) transform.localScale = scaleHidden;
         if (useMove) transform.localPosition = positionHidden;
+        if (useFade) canvasGroup.alpha = 0f;
 
         PlayAnimation();
     }
@@ -114,6 +121,7 @@ public class UIAnimator : MonoBehaviour
     {
         if (currentScaleRoutine != null) StopCoroutine(currentScaleRoutine);
         if (currentMoveRoutine != null) StopCoroutine(currentMoveRoutine);
+        if (currentFadeRoutine != null) StopCoroutine(currentFadeRoutine);
     }
 
     public void Show()
@@ -122,16 +130,14 @@ public class UIAnimator : MonoBehaviour
 
         if (useScale) transform.localScale = scaleHidden;
         if (useMove) transform.localPosition = positionHidden;
+        if (useFade) canvasGroup.alpha = 0f;
 
         PlayAnimation();
     }
 
     public void Close()
     {
-        PlayReverseAnimation(() =>
-        {
-            gameObject.SetActive(false);
-        });
+        PlayReverseAnimation(() => gameObject.SetActive(false));
     }
 
     private void PlayAnimation()
@@ -147,12 +153,18 @@ public class UIAnimator : MonoBehaviour
             if (currentMoveRoutine != null) StopCoroutine(currentMoveRoutine);
             currentMoveRoutine = StartCoroutine(moveAnimator.AnimateTo(positionShown, duration, delay));
         }
+
+        if (useFade)
+        {
+            if (currentFadeRoutine != null) StopCoroutine(currentFadeRoutine);
+            currentFadeRoutine = StartCoroutine(FadeTo(1f, duration, delay));
+        }
     }
 
     private void PlayReverseAnimation(Action onComplete = null)
     {
         int completed = 0;
-        int required = (useScale ? 1 : 0) + (useMove ? 1 : 0);
+        int required = (useScale ? 1 : 0) + (useMove ? 1 : 0) + (useFade ? 1 : 0);
 
         Action callback = () =>
         {
@@ -172,5 +184,30 @@ public class UIAnimator : MonoBehaviour
             if (currentMoveRoutine != null) StopCoroutine(currentMoveRoutine);
             currentMoveRoutine = StartCoroutine(moveAnimator.AnimateTo(positionHidden, duration, delay, callback));
         }
+
+        if (useFade)
+        {
+            if (currentFadeRoutine != null) StopCoroutine(currentFadeRoutine);
+            currentFadeRoutine = StartCoroutine(FadeTo(0f, duration, delay, callback));
+        }
+    }
+
+    private IEnumerator FadeTo(float targetAlpha, float duration, float delay = 0f, Action onComplete = null)
+    {
+        if (delay > 0f) yield return new WaitForSecondsRealtime(delay);
+
+        float startAlpha = canvasGroup.alpha;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(time / duration);
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
+            yield return null;
+        }
+
+        canvasGroup.alpha = targetAlpha;
+        onComplete?.Invoke();
     }
 }

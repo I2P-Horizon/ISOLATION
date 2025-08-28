@@ -10,21 +10,19 @@ public class WorldMapMarker : MonoBehaviour
     public RectTransform playerIcon;
     public Camera mapCamera;
 
-    [Header("·»´õ ¼³Á¤")]
-    public int renderWidth = 100;
-    public int renderHeight = 100;
+    public bool isRender = false;
 
     private RenderTexture mapTexture;
 
     public IEnumerator DelayedRender()
     {
-        for (int i = 0; i < 150; i++)
+        isRender = true;
+        for (int i = 0; i < 130; i++)
         {
             mapCamera.Render();
             yield return new WaitForEndOfFrame();
         }
-
-        yield return null;
+        isRender = false;
     }
 
     void LateUpdate()
@@ -41,7 +39,7 @@ public class WorldMapMarker : MonoBehaviour
 
     void Start()
     {
-        mapTexture = new RenderTexture(renderWidth, renderHeight, 16);
+        mapTexture = new RenderTexture(512, 512, 24);
         mapTexture.filterMode = FilterMode.Point;
 
         mapCamera.targetTexture = mapTexture;
@@ -49,6 +47,5 @@ public class WorldMapMarker : MonoBehaviour
         RawImage mapImage = mapRect.GetComponent<RawImage>();
         mapCamera.enabled = false;
         if (mapImage != null) mapImage.texture = mapTexture;
-        mapCamera.Render();
     }
 }
