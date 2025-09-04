@@ -1,0 +1,15 @@
+{
+  "Health": [
+    {
+      "id": 10001,
+      "itemName": "작은 체력 포션",
+      "itemToolTip": "체력을 약간 회복시켜 줍니다.",
+      "itemExplanation": "체력을 30 회복합니다.",
+      "itemIcon": "SmallHealthPotionIcon",
+      "itemPrice": 20,
+      "maxAmount": 99,
+      "portionType": "Health",
+      "value": 30.0
+    }
+  ]
+}

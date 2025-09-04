@@ -5,18 +5,25 @@ using TMPro;
 //using UnityEditorInternal;
 using UnityEngine;
 
-namespace InventorySystem
+public class FoodItemData : CountableItemData
 {
-    [CreateAssetMenu(fileName = "Itme_Food_", menuName = "Inventory System/Item Data/Food", order = 4)]
-    public class FoodItemData : CountableItemData
-    {
-        /// <summary>포만감 회복량</summary>
-        public float Value => _value;
-        [SerializeField] private float _value;
+    public float Value { get; private set; } // 포만감 회복량
 
-        public override Item CreateItem()
-        {
-            return new FoodItem(this);
-        }
+    public FoodItemData(FoodItemDTO dto)
+    {
+        this.id = dto.id;
+        this.itemName = dto.itemName;
+        this.itemToolTip = dto.itemToolTip;
+        this.itemExplanation = dto.itemExplanation;
+        this.itemIcon = dto.itemIcon;
+        this.itemPrice = dto.itemPrice;
+        this.maxAmount = dto.maxAmount;
+
+        this.Value = dto.value;
+    }
+
+    public override Item CreateItem()
+    {
+        return new FoodItem(this);
     }
 }

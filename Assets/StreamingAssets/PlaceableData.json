@@ -1,0 +1,14 @@
+{
+    "Tools": [
+        {
+            "id": 60001,
+            "itemName": "제작대",
+            "itemToolTip": "여러 아이템을 제작할 수 있는 제작대.",
+            "itemExplanation": "사용 시 제작대를 설치합니다.",
+            "itemIcon": "CraftingTableIcon",
+            "itemPrice": 40,
+            "maxAmount": 99,
+            "prefabName": "CraftingTablePrefab"
+        }
+    ]
+}

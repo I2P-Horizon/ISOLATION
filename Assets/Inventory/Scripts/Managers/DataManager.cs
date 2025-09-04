@@ -16,10 +16,16 @@ public class DataManager : Singleton<DataManager>
     private string weaponItemDataPath;      // 무기 데이터 저장경로
     private string portionItemDataPath;     // 포션 데이터 저장경로
     private string armorItemDataPath;       // 방어구 데이터 저장경로
+    private string foodItemDataPath;        // 음식 데이터 저장경로
+    private string materialItemDataPath;    // 재료 데이터 저장경로
+    private string placeableItemDataPath;   // 설치 아이템 데이터 저장경로
 
     private Dictionary<int, WeaponItemData> weaponDataDictionary;
     private Dictionary<int, PortionItemData> portionDataDictionary;
     private Dictionary<int, ArmorItemData> armorDataDictionary;
+    private Dictionary<int, FoodItemData> foodDataDictionary;
+    private Dictionary<int, MaterialItemData> materialDataDictionary;
+    private Dictionary<int, PlaceableItemData> placeableDataDictionary;
     private PlayerData playerData;
 
     protected override void Awake()
@@ -34,11 +40,17 @@ public class DataManager : Singleton<DataManager>
         weaponItemDataPath = Path.Combine(Application.persistentDataPath, "WeaponData.json");
         portionItemDataPath = Path.Combine(Application.persistentDataPath, "PortionData.json");
         armorItemDataPath = Path.Combine(Application.persistentDataPath, "ArmorData.json");
+        foodItemDataPath = Path.Combine(Application.persistentDataPath, "FoodData.json");
+        materialItemDataPath = Path.Combine(Application.persistentDataPath, "MaterialData.json");
+        placeableItemDataPath = Path.Combine(Application.persistentDataPath, "PlaceableData.json");
 
         playerData = LoadPlayerData();
         weaponDataDictionary = LoadWeaponData();
         portionDataDictionary = LoadPortionData();
         armorDataDictionary = LoadArmorData();
+        foodDataDictionary = LoadFoodData();
+        materialDataDictionary = LoadMaterialData();
+        placeableDataDictionary = LoadPlaceableData();
     }
 
     // 데이터 저장
@@ -52,24 +64,35 @@ public class DataManager : Singleton<DataManager>
     // 플레이어 데이터 불러오기
     private PlayerData LoadPlayerData()
     {
-        if(File.Exists(playerDataPath))
-        {
-            string jsonData = File.ReadAllText(playerDataPath);
-            var playerDTO = JsonConvert.DeserializeObject<PlayerDataDTO>(jsonData);
+        string persistentPath = Path.Combine(Application.persistentDataPath, "PlayerData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "PlayerData.json");
 
-            if (playerDTO != null && playerDTO.Status != null && playerDTO.Position != null)
+        if (!File.Exists(persistentPath))
+        {
+            Debug.Log("PlayerData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+
+            if (File.Exists(streamingPath))
             {
-                return new PlayerData(playerDTO);
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("PlayerData.json 파일이 복사되었습니다.");
             }
             else
             {
-                Debug.LogWarning("PlayerData.json 파일에 Status 또는 Position 정보가 없음.");
+                Debug.LogWarning("StreamingAssets 폴더에 PlayerData.json 파일이 없습니다.");
                 return null;
             }
         }
+
+        string jsonData = File.ReadAllText(persistentPath);
+        var playerDTO = JsonConvert.DeserializeObject<PlayerDataDTO>(jsonData);
+
+        if (playerDTO != null && playerDTO.Status != null && playerDTO.Position != null)
+        {
+            return new PlayerData(playerDTO);
+        }
         else
         {
-            Debug.LogWarning("PlayerData.json 파일이 없음.");
+            Debug.LogWarning("PlayerData.json 파일에 Status 또는 Position 정보가 없음.");
             return null;
         }
     }
@@ -78,107 +101,266 @@ public class DataManager : Singleton<DataManager>
     private Dictionary<int, WeaponItemData> LoadWeaponData()
     {
         Dictionary<int, WeaponItemData> dataDictionary = new Dictionary<int, WeaponItemData>();
+        string persistentPath = Path.Combine(Application.persistentDataPath, "WeaponData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "WeaponData.json");
 
-        if (File.Exists(weaponItemDataPath))
+        if (!File.Exists(persistentPath))
         {
-            string jsonData = File.ReadAllText(weaponItemDataPath);
-            var weaponDict = JsonConvert.DeserializeObject<Dictionary<string, List<WeaponItemDTO>>>(jsonData);
-
-            // 카테고리별 모든 데이터 저장
-            if(weaponDict != null)
+            Debug.Log("WeaponData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+            
+            if (File.Exists(streamingPath))
             {
-                foreach(var category in weaponDict)
-                {
-                    // DTO를 WeaponItemData로 변환하여 저장
-                    foreach (var weaponDTO in category.Value)
-                    {
-                        WeaponItemData weaponData = new WeaponItemData(weaponDTO);
-                        dataDictionary[weaponData.ID] = weaponData;
-                    }
-                }
-                return dataDictionary;
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("WeaponData.json 파일이 복사되었습니다.");
             }
             else
             {
-                Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+                Debug.LogWarning("StreamingAssets 폴더에 WeaponData.json 파일이 없습니다.");
+                return dataDictionary;
             }
+        }
+
+        string jsonData = File.ReadAllText(persistentPath);
+        var weaponDict = JsonConvert.DeserializeObject<Dictionary<string, List<WeaponItemDTO>>>(jsonData);
+
+        if (weaponDict != null)
+        {
+            foreach (var category in weaponDict)
+            {
+                foreach (var weaponDTO in category.Value)
+                {
+                    WeaponItemData weaponData = new WeaponItemData(weaponDTO);
+                    dataDictionary[weaponData.ID] = weaponData;
+                }
+            }
+            return dataDictionary;
         }
         else
         {
-            Debug.LogWarning("WeaponData.json 파일이 없음.");
+            Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+            return new Dictionary<int, WeaponItemData>();
         }
-        return new Dictionary<int, WeaponItemData>();
     }
 
     // 포션 데이터 불러오기
     private Dictionary<int, PortionItemData> LoadPortionData()
     {
         Dictionary<int, PortionItemData> dataDictionary = new Dictionary<int, PortionItemData>();
+        string persistentPath = Path.Combine(Application.persistentDataPath, "PortionData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "PortionData.json");
 
-        if (File.Exists(portionItemDataPath))
+        if (!File.Exists(persistentPath))
         {
-            string jsonData = File.ReadAllText(portionItemDataPath);
-            var portionDict = JsonConvert.DeserializeObject<Dictionary<string, List<PortionItemDTO>>>(jsonData);
-
-            // 카테고리별 모든 데이터 저장
-            if (portionDict !=  null)
+            Debug.Log("PortionData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+            
+            if (File.Exists(streamingPath))
             {
-                foreach (var category in portionDict)
-                {
-                    // DTO를 WeaponItemData로 변환하여 저장
-                    foreach (var portionDTO in category.Value)
-                    {
-                        PortionItemData portionData = new PortionItemData(portionDTO);
-                        dataDictionary[portionData.ID] = portionData;
-                    }
-                }
-                return dataDictionary;
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("PortionData.json 파일이 복사되었습니다.");
             }
             else
             {
-                Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+                Debug.LogWarning("StreamingAssets 폴더에 PortionData.json 파일이 없습니다.");
+                return new Dictionary<int, PortionItemData>();
             }
+        }
+
+        string jsonData = File.ReadAllText(persistentPath);
+        var portionDict = JsonConvert.DeserializeObject<Dictionary<string, List<PortionItemDTO>>>(jsonData);
+
+        if (portionDict != null)
+        {
+            foreach (var category in portionDict)
+            {
+                foreach (var portionDTO in category.Value)
+                {
+                    PortionItemData portionData = new PortionItemData(portionDTO);
+                    dataDictionary[portionData.ID] = portionData;
+                }
+            }
+            return dataDictionary;
         }
         else
         {
-            Debug.LogWarning("PortionData.json 파일이 없음.");
+            Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+            return new Dictionary<int, PortionItemData>();
         }
-        return new Dictionary<int, PortionItemData>();
     }
 
     // 방어구 데이터 불러오기
     private Dictionary<int, ArmorItemData> LoadArmorData()
     {
         Dictionary<int, ArmorItemData> dataDictionary = new Dictionary<int, ArmorItemData>();
+        string persistentPath = Path.Combine(Application.persistentDataPath, "ArmorData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "ArmorData.json");
 
-        if (File.Exists(armorItemDataPath))
+        if (!File.Exists(persistentPath))
         {
-            string jsonData = File.ReadAllText(armorItemDataPath);
-            var armorDict = JsonConvert.DeserializeObject<Dictionary<string, List<ArmorItemDTO>>>(jsonData);
-
-            // 카테고리별 모든 데이터 저장
-            if (armorDict != null)
+            Debug.Log("ArmorData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+            if (File.Exists(streamingPath))
             {
-                foreach(var category in armorDict)  // "Top", "Shoes", "Gloves"
-                {
-                    foreach (var armorDTO in category.Value)
-                    {
-                        ArmorItemData armorData = new ArmorItemData(armorDTO);
-                        dataDictionary[armorData.ID] = armorData;
-                    }  
-                }
-                return dataDictionary;
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("ArmorData.json 파일이 복사되었습니다.");
             }
             else
             {
-                Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+                Debug.LogWarning("StreamingAssets 폴더에 ArmorData.json 파일이 없습니다.");
+                return new Dictionary<int, ArmorItemData>();
             }
+        }
+
+        string jsonData = File.ReadAllText(persistentPath);
+        var armorDict = JsonConvert.DeserializeObject<Dictionary<string, List<ArmorItemDTO>>>(jsonData);
+
+        if (armorDict != null)
+        {
+            foreach (var category in armorDict)
+            {
+                foreach (var armorDTO in category.Value)
+                {
+                    ArmorItemData armorData = new ArmorItemData(armorDTO);
+                    dataDictionary[armorData.ID] = armorData;
+                }
+            }
+            return dataDictionary;
         }
         else
         {
-            Debug.LogWarning("ArmorData.json 파일이 없음.");
+            Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+            return new Dictionary<int, ArmorItemData>();
         }
-        return new Dictionary<int, ArmorItemData>();
+    }
+
+    // 음식 데이터 불러오기
+    private Dictionary<int, FoodItemData> LoadFoodData()
+    {
+        Dictionary<int, FoodItemData> dataDictionary = new Dictionary<int, FoodItemData>();
+        string persistentPath = Path.Combine(Application.persistentDataPath, "FoodData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "FoodData.json");
+
+        if (!File.Exists(persistentPath))
+        {
+            Debug.Log("FoodData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+            if (File.Exists(streamingPath))
+            {
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("FoodData.json 파일이 복사되었습니다.");
+            }
+            else
+            {
+                Debug.LogWarning("StreamingAssets 폴더에 FoodData.json 파일이 없습니다.");
+                return new Dictionary<int, FoodItemData>();
+            }
+        }
+
+        string jsonData = File.ReadAllText(persistentPath);
+        var foodDict = JsonConvert.DeserializeObject<Dictionary<string, List<FoodItemDTO>>>(jsonData);
+       
+        if (foodDict != null)
+        {
+            foreach (var category in foodDict)
+            {
+                foreach (var foodDTO in category.Value)
+                {
+                    FoodItemData foodData = new FoodItemData(foodDTO);
+                    dataDictionary[foodData.ID] = foodData;
+                }
+            }
+            return dataDictionary;
+        }
+        else
+        {
+            Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+            return new Dictionary<int, FoodItemData>();
+        }
+    }
+
+    // 재료 데이터 불러오기
+    private Dictionary<int, MaterialItemData> LoadMaterialData()
+    {
+        Dictionary<int, MaterialItemData> dataDictionary = new Dictionary<int, MaterialItemData>();
+        string persistentPath = Path.Combine(Application.persistentDataPath, "MaterialData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "MaterialData.json");
+        
+        if (!File.Exists(persistentPath))
+        {
+            Debug.Log("MaterialData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+            if (File.Exists(streamingPath))
+            {
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("MaterialData.json 파일이 복사되었습니다.");
+            }
+            else
+            {
+                Debug.LogWarning("StreamingAssets 폴더에 MaterialData.json 파일이 없습니다.");
+                return new Dictionary<int, MaterialItemData>();
+            }
+        }
+        
+        string jsonData = File.ReadAllText(persistentPath);
+        var materialDict = JsonConvert.DeserializeObject<Dictionary<string, List<MaterialItemDTO>>>(jsonData);
+        
+        if (materialDict != null)
+        {
+            foreach (var category in materialDict)
+            {
+                foreach (var materialDTO in category.Value)
+                {
+                    MaterialItemData materialData = new MaterialItemData(materialDTO);
+                    dataDictionary[materialData.ID] = materialData;
+                }
+            }
+            return dataDictionary;
+        }
+        else
+        {
+            Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+            return new Dictionary<int, MaterialItemData>();
+        }
+    }
+
+    // 설치 아이템 데이터 불러오기
+    private Dictionary<int, PlaceableItemData> LoadPlaceableData()
+    {
+        Dictionary<int, PlaceableItemData> dataDictionary = new Dictionary<int, PlaceableItemData>();
+        string persistentPath = Path.Combine(Application.persistentDataPath, "PlaceableData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "PlaceableData.json");
+        
+        if (!File.Exists(persistentPath))
+        {
+            Debug.Log("PlaceableData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+            if (File.Exists(streamingPath))
+            {
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("PlaceableData.json 파일이 복사되었습니다.");
+            }
+            else
+            {
+                Debug.LogWarning("StreamingAssets 폴더에 PlaceableData.json 파일이 없습니다.");
+                return new Dictionary<int, PlaceableItemData>();
+            }
+        }
+        
+        string jsonData = File.ReadAllText(persistentPath);
+        var placeableDict = JsonConvert.DeserializeObject<Dictionary<string, List<PlaceableItemDTO>>>(jsonData);
+        
+        if (placeableDict != null)
+        {
+            foreach (var category in placeableDict)
+            {
+                foreach (var placeableDTO in category.Value)
+                {
+                    PlaceableItemData placeableData = new PlaceableItemData(placeableDTO);
+                    dataDictionary[placeableData.ID] = placeableData;
+                }
+            }
+            return dataDictionary;
+        }
+        else
+        {
+            Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+            return new Dictionary<int, PlaceableItemData>();
+        }
     }
 
     // ID로 무기 데이터 가져오기
@@ -212,13 +394,55 @@ public class DataManager : Singleton<DataManager>
     // ID로 방어구 데이터 가져오기
     public ArmorItemData GetArmorDataById(int id)
     {
-        if(armorDataDictionary != null && armorDataDictionary.TryGetValue(id, out var resultData))
+        if (armorDataDictionary != null && armorDataDictionary.TryGetValue(id, out var resultData))
         {
             return resultData;
         }
         else
         {
             Debug.LogWarning(id + "에 해당하는 방어구데이터가 없음.");
+            return null;
+        }
+    }
+
+    // ID로 음식 데이터 가져오기
+    public FoodItemData GetFoodDataById(int id)
+    {
+        if (foodDataDictionary != null && foodDataDictionary.TryGetValue(id, out var resultData))
+        {
+            return resultData;
+        }
+        else
+        {
+            Debug.LogWarning("ID에 해당하는 음식데이터가 없음.");
+            return null;
+        }
+    }
+
+    // ID로 재료 데이터 가져오기
+    public MaterialItemData GetMaterialDataById(int id)
+    {
+        if (materialDataDictionary != null && materialDataDictionary.TryGetValue(id, out var resultData))
+        {
+            return resultData;
+        }
+        else
+        {
+            Debug.LogWarning("ID에 해당하는 재료데이터가 없음.");
+            return null;
+        }
+    }
+
+    // ID로 설치 아이템 데이터 가져오기
+    public PlaceableItemData GetPlaceableDataById(int id)
+    {
+        if (placeableDataDictionary != null && placeableDataDictionary.TryGetValue(id, out var resultData))
+        {
+            return resultData;
+        }
+        else
+        {
+            Debug.LogWarning("ID에 해당하는 설치아이템데이터가 없음.");
             return null;
         }
     }
