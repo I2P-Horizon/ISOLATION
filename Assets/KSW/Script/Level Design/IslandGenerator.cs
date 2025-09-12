@@ -283,7 +283,7 @@ public class IslandGenerator : MonoBehaviour
 
         /* юс╫ц */
         WorldMapMarker worldMapMarker = FindFirstObjectByType<WorldMapMarker>();
-        while (worldMapMarker.isRender) yield return null;
+        while (worldMapMarker.isRendering) yield return null;
         SceneManager.UnloadSceneAsync("MainScene");
         yield return new WaitForSeconds(1f);
         Loading.Instance.loadingPanel.SetActive(false);

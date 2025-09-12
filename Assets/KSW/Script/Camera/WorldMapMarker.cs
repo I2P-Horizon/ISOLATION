@@ -1,6 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class WorldMapMarker : MonoBehaviour
 {
@@ -10,42 +12,75 @@ public class WorldMapMarker : MonoBehaviour
     public RectTransform playerIcon;
     public Camera mapCamera;
 
-    public bool isRender = false;
+    [Header("RenderTexture ¼³Á¤")]
+    public int textureSize = 512;
 
     private RenderTexture mapTexture;
+    public bool isRendering = false;
 
-    public IEnumerator DelayedRender()
+    private List<GameObject> waters = new List<GameObject>();
+
+    private void Start()
     {
-        isRender = true;
-        for (int i = 0; i < 130; i++)
-        {
-            mapCamera.Render();
-            yield return new WaitForEndOfFrame();
-        }
-        isRender = false;
+        mapTexture = new RenderTexture(textureSize, textureSize, 24);
+        mapTexture.filterMode = FilterMode.Point;
+
+        mapCamera.targetTexture = mapTexture;
+        mapCamera.enabled = false;
+
+        RawImage mapImage = mapRect.GetComponent<RawImage>();
+        if (mapImage != null) mapImage.texture = mapTexture;
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
         if (player == null || mapCamera == null || mapRect == null || playerIcon == null) return;
 
         Vector3 viewportPos = mapCamera.WorldToViewportPoint(player.position);
-
         if (viewportPos.z < 0f) return;
 
-        Vector2 uiPos = new Vector2((viewportPos.x - 0.5f) * mapRect.rect.width, (viewportPos.y - 0.5f) * mapRect.rect.height);
+        Vector2 uiPos = new Vector2(
+            (viewportPos.x - 0.5f) * mapRect.rect.width,
+            (viewportPos.y - 0.5f) * mapRect.rect.height
+        );
+
         playerIcon.anchoredPosition = uiPos;
     }
 
-    void Start()
+    public IEnumerator DelayedRender(int frameCount = 130)
     {
-        mapTexture = new RenderTexture(512, 512, 24);
-        mapTexture.filterMode = FilterMode.Point;
+        isRendering = true;
 
-        mapCamera.targetTexture = mapTexture;
+        HideWaters();
 
-        RawImage mapImage = mapRect.GetComponent<RawImage>();
-        mapCamera.enabled = false;
-        if (mapImage != null) mapImage.texture = mapTexture;
+        for (int i = 0; i < frameCount; i++)
+        {
+            mapCamera.Render();
+            yield return new WaitForEndOfFrame();
+        }
+
+        RestoreWaters();
+
+        isRendering = false;
+    }
+
+    private void HideWaters()
+    {
+        waters.Clear();
+
+        waters = FindObjectsOfType<Transform>()
+            .Where(t => t.gameObject.name.EndsWith("_Water"))
+            .Select(t => t.gameObject)
+            .ToList();
+
+        foreach (var w in waters) w.SetActive(false);
+    }
+
+    private void RestoreWaters()
+    {
+        foreach (var w in waters)
+            if (w != null) w.SetActive(true);
+
+        waters.Clear();
     }
 }
