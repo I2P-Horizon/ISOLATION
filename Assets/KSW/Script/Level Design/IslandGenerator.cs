@@ -6,8 +6,13 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class ObjectData
 {
+    [Header("오브젝트 설정")]
     public GameObject ObjectPrefab;
     [Range(0, 1)] public float spawnChance;
+
+    [Header("메쉬 병합 설정")]
+    [Tooltip("메쉬 병합 여부")] public bool mergeMeshes;
+    [Tooltip("청크 단위 병합 여부")] public bool chunkSeparate;
 }
 
 public class IslandGenerator : MonoBehaviour
@@ -402,18 +407,66 @@ public class IslandGenerator : MonoBehaviour
     {
         if (objectData == null || objectData.Length == 0) return;
 
-        foreach (var grassPos in topGrassPositions)
-        {
-            if (templeExists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius) continue;
+        CombineMesh combiner = GetComponent<CombineMesh>();
 
-            foreach (var obj in objectData)
+        foreach (var obj in objectData)
+        {
+            if (obj.ObjectPrefab == null) continue;
+
+            Transform objectParent = new GameObject(obj.ObjectPrefab.name + "_Objects").transform;
+            objectParent.SetParent(islandParent);
+
+            Dictionary<string, Transform> chunkParents = new Dictionary<string, Transform>();
+
+            foreach (var grassPos in topGrassPositions)
             {
-                if (obj.ObjectPrefab == null) continue;
+                if (templeExists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius) continue;
 
                 if (Random.value < obj.spawnChance)
                 {
-                    Instantiate(obj.ObjectPrefab, grassPos + Vector3.up * 1f, Quaternion.identity, islandParent);
-                    break;
+                    Transform parentForSpawn = objectParent;
+
+                    if (obj.chunkSeparate)
+                    {
+                        int chunkX = Mathf.FloorToInt((grassPos.x + width / 2f) / chunkSize);
+                        int chunkZ = Mathf.FloorToInt((grassPos.z + height / 2f) / chunkSize);
+                        string chunkKey = $"{chunkX}_{chunkZ}";
+
+                        if (!chunkParents.ContainsKey(chunkKey))
+                        {
+                            Transform chunkObjParent = new GameObject($"Chunk_{chunkKey}_{obj.ObjectPrefab.name}").transform;
+                            chunkObjParent.SetParent(objectParent);
+                            chunkParents.Add(chunkKey, chunkObjParent);
+                        }
+                        parentForSpawn = chunkParents[chunkKey];
+                    }
+
+                    Instantiate(obj.ObjectPrefab, grassPos + Vector3.up * 1f, Quaternion.identity, parentForSpawn);
+                }
+            }
+
+            /* 병합 설정 처리 */
+            if (obj.mergeMeshes && combiner != null)
+            {
+                if (obj.chunkSeparate)
+                {
+                    /* 청크 단위 병합 */
+                    foreach (var kvp in chunkParents)
+                    {
+                        if (kvp.Value.childCount > 0)
+                        {
+                            combiner.Combine(kvp.Value, obj.ObjectPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.ObjectPrefab.name}_Merged_{kvp.Key}");
+                        }
+                    }
+                }
+
+                else
+                {
+                    /* 전체 병합 */
+                    if (objectParent.childCount > 0)
+                    {
+                        combiner.Combine(objectParent, obj.ObjectPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.ObjectPrefab.name}_Merged");
+                    }
                 }
             }
         }

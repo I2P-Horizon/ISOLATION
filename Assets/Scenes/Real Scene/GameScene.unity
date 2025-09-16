@@ -2002,7 +2002,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.98039216, g: 0.9019608, b: 0.7058824, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2031,13 +2031,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 729640905}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 10, y: 10}
+  m_EffectColor: {r: 0.6666667, g: 0.5882353, b: 0.3529412, a: 1}
+  m_EffectDistance: {x: 3, y: 3}
   m_UseGraphicAlpha: 1
 --- !u!1 &749774558
 GameObject:
@@ -3925,8 +3925,16 @@ MonoBehaviour:
   objectData:
   - ObjectPrefab: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
     spawnChance: 0.0015
+    mergeMeshes: 0
+    chunkSeparate: 0
   - ObjectPrefab: {fileID: 2814076585106460190, guid: 7c5e62986dca2c14c99281849829cc4d, type: 3}
     spawnChance: 0.0005
+    mergeMeshes: 0
+    chunkSeparate: 0
+  - ObjectPrefab: {fileID: 9171633543626880934, guid: 1c4fef5cd85d11841bf8b1767bd500ac, type: 3}
+    spawnChance: 0.3
+    mergeMeshes: 1
+    chunkSeparate: 1
   generationProgress: 0
 --- !u!4 &1425729661
 Transform:
