@@ -248,7 +248,26 @@ public class IslandGenerator : MonoBehaviour
                                 GameObject topBlock = (landHeight == seaLevel + 1) ? sandBlock : grassBlock;
                                 Vector3 pos = new Vector3(worldX, landHeight, worldZ);
                                 PlaceBlock(topBlock, pos, topBlock == grassBlock ? grassParent : topBlock == dirtBlock ? dirtParent : sandParent);
-                                if (topBlock == grassBlock) topGrassPositions.Add(pos);
+
+                                if (topBlock == grassBlock)
+                                {
+                                    topGrassPositions.Add(pos);
+
+                                    if (templeExists)
+                                    {
+                                        float distFromTemple = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(templePos.x, 0, templePos.z));
+
+                                        if (Mathf.Abs(distFromTemple - templeRadius) <= 1f)
+                                        {
+                                            for (int y = 1; y <= 4; y++)
+                                            {
+                                                Vector3 dirtPos = new Vector3(pos.x, pos.y - y, pos.z);
+                                                PlaceBlock(dirtBlock, dirtPos, dirtParent);
+                                            }
+                                        }
+                                    }
+                                }
+
                                 if (topBlock == sandBlock && pos.y > seaLevel) sandPositions.Add(pos);
                             }
                         }

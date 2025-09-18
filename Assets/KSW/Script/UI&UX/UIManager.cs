@@ -25,8 +25,8 @@ public class UIManager : MonoBehaviour
     public Button mainButton;
 
     [Header("Hp, Satiety")]
-    public Slider hpSlider;
-    public Slider satietySlider;
+    public Image hpSlider;
+    public Image satietySlider;
 
     [Header("½Ã°£")]
     public GameObject timeValue1;
@@ -89,8 +89,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void PlayerStats()
     {
-        hpSlider.value = Player.Instance.State.GetCurrentHp();
-        satietySlider.value = Player.Instance.State.GetCurrentSatiety();
+        hpSlider.fillAmount = Player.Instance.State.GetCurrentHp() / 100;
+        satietySlider.fillAmount = Player.Instance.State.GetCurrentSatiety() / 100;
     }
 
     /// <summary>
@@ -223,9 +223,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         ButtonConnection();
-
-        hpSlider.value = Player.Instance.State.MaxHp;
-        satietySlider.value = Player.Instance.State.MaxSatiety;
+        PlayerStats();
     }
 
     private void Awake()
