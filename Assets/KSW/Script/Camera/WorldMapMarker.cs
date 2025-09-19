@@ -19,6 +19,7 @@ public class WorldMapMarker : MonoBehaviour
     public bool isRendering = false;
 
     private List<GameObject> waters = new List<GameObject>();
+    private List<GameObject> dirts = new List<GameObject>();
 
     private void Start()
     {
@@ -51,7 +52,7 @@ public class WorldMapMarker : MonoBehaviour
     {
         isRendering = true;
 
-        HideWaters();
+        Hide();
 
         for (int i = 0; i < frameCount; i++)
         {
@@ -59,28 +60,36 @@ public class WorldMapMarker : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        RestoreWaters();
+        Restore();
 
         isRendering = false;
     }
 
-    private void HideWaters()
+    private void Hide()
     {
         waters.Clear();
+        dirts.Clear();
 
         waters = FindObjectsOfType<Transform>()
             .Where(t => t.gameObject.name.EndsWith("_Water"))
             .Select(t => t.gameObject)
             .ToList();
 
+        dirts = FindObjectsOfType<Transform>()
+            .Where(t => t.gameObject.name.EndsWith("_Dirt"))
+            .Select(t => t.gameObject)
+            .ToList();
+
         foreach (var w in waters) w.SetActive(false);
+        foreach (var d in dirts) d.SetActive(false);
     }
 
-    private void RestoreWaters()
+    private void Restore()
     {
-        foreach (var w in waters)
-            if (w != null) w.SetActive(true);
+        foreach (var w in waters) if (w != null) w.SetActive(true);
+        foreach (var d in dirts) if(d != null) d.SetActive(true);
 
         waters.Clear();
+        dirts.Clear();
     }
 }

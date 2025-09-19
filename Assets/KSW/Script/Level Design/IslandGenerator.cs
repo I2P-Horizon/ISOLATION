@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+#region Object Data
 [System.Serializable]
 public class ObjectData
 {
@@ -14,58 +15,104 @@ public class ObjectData
     [Tooltip("메쉬 병합 여부")] public bool mergeMeshes;
     [Tooltip("청크 단위 병합 여부")] public bool chunkSeparate;
 }
+#endregion
 
-public class IslandGenerator : MonoBehaviour
+#region BlockData
+[System.Serializable]
+public class BlockData
 {
-    [Header("Parent Object")]
-    public Transform islandParent;
-
-    [Header("Player")]
-    public Transform player;
-
     [Header("Block Prefabs")]
     public GameObject grassBlock;
     public GameObject dirtBlock;
     public GameObject sandBlock;
     public GameObject waterPlane;
-    public GameObject templePrefab;
     public GameObject templeFloorBlock;
+}
+#endregion
 
-    [Header("Grid (Sea Area)")]
+#region Grid
+[System.Serializable]
+public class Grid
+{
+    [Header("Grid")]
     public int width = 800;
     public int height = 800;
-    public int chunkSize = 64;
+    public int chunkSize = 32;
+}
+#endregion
 
+#region Noise
+[System.Serializable]
+public class Noise
+{
     [Header("Noise")]
-    public float noiseScale = 80f;
+    public float scale = 80f;
     public int octaves = 4;
     public float persistence = 0.5f;
     public float lacunarity = 2f;
     public int seed = 0;
+}
+#endregion
 
+#region Shape
+[System.Serializable]
+public class Shape
+{
     [Header("Shape")]
     public float islandRadius = 200f;
     public float falloffPower = 0.15f;
     public float beachWidth = 3f;
+}
+#endregion
 
+#region Height
+[System.Serializable]
+public class Height
+{
     [Header("Heights")]
     public int maxHeight = 16;
     public int seaLevel = 4;
+}
+#endregion
 
+#region Jungle
+[System.Serializable]
+public class Jungle
+{
     [Header("Jungle Settings")]
-    public int JungleCount = 20;
+    public int count = 20;
     public int minTreesPerJungle = 60;
     public int maxTreesPerJungle = 80;
-    public float JungleRadius = 80f;
+    public float radius = 80f;
     public GameObject[] treePrefabs;
+}
+#endregion
 
+#region Temple
+[System.Serializable]
+public class Temple
+{
     [Header("Temple Settings")]
-    public float templeRadius = 10f;
-    public float templeY = 5f;
-    public float templeMaxDistanceFromCenter = 50f;
+    public GameObject prefab;
+    public float radius = 10f;
+    public float scaleY = 5f;
+    public float maxDistanceFromCenter = 50f;
+}
+#endregion
 
-    [Header("Object Settings")]
+public class IslandGenerator : MonoBehaviour
+{
     public ObjectData[] objectData;
+    public BlockData blockData;
+    public Grid grid;
+    public Noise noise;
+    public Shape shape;
+    public Height height;
+    public Jungle jungle;
+    public Temple temple;
+
+    public Transform island;
+    public Transform player;
 
     private Dictionary<GameObject, Vector3> _scaleCache = new Dictionary<GameObject, Vector3>();
     private List<Vector3> sandPositions = new List<Vector3>();
@@ -78,7 +125,7 @@ public class IslandGenerator : MonoBehaviour
 
     private void Start()
     {
-        if (seed == 0) seed = Random.Range(1, 100000);
+        if (noise.seed == 0) noise.seed = Random.Range(1, 100000);
 
         DetermineTemplePosition();
         StartCoroutine(GenerateIsland());
@@ -86,18 +133,18 @@ public class IslandGenerator : MonoBehaviour
 
     private void DetermineTemplePosition()
     {
-        if (templePrefab == null) return;
+        if (temple.prefab == null) return;
 
         for (int i = 0; i < 100; i++)
         {
-            Vector2 offset = Random.insideUnitCircle * templeMaxDistanceFromCenter;
+            Vector2 offset = Random.insideUnitCircle * temple.maxDistanceFromCenter;
             int testX = Mathf.RoundToInt(offset.x);
             int testZ = Mathf.RoundToInt(offset.y);
 
-            float dist = Mathf.Sqrt(testX * testX + testZ * testZ) / islandRadius;
-            float noiseMask = Mathf.PerlinNoise((testX + seed) / noiseScale, (testZ + seed) / noiseScale);
+            float dist = Mathf.Sqrt(testX * testX + testZ * testZ) / shape.islandRadius;
+            float noiseMask = Mathf.PerlinNoise((testX + noise.seed) / noise.scale, (testZ + noise.seed) / noise.scale);
             float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
-            islandMask = Mathf.Pow(islandMask, falloffPower);
+            islandMask = Mathf.Pow(islandMask, shape.falloffPower);
             islandMask = Mathf.Max(islandMask, 0.05f);
 
             float heightNoise = 0f;
@@ -105,23 +152,23 @@ public class IslandGenerator : MonoBehaviour
             float frequency = 1f;
             float maxAmp = 0f;
 
-            for (int o = 0; o < octaves; o++)
+            for (int o = 0; o < noise.octaves; o++)
             {
-                float sampleX = (testX + seed) / noiseScale * frequency;
-                float sampleZ = (testZ + seed) / noiseScale * frequency;
+                float sampleX = (testX + noise.seed) / noise.scale * frequency;
+                float sampleZ = (testZ + noise.seed) / noise.scale * frequency;
                 heightNoise += Mathf.PerlinNoise(sampleX, sampleZ) * amplitude;
                 maxAmp += amplitude;
-                amplitude *= persistence;
-                frequency *= lacunarity;
+                amplitude *= noise.persistence;
+                frequency *= noise.lacunarity;
             }
 
             if (maxAmp > 0f) heightNoise /= maxAmp;
 
-            int landHeight = Mathf.RoundToInt(heightNoise * islandMask * maxHeight);
+            int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
 
-            if (landHeight <= seaLevel) landHeight = seaLevel + 1;
+            if (landHeight <= height.seaLevel) landHeight = height.seaLevel + 1;
 
-            if (islandMask > 0f && landHeight > seaLevel + 1)
+            if (islandMask > 0f && landHeight > height.seaLevel + 1)
             {
                 templePos = new Vector3(testX, landHeight, testZ);
                 templeExists = true;
@@ -132,22 +179,22 @@ public class IslandGenerator : MonoBehaviour
 
     private IEnumerator GenerateIsland()
     {
-        if (islandParent == null) islandParent = new GameObject("Island").transform;
+        if (island == null) island = new GameObject("Island").transform;
 
         Vector3 targetSize = Vector3.one;
-        foreach (var p in new[] { grassBlock, dirtBlock, sandBlock, waterPlane, templeFloorBlock })
+        foreach (var p in new[] { blockData.grassBlock, blockData.dirtBlock, blockData.sandBlock, blockData.waterPlane, blockData.templeFloorBlock })
             if (p != null && !_scaleCache.ContainsKey(p)) _scaleCache[p] = GetScaleToFit(p, targetSize);
 
-        float halfW = width / 2f;
-        float halfH = height / 2f;
+        float halfW = grid.width / 2f;
+        float halfH = grid.height / 2f;
 
-        int chunkXCount = Mathf.CeilToInt((float)width / chunkSize);
-        int chunkZCount = Mathf.CeilToInt((float)height / chunkSize);
+        int chunkXCount = Mathf.CeilToInt((float)grid.width / grid.chunkSize);
+        int chunkZCount = Mathf.CeilToInt((float)grid.height / grid.chunkSize);
 
-        int totalBlocks = chunkXCount * chunkZCount * chunkSize * chunkSize;
+        int totalBlocks = chunkXCount * chunkZCount * grid.chunkSize * grid.chunkSize;
         int blocksGenerated = 0;
 
-        float waterY = seaLevel + 1.5f;
+        float waterY = height.seaLevel + 1.5f;
         sandPositions.Clear();
         topGrassPositions.Clear();
 
@@ -156,7 +203,7 @@ public class IslandGenerator : MonoBehaviour
             for (int cz = 0; cz < chunkZCount; cz++)
             {
                 Transform chunkParent = new GameObject($"Chunk_{cx}_{cz}").transform;
-                chunkParent.SetParent(islandParent);
+                chunkParent.SetParent(island);
 
                 Transform grassParent = new GameObject("Grass").transform;
                 Transform dirtParent = new GameObject("Dirt").transform;
@@ -170,56 +217,56 @@ public class IslandGenerator : MonoBehaviour
                 waterParent.SetParent(chunkParent);
                 templeParent.SetParent(chunkParent);
 
-                for (int x = 0; x < chunkSize; x++)
+                for (int x = 0; x < grid.chunkSize; x++)
                 {
-                    for (int z = 0; z < chunkSize; z++)
+                    for (int z = 0; z < grid.chunkSize; z++)
                     {
-                        int worldX = cx * chunkSize + x - (int)halfW;
-                        int worldZ = cz * chunkSize + z - (int)halfH;
+                        int worldX = cx * grid.chunkSize + x - (int)halfW;
+                        int worldZ = cz * grid.chunkSize + z - (int)halfH;
 
-                        float dist = Mathf.Sqrt(worldX * worldX + worldZ * worldZ) / islandRadius;
-                        float noiseMask = Mathf.PerlinNoise((worldX + seed) / noiseScale, (worldZ + seed) / noiseScale);
+                        float dist = Mathf.Sqrt(worldX * worldX + worldZ * worldZ) / shape.islandRadius;
+                        float noiseMask = Mathf.PerlinNoise((worldX + noise.seed) / noise.scale, (worldZ + noise.seed) / noise.scale);
                         float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
-                        islandMask = Mathf.Pow(islandMask, falloffPower);
+                        islandMask = Mathf.Pow(islandMask, shape.falloffPower);
 
                         float heightNoise = 0f;
                         float amplitude = 1f;
                         float frequency = 1f;
                         float maxAmp = 0f;
 
-                        for (int o = 0; o < octaves; o++)
+                        for (int o = 0; o < noise.octaves; o++)
                         {
-                            float sampleX = (worldX + seed) / noiseScale * frequency;
-                            float sampleZ = (worldZ + seed) / noiseScale * frequency;
+                            float sampleX = (worldX + noise.seed) / noise.scale * frequency;
+                            float sampleZ = (worldZ + noise.seed) / noise.scale * frequency;
                             heightNoise += Mathf.PerlinNoise(sampleX, sampleZ) * amplitude;
                             maxAmp += amplitude;
-                            amplitude *= persistence;
-                            frequency *= lacunarity;
+                            amplitude *= noise.persistence;
+                            frequency *= noise.lacunarity;
                         }
 
                         if (maxAmp > 0f) heightNoise /= maxAmp;
 
-                        int landHeight = Mathf.RoundToInt(heightNoise * islandMask * maxHeight);
+                        int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
 
                         int sandLayers = 0;
-                        float distanceToEdge = islandRadius - dist * islandRadius * islandMask;
+                        float distanceToEdge = shape.islandRadius - dist * shape.islandRadius * islandMask;
 
-                        if (distanceToEdge < beachWidth)
+                        if (distanceToEdge < shape.beachWidth)
                         {
-                            float t = Mathf.Clamp01(distanceToEdge / beachWidth);
+                            float t = Mathf.Clamp01(distanceToEdge / shape.beachWidth);
                             sandLayers = (t > 0.5f) ? 2 : 1;
                         }
 
                         Vector3 posXZ = new Vector3(worldX, 0, worldZ);
-                        bool inTempleArea = templeExists && Vector3.Distance(new Vector3(templePos.x, 0, templePos.z), posXZ) <= templeRadius;
+                        bool inTempleArea = templeExists && Vector3.Distance(new Vector3(templePos.x, 0, templePos.z), posXZ) <= temple.radius;
 
-                        if (islandMask > 0f && landHeight > seaLevel)
+                        if (islandMask > 0f && landHeight > height.seaLevel)
                         {
                             if (inTempleArea)
                             {
-                                float floorY = Mathf.Max(templePos.y, templeY);
-                                PlaceBlock(templeFloorBlock, new Vector3(worldX, floorY, worldZ), templeParent);
-                                for (int y = seaLevel + 1; y < floorY; y++) PlaceBlock(dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
+                                float floorY = Mathf.Max(templePos.y, temple.scaleY);
+                                PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, floorY, worldZ), templeParent);
+                                for (int y = height.seaLevel + 1; y < floorY; y++) PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
                                 continue;
                             }
 
@@ -228,9 +275,9 @@ public class IslandGenerator : MonoBehaviour
                                 for (int y = 0; y < sandLayers; y++)
                                 {
                                     Vector3 pos = new Vector3(worldX, y, worldZ);
-                                    if (pos.y > seaLevel)
+                                    if (pos.y > height.seaLevel)
                                     {
-                                        PlaceBlock(sandBlock, pos, sandParent);
+                                        PlaceBlock(blockData.sandBlock, pos, sandParent);
                                         sandPositions.Add(pos);
                                     }
                                 }
@@ -238,18 +285,18 @@ public class IslandGenerator : MonoBehaviour
                                 if (landHeight > sandLayers)
                                 {
                                     Vector3 grassPos = new Vector3(worldX, sandLayers, worldZ);
-                                    PlaceBlock(grassBlock, grassPos, grassParent);
+                                    PlaceBlock(blockData.grassBlock, grassPos, grassParent);
                                     topGrassPositions.Add(grassPos);
                                 }
                             }
 
                             else
                             {
-                                GameObject topBlock = (landHeight == seaLevel + 1) ? sandBlock : grassBlock;
+                                GameObject topBlock = (landHeight == height.seaLevel + 1) ? blockData.sandBlock : blockData.grassBlock;
                                 Vector3 pos = new Vector3(worldX, landHeight, worldZ);
-                                PlaceBlock(topBlock, pos, topBlock == grassBlock ? grassParent : topBlock == dirtBlock ? dirtParent : sandParent);
+                                PlaceBlock(topBlock, pos, topBlock == blockData.grassBlock ? grassParent : topBlock ==  blockData.dirtBlock ? dirtParent : sandParent);
 
-                                if (topBlock == grassBlock)
+                                if (topBlock == blockData.grassBlock)
                                 {
                                     topGrassPositions.Add(pos);
 
@@ -257,22 +304,28 @@ public class IslandGenerator : MonoBehaviour
                                     {
                                         float distFromTemple = Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(templePos.x, 0, templePos.z));
 
-                                        if (Mathf.Abs(distFromTemple - templeRadius) <= 1f)
+                                        if (Mathf.Abs(distFromTemple - temple.radius) <= 1f)
                                         {
                                             for (int y = 1; y <= 4; y++)
                                             {
                                                 Vector3 dirtPos = new Vector3(pos.x, pos.y - y, pos.z);
-                                                PlaceBlock(dirtBlock, dirtPos, dirtParent);
+                                                PlaceBlock(blockData.dirtBlock, dirtPos, dirtParent);
                                             }
                                         }
                                     }
                                 }
 
-                                if (topBlock == sandBlock && pos.y > seaLevel) sandPositions.Add(pos);
+                                if (topBlock == blockData.sandBlock && pos.y > height.seaLevel) sandPositions.Add(pos);
                             }
                         }
 
-                        PlaceBlock(waterPlane, new Vector3(worldX, waterY, worldZ), waterParent);
+                        if (islandMask > 0f && landHeight <= height.seaLevel)
+                        {
+                            Vector3 dirtUnderWaterPos = new Vector3(worldX, waterY - 1.5f, worldZ);
+                            PlaceBlock(blockData.dirtBlock, dirtUnderWaterPos, dirtParent);
+                        }
+
+                        PlaceBlock(blockData.waterPlane, new Vector3(worldX, waterY, worldZ), waterParent);
 
                         blocksGenerated++;
                         generationProgress = (float)blocksGenerated / totalBlocks;
@@ -283,23 +336,23 @@ public class IslandGenerator : MonoBehaviour
                 if (combiner != null)
                 {
                     if (grassParent.childCount > 0)
-                        combiner.Combine(grassParent, grassBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Grass");
+                        combiner.Combine(grassParent, blockData.grassBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Grass");
                     if (dirtParent.childCount > 0)
-                        combiner.Combine(dirtParent, dirtBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Dirt");
+                        combiner.Combine(dirtParent, blockData.dirtBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Dirt");
                     if (sandParent.childCount > 0)
-                        combiner.Combine(sandParent, sandBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Sand");
+                        combiner.Combine(sandParent, blockData.sandBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Sand");
                     if (waterParent.childCount > 0)
-                        combiner.Combine(waterParent, waterPlane.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Water");
+                        combiner.Combine(waterParent, blockData.waterPlane.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Water");
                     if (templeParent.childCount > 0)
-                        combiner.Combine(templeParent, templeFloorBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Temple");
+                        combiner.Combine(templeParent, blockData.templeFloorBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Temple");
                 }
 
                 yield return null;
             }
         }
 
-        if (templeExists && templePrefab != null)
-            Instantiate(templePrefab, new Vector3(templePos.x, Mathf.Max(templePos.y, templeY), templePos.z), Quaternion.identity, islandParent);
+        if (templeExists && temple.prefab != null)
+            Instantiate(temple.prefab, new Vector3(templePos.x, Mathf.Max(templePos.y, temple.scaleY), templePos.z), Quaternion.identity, island);
 
         SpawnPlayer();
         SpawnJungles();
@@ -347,13 +400,13 @@ public class IslandGenerator : MonoBehaviour
         float minDist = float.MaxValue;
         foreach (var pos in sandPositions)
         {
-            if (pos.y <= seaLevel) continue;
+            if (pos.y <= height.seaLevel) continue;
 
             float distFromCenter = new Vector2(pos.x, pos.z).magnitude;
 
-            if (distFromCenter >= islandRadius - beachWidth * 2)
+            if (distFromCenter >= shape.islandRadius - shape.beachWidth * 2)
             {
-                float diff = Mathf.Abs(distFromCenter - (islandRadius - beachWidth / 2));
+                float diff = Mathf.Abs(distFromCenter - (shape.islandRadius - shape.beachWidth / 2));
                 if (diff < minDist)
                 {
                     minDist = diff;
@@ -367,22 +420,22 @@ public class IslandGenerator : MonoBehaviour
 
     private void SpawnJungles()
     {
-        if (treePrefabs == null || treePrefabs.Length == 0) return;
-        for (int i = 0; i < JungleCount; i++)
+        if (jungle.treePrefabs == null || jungle.treePrefabs.Length == 0) return;
+        for (int i = 0; i < jungle.count; i++)
         {
             float angle = Random.Range(0f, Mathf.PI * 2f);
-            float dist = Random.Range(islandRadius * 0.3f, islandRadius * 0.8f);
+            float dist = Random.Range(shape.islandRadius * 0.3f, shape.islandRadius * 0.8f);
             Vector3 center = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * dist;
 
             RaycastHit hit;
             if (Physics.Raycast(center + Vector3.up * 100f, Vector3.down, out hit, 200f))
             {
-                if (hit.point.y > seaLevel + 1f)
+                if (hit.point.y > height.seaLevel + 1f)
                 {
-                    if (templeExists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius)
+                    if (templeExists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(templePos.x, 0, templePos.z)) <= temple.radius)
                         continue;
 
-                    SpawnJungleCluster(hit.point, islandParent);
+                    SpawnJungleCluster(hit.point, island);
                 }
             }
         }
@@ -394,12 +447,12 @@ public class IslandGenerator : MonoBehaviour
         clusterParent.SetParent(parent);
         clusterParent.position = centerPos;
 
-        GameObject selectedTreePrefab = treePrefabs[Random.Range(0, treePrefabs.Length)];
-        int treeCount = Random.Range(minTreesPerJungle, maxTreesPerJungle + 1);
+        GameObject selectedTreePrefab = jungle.treePrefabs[Random.Range(0, jungle.treePrefabs.Length)];
+        int treeCount = Random.Range(jungle.minTreesPerJungle, jungle.maxTreesPerJungle + 1);
 
         for (int i = 0; i < treeCount; i++)
         {
-            Vector2 offset2D = Random.insideUnitCircle * JungleRadius;
+            Vector2 offset2D = Random.insideUnitCircle * jungle.radius;
             Vector3 spawnPos = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
 
             RaycastHit hit;
@@ -410,9 +463,9 @@ public class IslandGenerator : MonoBehaviour
 
                 if (groundName.Contains("sand")) continue;
 
-                if (hit.point.y > seaLevel + 1f)
+                if (hit.point.y > height.seaLevel + 1f)
                 {
-                    if (templeExists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius)
+                    if (templeExists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(templePos.x, 0, templePos.z)) <= temple.radius)
                         continue;
 
                     spawnPos.y = hit.point.y + 0.1f;
@@ -433,13 +486,13 @@ public class IslandGenerator : MonoBehaviour
             if (obj.ObjectPrefab == null) continue;
 
             Transform objectParent = new GameObject(obj.ObjectPrefab.name + "_Objects").transform;
-            objectParent.SetParent(islandParent);
+            objectParent.SetParent(island);
 
             Dictionary<string, Transform> chunkParents = new Dictionary<string, Transform>();
 
             foreach (var grassPos in topGrassPositions)
             {
-                if (templeExists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(templePos.x, 0, templePos.z)) <= templeRadius) continue;
+                if (templeExists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(templePos.x, 0, templePos.z)) <= temple.radius) continue;
 
                 if (Random.value < obj.spawnChance)
                 {
@@ -447,8 +500,8 @@ public class IslandGenerator : MonoBehaviour
 
                     if (obj.chunkSeparate)
                     {
-                        int chunkX = Mathf.FloorToInt((grassPos.x + width / 2f) / chunkSize);
-                        int chunkZ = Mathf.FloorToInt((grassPos.z + height / 2f) / chunkSize);
+                        int chunkX = Mathf.FloorToInt((grassPos.x + grid.width / 2f) / grid.chunkSize);
+                        int chunkZ = Mathf.FloorToInt((grassPos.z + grid.height / 2f) / grid.chunkSize);
                         string chunkKey = $"{chunkX}_{chunkZ}";
 
                         if (!chunkParents.ContainsKey(chunkKey))
