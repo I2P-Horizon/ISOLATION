@@ -43,13 +43,6 @@ public class Loading : MonoBehaviour
 
         yield return null;
 
-        IslandGenerator islandGenerator = null;
-        while (islandGenerator == null)
-        {
-            islandGenerator = FindObjectOfType<IslandGenerator>();
-            yield return null;
-        }
-
         WorldMapMarker worldMapMarker = null;
         while (worldMapMarker == null)
         {
@@ -57,18 +50,18 @@ public class Loading : MonoBehaviour
             yield return null;
         }
 
-        while (islandGenerator.generationProgress < 0.9f)
+        while (IslandGenerator.generationProgress < 0.9f)
         {
-            loadingBar.value = islandGenerator.generationProgress;
+            loadingBar.value = IslandGenerator.generationProgress;
             loadingText.text = "Loading...";
             yield return null;
         }
 
         StartCoroutine(worldMapMarker.DelayedRender());
 
-        while (islandGenerator.generationProgress < 1f)
+        while (IslandGenerator.generationProgress < 1f)
         {
-            loadingBar.value = islandGenerator.generationProgress;
+            loadingBar.value = IslandGenerator.generationProgress;
             loadingText.text = "Rendering...";
             yield return null;
         }
