@@ -210,6 +210,8 @@ public class UIManager : MonoBehaviour
     {
         TimeUI();
 
+        if (Loading.Instance == null) return;
+
         if (!Loading.Instance.isLoading)
         {
             PlayerStats();

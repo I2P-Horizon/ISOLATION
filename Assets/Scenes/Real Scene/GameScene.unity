@@ -379,7 +379,7 @@ Transform:
   m_GameObject: {fileID: 15781016}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 20, z: 0}
+  m_LocalPosition: {x: 0, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -515,6 +515,10 @@ PrefabInstance:
     - target: {fileID: 8688624321822278009, guid: b659fe8d6807edf4aaf8ea55cb1d80c1, type: 3}
       propertyPath: m_Name
       value: Gorilla
+      objectReference: {fileID: 0}
+    - target: {fileID: 8688624321822278009, guid: b659fe8d6807edf4aaf8ea55cb1d80c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -693,6 +697,10 @@ PrefabInstance:
     - target: {fileID: 8688624321822278009, guid: b7cc81b2c6806cd43803c89abf1946f2, type: 3}
       propertyPath: m_Name
       value: Armadillo
+      objectReference: {fileID: 0}
+    - target: {fileID: 8688624321822278009, guid: b7cc81b2c6806cd43803c89abf1946f2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1109,8 +1117,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 480, y: 470}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchoredPosition: {x: 500, y: 470}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &286556098
 MonoBehaviour:
@@ -1331,6 +1339,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Armadillo (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8688624321822278009, guid: b7cc81b2c6806cd43803c89abf1946f2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1543,6 +1555,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Crocodile (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8688624321822278009, guid: dbec92a82c83764459222985c3191480, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1644,7 +1660,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &586825685
 MonoBehaviour:
@@ -2473,7 +2489,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 20}
+  m_SizeDelta: {x: 15, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &836770419
 MonoBehaviour:
@@ -3282,7 +3298,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1168853775
 MonoBehaviour:
@@ -3389,6 +3405,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gorilla (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8688624321822278009, guid: b659fe8d6807edf4aaf8ea55cb1d80c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3445,6 +3465,10 @@ PrefabInstance:
     - target: {fileID: 8688624321822278009, guid: dbec92a82c83764459222985c3191480, type: 3}
       propertyPath: m_Name
       value: Crocodile
+      objectReference: {fileID: 0}
+    - target: {fileID: 8688624321822278009, guid: dbec92a82c83764459222985c3191480, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3809,14 +3833,6 @@ MonoBehaviour:
     pos: {fileID: 1026859752}
     player: {fileID: 1344258696}
     sandPositions: []
-    topGrassPositions: []
-  height:
-    maxHeight: 32
-    seaLevel: 8
-  shape:
-    radius: 200
-    falloffPower: 0.15
-    beachWidth: 3
   temple:
     prefab: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
     radius: 10
@@ -3828,10 +3844,17 @@ MonoBehaviour:
     count: 20
     minTreesPerJungle: 60
     maxTreesPerJungle: 80
-    jungleRadius: 80
+    radius: 80
     treePrefabs:
     - {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
     - {fileID: 6091739994827031229, guid: 8be4d495e4f5d154cb3e398be3bcf557, type: 3}
+  height:
+    maxHeight: 32
+    seaLevel: 8
+  shape:
+    radius: 200
+    falloffPower: 0.15
+    beachWidth: 3
   grid:
     width: 800
     height: 800
@@ -3865,7 +3888,6 @@ MonoBehaviour:
     spawnChance: 0.0005
     mergeMeshes: 1
     chunkSeparate: 1
-  generationProgress: 0
 --- !u!4 &1425729661
 Transform:
   m_ObjectHideFlags: 0
@@ -4086,7 +4108,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1503443526
 MonoBehaviour:
@@ -4984,8 +5006,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 680, y: 470}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchoredPosition: {x: 700, y: 470}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2012468745
 MonoBehaviour:
@@ -5155,8 +5177,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 580, y: 470}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchoredPosition: {x: 600, y: 470}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2044301546
 MonoBehaviour:
