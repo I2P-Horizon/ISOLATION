@@ -221,6 +221,8 @@ public class Jungle
         GameObject selectedTreePrefab = treePrefabs[Random.Range(0, treePrefabs.Length)];
         int treeCount = Random.Range(minTreesPerJungle, maxTreesPerJungle + 1);
 
+        float blockSize = 1f;
+
         for (int i = 0; i < treeCount; i++)
         {
             Vector2 offset2D = Random.insideUnitCircle * radius;
@@ -237,7 +239,10 @@ public class Jungle
                     if (temple.exists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius)
                         continue;
 
-                    spawnPos.y = hit.point.y + 0.1f;
+                    spawnPos.x = Mathf.Round(hit.point.x / blockSize) * blockSize;
+                    spawnPos.z = Mathf.Round(hit.point.z / blockSize) * blockSize;
+                    spawnPos.y = Mathf.Round(hit.point.y / blockSize) * blockSize;
+
                     MonoBehaviour.Instantiate(selectedTreePrefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0), clusterParent);
                 }
             }
@@ -338,7 +343,6 @@ public class Island
     private Jungle jungle;
     private Temple temple;
     private BlockData blockData;
-    private ObjectData[] objectData;
 
     public Transform Root { get; private set; }
     public Transform pos;
@@ -347,9 +351,9 @@ public class Island
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
-    public void Set(Height height, Shape shape, Grid grid, Noise noise, Jungle jungle, Temple temple, BlockData blockData, ObjectData[] objectData)
+    public void Set(Height height, Shape shape, Grid grid, Noise noise, Jungle jungle, Temple temple, BlockData blockData)
     {
-        this.height = height; this.shape = shape; this.grid = grid; this.noise = noise; this.jungle = jungle; this.temple = temple; this.blockData = blockData; this.objectData = objectData;
+        this.height = height; this.shape = shape; this.grid = grid; this.noise = noise; this.jungle = jungle; this.temple = temple; this.blockData = blockData;
     }
 
     public IEnumerator Spawn(Transform parent)
@@ -568,17 +572,17 @@ public class Island
 public class IslandGenerator : MonoBehaviour
 {
     [Header("Settings")]
-    public Island island;
-    public Temple temple;
-    public Jungle jungle;
-    public Height height;
-    public Shape shape;
-    public Grid grid;
-    public Noise noise;
+    [SerializeField] private Island island;
+    [SerializeField] private Temple temple;
+    [SerializeField] private Jungle jungle;
+    [SerializeField] private Height height;
+    [SerializeField] private Shape shape;
+    [SerializeField] private Grid grid;
+    [SerializeField] private Noise noise;
 
-    [Header("Prefabs/Data")]
-    public BlockData blockData;
-    public ObjectData[] objectData;
+    [Header("Data")]
+    [SerializeField] private BlockData blockData;
+    [SerializeField] private ObjectData[] objectData;
 
     public static float generationProgress = 0f;
 
@@ -596,7 +600,7 @@ public class IslandGenerator : MonoBehaviour
     private void Start()
     {
         /* Setter */
-        island.Set(height, shape, grid, noise, jungle, temple, blockData, objectData);
+        island.Set(height, shape, grid, noise, jungle, temple, blockData);
         jungle.Set(island, height, shape, temple);
         temple.Set(height, shape, noise);
         objectSpawner.Set(island, grid, temple, blockData, objectData);
