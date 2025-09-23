@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -174,6 +175,7 @@ public class Jungle
     private Height height;
     private Shape shape;
     private Temple temple;
+    private MapObject mapObject;
 
     [Header("Jungle Settings")]
     public int count = 20;
@@ -182,9 +184,9 @@ public class Jungle
     public float radius = 80f;
     public GameObject[] treePrefabs;
 
-    public void Set(Island island, Height height, Shape shape, Temple temple)
+    public void Set(Island island, Height height, Shape shape, Temple temple, MapObject mapObject)
     {
-        this.island = island; this.height = height; this.shape = shape; this.temple = temple;
+        this.island = island; this.height = height; this.shape = shape; this.temple = temple; this.mapObject = mapObject;
     }
 
     public void Spawn()
@@ -243,7 +245,8 @@ public class Jungle
                     spawnPos.z = Mathf.Round(hit.point.z / blockSize) * blockSize;
                     spawnPos.y = Mathf.Round(hit.point.y / blockSize) * blockSize;
 
-                    MonoBehaviour.Instantiate(selectedTreePrefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0), clusterParent);
+                    GameObject tree = MonoBehaviour.Instantiate(selectedTreePrefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0), clusterParent);
+                    mapObject.RegisterObject(tree);
                 }
             }
         }
@@ -259,10 +262,11 @@ public class ObjectSpawner
     private Temple temple;
     private ObjectData[] objectData;
     private BlockData blockData;
+    private MapObject mapObject;
 
-    public void Set(Island island, Grid grid, Temple temple, BlockData blockData, ObjectData[] objectData)
+    public void Set(Island island, Grid grid, Temple temple, BlockData blockData, ObjectData[] objectData, MapObject mapObject)
     {
-        this.island = island; this.grid = grid; this.temple = temple; this.blockData = blockData; this.objectData = objectData;
+        this.island = island; this.grid = grid; this.temple = temple; this.blockData = blockData; this.objectData = objectData; this.mapObject = mapObject;
     }
 
     public void SpawnObjects()
@@ -297,12 +301,15 @@ public class ObjectSpawner
                             Transform chunkObjParent = new GameObject($"Chunk_{chunkKey}_{obj.prefab.name}").transform;
                             chunkObjParent.SetParent(objectParent);
                             chunkParents.Add(chunkKey, chunkObjParent);
+
+                            mapObject.RegisterChunk(new Vector2Int(chunkX, chunkZ), chunkObjParent.gameObject);
                         }
 
                         parentForSpawn = chunkParents[chunkKey];
                     }
 
-                    MonoBehaviour.Instantiate(obj.prefab, grassPos + Vector3.up * 1f, Quaternion.identity, parentForSpawn);
+                    GameObject mapObj = MonoBehaviour.Instantiate(obj.prefab, grassPos + Vector3.up * 1f, Quaternion.identity, parentForSpawn);
+                    mapObject.RegisterObject(mapObj);
                 }
             }
 
@@ -314,18 +321,123 @@ public class ObjectSpawner
                     {
                         if (kvp.Value.childCount > 0)
                         {
-                            combiner.Combine(kvp.Value, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged_{kvp.Key}");
+                            GameObject merged = combiner.Combine(kvp.Value, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged_{kvp.Key}");
+                            if (merged != null) mapObject.RegisterObject(merged);
                         }
                     }
                 }
-
                 else
                 {
                     if (objectParent.childCount > 0)
                     {
-                        combiner.Combine(objectParent, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged");
+                        GameObject merged = combiner.Combine(objectParent, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged");
+                        if (merged != null) mapObject.RegisterObject(merged);
                     }
                 }
+            }
+        }
+    }
+}
+
+public class MapObject
+{
+    private Grid grid;
+    private List<GameObject> allObjects = new List<GameObject>();
+
+    private Dictionary<Vector2Int, GameObject> chunkMap = new Dictionary<Vector2Int, GameObject>();
+
+    public void Set(Grid grid)
+    {
+        this.grid = grid;
+    }
+
+    /// <summary>
+    /// 청크 등록
+    /// </summary>
+    /// <param name="chunkIndex"></param>
+    /// <param name="chunkObj"></param>
+    public void RegisterChunk(Vector2Int chunkIndex, GameObject chunkObj)
+    {
+        chunkMap[chunkIndex] = chunkObj;
+    }
+
+    /// <summary>
+    /// 개별 오브젝트 등록
+    /// </summary>
+    /// <param name="obj"></param>
+    public void RegisterObject(GameObject obj)
+    {
+        allObjects.Add(obj);
+    }
+
+    /// <summary>
+    /// <para>지정한 위치와 크기(pos, size)에 포함된 모든 청크와 개별 오브젝트를 비활성화.</para>
+    /// <para>pos는 영역의 중심, size는 영역의 크기.</para>
+    /// <para>청크 단위로 먼저 비활성화 후, 범위 안 개별 오브젝트도 비활성화.</para>
+    /// </summary>
+    /// <param name="pos">비활성화할 영역의 중심 위치</param>
+    /// <param name="size">비활성화할 영역의 크기</param>
+    public void Deactivate(Vector3 pos, Vector3 size)
+    {
+        Vector3 halfSize = size / 2f;
+        Bounds deactivateBounds = new Bounds(pos, size);
+
+        /* 청크 단위 비활성화 */
+        foreach (var kvp in chunkMap.ToList())
+        {
+            GameObject chunk = kvp.Value;
+            if (chunk == null) { chunkMap.Remove(kvp.Key); continue; }
+
+            Renderer rend = chunk.GetComponentInChildren<Renderer>();
+            if (rend != null)
+            {
+                if (deactivateBounds.Intersects(rend.bounds))
+                {
+                    chunk.SetActive(false);
+                    chunkMap.Remove(kvp.Key);
+                }
+            }
+            else
+            {
+                Vector3 chunkPos = chunk.transform.position;
+                if (Mathf.Abs(chunkPos.x - pos.x) <= halfSize.x &&
+                    Mathf.Abs(chunkPos.y - pos.y) <= halfSize.y &&
+                    Mathf.Abs(chunkPos.z - pos.z) <= halfSize.z)
+                {
+                    chunk.SetActive(false);
+                    chunkMap.Remove(kvp.Key);
+                }
+            }
+        }
+
+        /* 범위 내 개별 오브젝트 비활성화 */
+        for (int i = allObjects.Count - 1; i >= 0; i--)
+        {
+            GameObject obj = allObjects[i];
+            if (obj == null) { allObjects.RemoveAt(i); continue; }
+
+            Renderer rend = obj.GetComponentInChildren<Renderer>();
+            bool inBounds = false;
+
+            if (rend != null)
+            {
+                inBounds = deactivateBounds.Intersects(rend.bounds);
+            }
+            else
+            {
+                Vector3 objPos = obj.transform.position;
+                if (Mathf.Abs(objPos.x - pos.x) <= halfSize.x &&
+                    Mathf.Abs(objPos.y - pos.y) <= halfSize.y &&
+                    Mathf.Abs(objPos.z - pos.z) <= halfSize.z)
+                {
+                    inBounds = true;
+                }
+            }
+
+            if (inBounds)
+            {
+                obj.SetActive(false);
+                allObjects.RemoveAt(i);
             }
         }
     }
@@ -343,6 +455,7 @@ public class Island
     private Jungle jungle;
     private Temple temple;
     private BlockData blockData;
+    private MapObject mapObject;
 
     public Transform Root { get; private set; }
     public Transform pos;
@@ -351,9 +464,9 @@ public class Island
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
-    public void Set(Height height, Shape shape, Grid grid, Noise noise, Jungle jungle, Temple temple, BlockData blockData)
+    public void Set(Height height, Shape shape, Grid grid, Noise noise, Jungle jungle, Temple temple, BlockData blockData, MapObject mapObject)
     {
-        this.height = height; this.shape = shape; this.grid = grid; this.noise = noise; this.jungle = jungle; this.temple = temple; this.blockData = blockData;
+        this.height = height; this.shape = shape; this.grid = grid; this.noise = noise; this.jungle = jungle; this.temple = temple; this.blockData = blockData; this.mapObject = mapObject;
     }
 
     public IEnumerator Spawn(Transform parent)
@@ -587,6 +700,9 @@ public class IslandGenerator : MonoBehaviour
     public static float generationProgress = 0f;
 
     private ObjectSpawner objectSpawner = new ObjectSpawner();
+    private MapObject mapObject = new MapObject();
+
+    public MapObject mapObj => mapObject;
 
     private IEnumerator RunGeneration()
     {
@@ -600,10 +716,11 @@ public class IslandGenerator : MonoBehaviour
     private void Start()
     {
         /* Setter */
-        island.Set(height, shape, grid, noise, jungle, temple, blockData);
-        jungle.Set(island, height, shape, temple);
+        island.Set(height, shape, grid, noise, jungle, temple, blockData, mapObject);
+        jungle.Set(island, height, shape, temple, mapObject);
         temple.Set(height, shape, noise);
-        objectSpawner.Set(island, grid, temple, blockData, objectData);
+        mapObject.Set(grid);
+        objectSpawner.Set(island, grid, temple, blockData, objectData, mapObject);
 
         /* 시드 생성 및 사원 위치 결정 */
         noise.Seed();

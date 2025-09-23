@@ -6,11 +6,11 @@ using UnityEngine.AI;
 
 public class CombineMesh : MonoBehaviour
 {
-    public void Combine(Transform parent, Material originalMaterial, string mergedName)
+    public GameObject Combine(Transform parent, Material originalMaterial, string mergedName)
     {
         MeshFilter[] meshFilters = parent.GetComponentsInChildren<MeshFilter>();
-
         List<CombineInstance> combine = new List<CombineInstance>();
+
         foreach (var mf in meshFilters)
         {
             if (mf == null || mf.sharedMesh == null) continue;
@@ -21,7 +21,7 @@ public class CombineMesh : MonoBehaviour
             combine.Add(ci);
         }
 
-        if (combine.Count == 0) return;
+        if (combine.Count == 0) return null;
 
         GameObject combinedObject = new GameObject(mergedName);
         combinedObject.transform.SetParent(parent.parent);
@@ -37,29 +37,30 @@ public class CombineMesh : MonoBehaviour
         mfCombined.sharedMesh = combinedMesh;
 
         MeshRenderer mrCombined = combinedObject.AddComponent<MeshRenderer>();
-
         mrCombined.sharedMaterial = originalMaterial;
 
         for (int i = parent.childCount - 1; i >= 0; i--)
         {
             Transform child = parent.GetChild(i);
             if (child == combinedObject.transform) continue;
-            DestroyImmediate(child.gameObject);
+            GameObject.DestroyImmediate(child.gameObject);
         }
 
-        if (combinedObject.name.EndsWith("Water") || combinedObject.name.StartsWith("bush")) return;
-        MeshCollider meshCollider = combinedObject.AddComponent<MeshCollider>();
-        meshCollider.sharedMesh = combinedMesh;
-        meshCollider.convex = false;
+        if (!combinedObject.name.EndsWith("Water") && !combinedObject.name.StartsWith("bush"))
+        {
+            MeshCollider meshCollider = combinedObject.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = combinedMesh;
+            meshCollider.convex = false;
+        }
 
-        // JSH
         if (combinedObject.name.EndsWith("_Grass") || combinedObject.name.EndsWith("_Sand"))
         {
             NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
             navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
             navMeshSurface.collectObjects = CollectObjects.Children;
-
             navMeshSurface.BuildNavMesh();
         }
+
+        return combinedObject;
     }
 }
