@@ -2,17 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tiger : MonoBehaviour
+public class Tiger : CreatureBase
 {
-    // Start is called before the first frame update
-    void Start()
+    protected override void OnEnable()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        base.OnEnable();
+        InitStats(90.0f, 180.0f, 5.0f, 2.0f, 10.0f, 5.0f, 5.0f, 2.0f);
     }
 }
