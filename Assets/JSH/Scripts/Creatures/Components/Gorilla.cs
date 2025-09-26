@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Gorilla : CreatureBase
 {
-    // Start is called before the first frame update
     protected override void OnEnable()
     {
         base.OnEnable();
