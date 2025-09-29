@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Jungle
+public class Jungle : Shape
 {
     private Island island;
     private Height height;
-    private Shape shape;
     private Temple temple;
     private MapObject mapObject;
 
@@ -15,12 +14,12 @@ public class Jungle
     public int count = 20;
     public int minTreesPerJungle = 60;
     public int maxTreesPerJungle = 80;
-    public float radius = 80f;
+    public float jungleRadius = 80f;
     public GameObject[] treePrefabs;
 
-    public void Set(Island island, Height height, Shape shape, Temple temple, MapObject mapObject)
+    public void Set(Island island, Height height, Temple temple, MapObject mapObject)
     {
-        this.island = island; this.height = height; this.shape = shape; this.temple = temple; this.mapObject = mapObject;
+        this.island = island; this.height = height; this.temple = temple; this.mapObject = mapObject;
     }
 
     public void Spawn()
@@ -30,7 +29,7 @@ public class Jungle
         for (int i = 0; i < count; i++)
         {
             float angle = Random.Range(0f, Mathf.PI * 2f);
-            float dist = Random.Range(shape.radius * 0.3f, shape.radius * 0.8f);
+            float dist = Random.Range(radius * 0.3f, radius * 0.8f);
             Vector3 center = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * dist;
 
             RaycastHit hit;
@@ -61,7 +60,7 @@ public class Jungle
 
         for (int i = 0; i < treeCount; i++)
         {
-            Vector2 offset2D = Random.insideUnitCircle * radius;
+            Vector2 offset2D = Random.insideUnitCircle * jungleRadius;
             Vector3 spawnPos = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
 
             RaycastHit hit;

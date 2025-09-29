@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Temple
+public class Temple : Shape
 {
     private Height height;
-    private Shape shape;
     private Noise noise;
 
     [Header("Temple Settings")]
     public GameObject prefab;
-    public float radius = 10f;
     public float scaleY = 5f;
     public float maxDistanceFromCenter = 50f;
 
@@ -19,9 +17,9 @@ public class Temple
     public Vector3 pos;
     public bool exists = false;
 
-    public void Set(Height height, Shape shape, Noise noise)
+    public void Set(Height height, Noise noise)
     {
-        this.height = height; this.shape = shape; this.noise = noise;
+        this.height = height; this.noise = noise;
     }
 
     public void Placement()
@@ -36,10 +34,10 @@ public class Temple
             int testX = Mathf.RoundToInt(offset.x);
             int testZ = Mathf.RoundToInt(offset.y);
 
-            float dist = Mathf.Sqrt(testX * testX + testZ * testZ) / shape.radius;
+            float dist = Mathf.Sqrt(testX * testX + testZ * testZ) / radius;
             float noiseMask = Mathf.PerlinNoise((testX + noise.seed) / noise.scale, (testZ + noise.seed) / noise.scale);
             float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
-            islandMask = Mathf.Pow(islandMask, shape.falloffPower);
+            islandMask = Mathf.Pow(islandMask, falloffPower);
             islandMask = Mathf.Max(islandMask, 0.05f);
 
             float heightNoise = 0f; float amplitude = 1f; float frequency = 1f; float maxAmp = 0f;

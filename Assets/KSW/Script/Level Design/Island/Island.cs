@@ -4,10 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [System.Serializable]
-public class Island
+public class Island : Shape
 {
     private Height height;
-    private Shape shape;
     private Grid grid;
     private Noise noise;
     private Jungle jungle;
@@ -22,9 +21,9 @@ public class Island
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
-    public void Set(Height height, Shape shape, Grid grid, Noise noise, Jungle jungle, Temple temple, BlockData blockData, MapObject mapObject)
+    public void Set(Height height, Grid grid, Noise noise, Jungle jungle, Temple temple, BlockData blockData, MapObject mapObject)
     {
-        this.height = height; this.shape = shape; this.grid = grid; this.noise = noise; this.jungle = jungle; this.temple = temple; this.blockData = blockData; this.mapObject = mapObject;
+        this.height = height; this.grid = grid; this.noise = noise; this.jungle = jungle; this.temple = temple; this.blockData = blockData; this.mapObject = mapObject;
     }
 
     public IEnumerator Spawn(Transform parent)
@@ -71,10 +70,10 @@ public class Island
                         int worldX = cx * grid.chunkSize + x - (int)halfW;
                         int worldZ = cz * grid.chunkSize + z - (int)halfH;
 
-                        float dist = Mathf.Sqrt(worldX * worldX + worldZ * worldZ) / shape.radius;
+                        float dist = Mathf.Sqrt(worldX * worldX + worldZ * worldZ) / radius;
                         float noiseMask = Mathf.PerlinNoise((worldX + noise.seed) / noise.scale, (worldZ + noise.seed) / noise.scale);
                         float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
-                        islandMask = Mathf.Pow(islandMask, shape.falloffPower);
+                        islandMask = Mathf.Pow(islandMask, falloffPower);
 
                         float heightNoise = 0f; float amplitude = 1f; float frequency = 1f; float maxAmp = 0f;
 
@@ -93,11 +92,11 @@ public class Island
                         int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
 
                         int sandLayers = 0;
-                        float distanceToEdge = shape.radius - dist * shape.radius * islandMask;
+                        float distanceToEdge = radius - dist * radius * islandMask;
 
-                        if (distanceToEdge < shape.beachWidth)
+                        if (distanceToEdge < beachWidth)
                         {
-                            float t = Mathf.Clamp01(distanceToEdge / shape.beachWidth);
+                            float t = Mathf.Clamp01(distanceToEdge / beachWidth);
                             sandLayers = (t > 0.5f) ? 2 : 1;
                         }
 
@@ -222,9 +221,9 @@ public class Island
 
             float distFromCenter = new Vector2(pos.x, pos.z).magnitude;
 
-            if (distFromCenter >= shape.radius - shape.beachWidth * 2)
+            if (distFromCenter >= radius - beachWidth * 2)
             {
-                float diff = Mathf.Abs(distFromCenter - (shape.radius - shape.beachWidth / 2));
+                float diff = Mathf.Abs(distFromCenter - (radius - beachWidth / 2));
 
                 if (diff < minDist)
                 {

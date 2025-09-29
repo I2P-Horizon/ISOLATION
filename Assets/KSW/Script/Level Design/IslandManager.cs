@@ -35,9 +35,9 @@ public class IslandManager : MonoBehaviour
 
     private void Start()
     {
-        island.Set(height, shape, grid, noise, jungle, temple, blockData, mapObject);
-        jungle.Set(island, height, shape, temple, mapObject);
-        temple.Set(height, shape, noise);
+        island.Set(height, grid, noise, jungle, temple, blockData, mapObject);
+        jungle.Set(island, height, temple, mapObject);
+        temple.Set(height, noise);
         mapObject.Set(grid);
         objectSpawner.Set(island, grid, temple, blockData, objectData, mapObject);
 

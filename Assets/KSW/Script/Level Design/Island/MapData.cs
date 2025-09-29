@@ -10,7 +10,6 @@ public class Height
     public int seaLevel = 8;
 }
 
-[System.Serializable]
 public class Shape
 {
     [Header("Shape")]
