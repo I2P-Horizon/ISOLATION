@@ -50,18 +50,18 @@ public class Loading : MonoBehaviour
             yield return null;
         }
 
-        while (IslandGenerator.generationProgress < 0.9f)
+        while (IslandManager.generationProgress < 0.9f)
         {
-            loadingBar.value = IslandGenerator.generationProgress;
+            loadingBar.value = IslandManager.generationProgress;
             loadingText.text = "Loading...";
             yield return null;
         }
 
         StartCoroutine(worldMapMarker.DelayedRender());
 
-        while (IslandGenerator.generationProgress < 1f)
+        while (IslandManager.generationProgress < 1f)
         {
-            loadingBar.value = IslandGenerator.generationProgress;
+            loadingBar.value = IslandManager.generationProgress;
             loadingText.text = "Rendering...";
             yield return null;
         }

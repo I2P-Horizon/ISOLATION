@@ -3871,6 +3871,8 @@ MonoBehaviour:
     sandBlock: {fileID: 2739551521495890618, guid: bebbdb476ec66ed499c664d6f6240513, type: 3}
     waterPlane: {fileID: 6492228295775410654, guid: f117407826827c840a1bd62ec3909e88, type: 3}
     templeFloorBlock: {fileID: 1386933832549134375, guid: 8f9e75665fc94054fa0b62d4db6d40d8, type: 3}
+    swampBlock: {fileID: 1386933832549134375, guid: 8f9e75665fc94054fa0b62d4db6d40d8, type: 3}
+    rockBlock: {fileID: 7670950037535107308, guid: 7dcd8ec621ab9ac4d9343099b40ecf64, type: 3}
   objectData:
   - prefab: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
     spawnChance: 0.0015
