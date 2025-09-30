@@ -8,6 +8,7 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private Island island;
     [SerializeField] private Temple temple;
     [SerializeField] private Jungle jungle;
+
     [SerializeField] private Height height;
     [SerializeField] private Shape shape;
     [SerializeField] private Grid grid;
@@ -44,11 +45,11 @@ public class IslandManager : MonoBehaviour
 
     private void Start()
     {
-        island.Set(height, grid, noise, temple, blockData);
+        island.Set(height, grid, noise, temple, blockData, mapObject);
         jungle.Set(island, height, temple, mapObject);
         temple.Set(height, noise);
         mapObject.Set(grid);
-        objectSpawner.Set(island, grid, temple, blockData, objectData, mapObject);
+        objectSpawner.Set(island, grid, temple, objectData, mapObject);
 
         StartCoroutine(Generation());
     }

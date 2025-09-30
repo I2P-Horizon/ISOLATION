@@ -10,6 +10,7 @@ public class Island : Shape
     private Grid grid;
     private Noise noise;
     private Temple temple;
+    private MapObject mapObject;
     private BlockData blockData;
 
     public Transform Root { get; private set; }
@@ -19,7 +20,7 @@ public class Island : Shape
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
-    public void Set(Height height, Grid grid, Noise noise, Temple temple, BlockData blockData)
+    public void Set(Height height, Grid grid, Noise noise, Temple temple, BlockData blockData, MapObject mapObject)
     {
         this.height = height; this.grid = grid; this.noise = noise; this.temple = temple; this.blockData = blockData;
     }
@@ -87,8 +88,6 @@ public class Island : Shape
 
                         if (maxAmp > 0f) heightNoise /= maxAmp;
 
-                        int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
-
                         int sandLayers = 0;
                         float distanceToEdge = radius - dist * radius * islandMask;
 
@@ -101,11 +100,13 @@ public class Island : Shape
                         Vector3 posXZ = new Vector3(worldX, 0, worldZ);
                         bool inTempleArea = temple.exists && Vector3.Distance(new Vector3(temple.pos.x, 0, temple.pos.z), posXZ) <= temple.radius;
 
+                        int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
+                        float floorY = Mathf.Max(temple.pos.y, temple.scaleY + 2);
+
                         if (islandMask > 0f && landHeight > height.seaLevel)
                         {
                             if (inTempleArea)
                             {
-                                float floorY = Mathf.Max(temple.pos.y, temple.scaleY);
                                 blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, floorY, worldZ), templeParent);
                                 for (int y = height.seaLevel + 1; y < floorY; y++) blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
                                 continue;
@@ -125,6 +126,10 @@ public class Island : Shape
                             //    }
                             //}
 
+                            RockArea rockArea = new RockArea();
+                            rockArea.Set(temple, mapObject);
+                            rockArea.Initialize(chunkParent);
+
                             /* 돌 영역 생성 */
                             if (!placed && landHeight > sandLayers)
                             {
@@ -132,7 +137,7 @@ public class Island : Shape
                                 if (rockMask > 0.8f)
                                 {
                                     Vector3 rockPos = new Vector3(worldX, landHeight, worldZ);
-                                    blockData.PlaceBlock(blockData.rockBlock, rockPos, rockParent);
+                                    rockArea.Generate(rockPos, blockData.rockBlock);
                                     placed = true;
                                 }
                             }

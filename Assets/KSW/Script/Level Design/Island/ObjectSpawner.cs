@@ -9,12 +9,11 @@ public class ObjectSpawner
     private Grid grid;
     private Temple temple;
     private ObjectData[] objectData;
-    private BlockData blockData;
     private MapObject mapObject;
 
-    public void Set(Island island, Grid grid, Temple temple, BlockData blockData, ObjectData[] objectData, MapObject mapObject)
+    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject)
     {
-        this.island = island; this.grid = grid; this.temple = temple; this.blockData = blockData; this.objectData = objectData; this.mapObject = mapObject;
+        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject;
     }
 
     public void SpawnObjects()
