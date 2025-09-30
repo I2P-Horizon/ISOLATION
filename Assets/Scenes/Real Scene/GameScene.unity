@@ -3830,31 +3830,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   island:
+    radius: 200
+    falloffPower: 0.15
+    beachWidth: 3
     pos: {fileID: 1026859752}
     player: {fileID: 1344258696}
     sandPositions: []
   temple:
-    prefab: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
     radius: 10
+    falloffPower: 0.15
+    beachWidth: 3
+    prefab: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
     scaleY: 5
     maxDistanceFromCenter: 50
     pos: {x: 0, y: 0, z: 0}
     exists: 0
   jungle:
+    radius: 80
+    falloffPower: 0.15
+    beachWidth: 3
     count: 20
     minTreesPerJungle: 60
-    maxTreesPerJungle: 80
-    radius: 80
+    maxTreesPerJungle: 70
     treePrefabs:
     - {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
     - {fileID: 6091739994827031229, guid: 8be4d495e4f5d154cb3e398be3bcf557, type: 3}
   height:
     maxHeight: 32
     seaLevel: 8
-  shape:
-    radius: 200
-    falloffPower: 0.15
-    beachWidth: 3
   grid:
     width: 800
     height: 800
@@ -3882,7 +3885,7 @@ MonoBehaviour:
     spawnChance: 0.0005
     mergeMeshes: 0
     chunkSeparate: 0
-  - prefab: {fileID: 9171633543626880934, guid: 1c4fef5cd85d11841bf8b1767bd500ac, type: 3}
+  - prefab: {fileID: 4690789056192800245, guid: 489c2ddba930acb4f9110e46c00a6248, type: 3}
     spawnChance: 0.1
     mergeMeshes: 1
     chunkSeparate: 1

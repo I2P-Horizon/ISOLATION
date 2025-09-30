@@ -24,26 +24,32 @@ public class IslandManager : MonoBehaviour
 
     public MapObject mapObj => mapObject;
 
-    private IEnumerator RunGeneration()
+    /// <summary>
+    /// 级 积己 内风凭
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator Generation()
     {
+        noise.Seed();
+        temple.Placement();
+
         yield return StartCoroutine(island.Spawn(island.pos));
+
         objectSpawner.SpawnObjects();
         jungle.Spawn();
         island.SpawnPlayer();
+
         yield return StartCoroutine(island.SceneChange());
     }
 
     private void Start()
     {
-        island.Set(height, grid, noise, jungle, temple, blockData, mapObject);
+        island.Set(height, grid, noise, temple, blockData);
         jungle.Set(island, height, temple, mapObject);
         temple.Set(height, noise);
         mapObject.Set(grid);
         objectSpawner.Set(island, grid, temple, blockData, objectData, mapObject);
 
-        noise.Seed();
-        temple.Placement();
-
-        StartCoroutine(RunGeneration());
+        StartCoroutine(Generation());
     }
 }

@@ -9,10 +9,8 @@ public class Island : Shape
     private Height height;
     private Grid grid;
     private Noise noise;
-    private Jungle jungle;
     private Temple temple;
     private BlockData blockData;
-    private MapObject mapObject;
 
     public Transform Root { get; private set; }
     public Transform pos;
@@ -21,9 +19,9 @@ public class Island : Shape
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
-    public void Set(Height height, Grid grid, Noise noise, Jungle jungle, Temple temple, BlockData blockData, MapObject mapObject)
+    public void Set(Height height, Grid grid, Noise noise, Temple temple, BlockData blockData)
     {
-        this.height = height; this.grid = grid; this.noise = noise; this.jungle = jungle; this.temple = temple; this.blockData = blockData; this.mapObject = mapObject;
+        this.height = height; this.grid = grid; this.noise = noise; this.temple = temple; this.blockData = blockData;
     }
 
     public IEnumerator Spawn(Transform parent)
@@ -156,15 +154,38 @@ public class Island : Shape
                                         Vector3 grassPos = new Vector3(worldX, sandLayers, worldZ);
                                         blockData.PlaceBlock(blockData.grassBlock, grassPos, grassParent);
                                         TopGrassPositions.Add(grassPos);
+
+                                        if (inTempleArea == false && Vector3.Distance(new Vector3(temple.pos.x, 0, temple.pos.z), new Vector3(worldX, 0, worldZ)) <= temple.radius + 1f)
+                                        {
+                                            for (int i = 0; i < 6; i++)
+                                            {
+                                                Vector3 dirtPos = new Vector3(worldX, sandLayers - i, worldZ);
+                                                blockData.PlaceBlock(blockData.dirtBlock, dirtPos, dirtParent);
+                                            }
+                                        }
                                     }
                                 }
+
                                 else
                                 {
                                     GameObject topBlock = (landHeight == height.seaLevel + 1) ? blockData.sandBlock : blockData.grassBlock;
                                     Vector3 pos = new Vector3(worldX, landHeight, worldZ);
                                     blockData.PlaceBlock(topBlock, pos, topBlock == blockData.grassBlock ? grassParent : sandParent);
 
-                                    if (topBlock == blockData.grassBlock) TopGrassPositions.Add(pos);
+                                    if (topBlock == blockData.grassBlock)
+                                    {
+                                        TopGrassPositions.Add(pos);
+
+                                        if (inTempleArea == false && Vector3.Distance(new Vector3(temple.pos.x, 0, temple.pos.z), new Vector3(worldX, 0, worldZ)) <= temple.radius + 1f)
+                                        {
+                                            for (int i = 1; i <= 6; i++)
+                                            {
+                                                Vector3 dirtPos = new Vector3(worldX, landHeight - i, worldZ);
+                                                blockData.PlaceBlock(blockData.dirtBlock, dirtPos, dirtParent);
+                                            }
+                                        }
+                                    }
+
                                     if (topBlock == blockData.sandBlock && pos.y > height.seaLevel) sandPositions.Add(pos);
                                 }
                             }

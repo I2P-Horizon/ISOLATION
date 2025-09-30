@@ -13,8 +13,7 @@ public class Jungle : Shape
     [Header("Jungle Settings")]
     public int count = 20;
     public int minTreesPerJungle = 60;
-    public int maxTreesPerJungle = 80;
-    public float jungleRadius = 80f;
+    public int maxTreesPerJungle = 70;
     public GameObject[] treePrefabs;
 
     public void Set(Island island, Height height, Temple temple, MapObject mapObject)
@@ -60,7 +59,7 @@ public class Jungle : Shape
 
         for (int i = 0; i < treeCount; i++)
         {
-            Vector2 offset2D = Random.insideUnitCircle * jungleRadius;
+            Vector2 offset2D = Random.insideUnitCircle * radius;
             Vector3 spawnPos = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
 
             RaycastHit hit;
