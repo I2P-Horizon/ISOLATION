@@ -17,6 +17,8 @@ public class Island : Shape
     public Transform pos;
     public Transform player;
 
+    [SerializeField] private RockArea rockArea;
+
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
@@ -126,8 +128,7 @@ public class Island : Shape
                             //    }
                             //}
 
-                            RockArea rockArea = new RockArea();
-                            rockArea.Set(temple, mapObject);
+                            rockArea.Set(temple, mapObject, blockData);
                             rockArea.Initialize(chunkParent);
 
                             /* 돌 영역 생성 */
@@ -137,7 +138,7 @@ public class Island : Shape
                                 if (rockMask > 0.8f)
                                 {
                                     Vector3 rockPos = new Vector3(worldX, landHeight, worldZ);
-                                    rockArea.Generate(rockPos, blockData.rockBlock);
+                                    rockArea.Generate(rockPos, blockData.rockBlock, rockArea.rockObject);
                                     placed = true;
                                 }
                             }
