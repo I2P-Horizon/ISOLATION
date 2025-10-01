@@ -38,6 +38,12 @@ public class RockArea
         rockObjectParent.SetParent(Parent);
     }
 
+    /// <summary>
+    /// 돌 영역 생성
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="rockBlock"></param>
+    /// <param name="rockObject"></param>
     public void Generate(Vector3 pos, GameObject rockBlock, GameObject rockObject)
     {
         if (temple.exists && Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius)
@@ -58,6 +64,7 @@ public class RockArea
         if (rockObject != null && Random.value <= spawnChance)
         {
             /* 돌 블록 위에 돌 오브젝트 배치 */
+            /* 오일러 함수를 사용하여 랜덤 회전 값을 정하고, RockObject를 랜덤한 방향으로 스폰되도록 설정. */
             Vector3 objPos = pos + Vector3.up * rock.transform.localScale.y;
             GameObject obj = MonoBehaviour.Instantiate(rockObject, objPos, Quaternion.Euler(0, Random.Range(0f, 360f), 0), rockObjectParent);
 
