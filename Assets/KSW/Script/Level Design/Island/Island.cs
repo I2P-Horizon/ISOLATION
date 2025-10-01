@@ -129,16 +129,20 @@ public class Island : Shape
                             //}
 
                             rockArea.Set(temple, mapObject, blockData);
-                            rockArea.Initialize(chunkParent);
+                            rockArea.SetParentObject(chunkParent);
 
                             /* 돌 영역 생성 */
                             if (!placed && landHeight > sandLayers)
                             {
+                                /* worldX/worldZ 좌표를 80으로 나누어 노이즈의 스케일을 크게 만들어 큰 영역 단위로 돌 생성 */
                                 float rockMask = Mathf.PerlinNoise(worldX / 80f, worldZ / 80f);
                                 if (rockMask > 0.85f)
                                 {
                                     Vector3 rockPos = new Vector3(worldX, landHeight, worldZ);
                                     rockArea.Generate(rockPos, blockData.rockBlock, rockArea.rockObject);
+
+                                    /* 돌을 생성했으므로 placed를 true로 변경 */
+                                    /* 이후 모래나 잔디를 배치하는 로직에서는 이 좌표를 건너뜀. */
                                     placed = true;
                                 }
                             }

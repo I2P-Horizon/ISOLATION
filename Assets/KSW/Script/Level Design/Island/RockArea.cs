@@ -8,15 +8,13 @@ public class RockArea
     private MapObject mapObject;
     private BlockData blockData;
 
-    public List<Vector3> RockPositions { get; private set; } = new List<Vector3>();
-
     public Transform Parent { get; private set; }
-
-    public GameObject rockObject;
-    [Range(0, 1)] public float spawnChance;
 
     private Transform rockBlockParent;
     private Transform rockObjectParent;
+
+    public GameObject rockObject;
+    [Range(0, 1)] public float spawnChance;
 
     public void Set(Temple temple, MapObject mapObject, BlockData blockData)
     {
@@ -25,11 +23,14 @@ public class RockArea
         this.blockData = blockData;
     }
 
-    public void Initialize(Transform parent)
+    /// <summary>
+    /// 부모 오브젝트 설정
+    /// </summary>
+    /// <param name="parent"></param>
+    public void SetParentObject(Transform parent)
     {
         Parent = new GameObject("RockArea").transform;
         Parent.SetParent(parent);
-        RockPositions.Clear();
 
         rockBlockParent = new GameObject("RockBlocks").transform;
         rockBlockParent.SetParent(Parent);
@@ -57,14 +58,11 @@ public class RockArea
             rock.transform.localScale = scale;
         else rock.transform.localScale = Vector3.one;
 
-        /* 돌 영역 위치 저장 */
-        RockPositions.Add(pos);
-
         /* RockObject 생성 확률 처리 (0, 1) */
         if (rockObject != null && Random.value <= spawnChance)
         {
             /* 돌 블록 위에 돌 오브젝트 배치 */
-            /* 오일러 함수를 사용하여 랜덤 회전 값을 정하고, RockObject를 랜덤한 방향으로 스폰되도록 설정. */
+            /* 오일러 함수를 사용하여 Y축 랜덤 회전 값을 정하고, RockObject를 랜덤한 방향으로 스폰되도록 설정. */
             Vector3 objPos = pos + Vector3.up * rock.transform.localScale.y;
             GameObject obj = MonoBehaviour.Instantiate(rockObject, objPos, Quaternion.Euler(0, Random.Range(0f, 360f), 0), rockObjectParent);
 
