@@ -134,8 +134,8 @@ public class Island : Shape
                             /* 돌 영역 생성 */
                             if (!placed && landHeight > sandLayers)
                             {
-                                float rockMask = Mathf.PerlinNoise(worldX / 30f, worldZ / 30f);
-                                if (rockMask > 0.8f)
+                                float rockMask = Mathf.PerlinNoise(worldX / 80f, worldZ / 80f);
+                                if (rockMask > 0.85f)
                                 {
                                     Vector3 rockPos = new Vector3(worldX, landHeight, worldZ);
                                     rockArea.Generate(rockPos, blockData.rockBlock, rockArea.rockObject);
