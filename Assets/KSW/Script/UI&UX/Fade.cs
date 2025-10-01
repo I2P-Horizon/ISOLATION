@@ -21,7 +21,7 @@ public class Fade : MonoBehaviour
         else Destroy(this.gameObject);
     }
 
-    public IEnumerator FadeIn(Color color)
+    public IEnumerator FadeOut(Color color)
     {
         fadeImage.gameObject.SetActive(true);
         float elapsed = 0f;
@@ -42,7 +42,7 @@ public class Fade : MonoBehaviour
         fadeImage.color = c;
     }
 
-    public IEnumerator FadeOut(Color color)
+    public IEnumerator FadeIn(Color color)
     {
         fadeImage.gameObject.SetActive(true);
         float elapsed = 0f;
