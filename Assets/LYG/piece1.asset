@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 733dbb93024dfcd41819e725d3898dd9, type: 3}
-  m_Name: bag
+  m_Name: piece1
   m_EditorClassIdentifier: 
-  itemName: bag
-  itemImage: {fileID: 21300000, guid: 715accaa18024c04aaf526397f61e4b4, type: 3}
+  itemName: piece1
+  itemImage: {fileID: 21300000, guid: 38693fb39ea6fa7419635190fc06cb39, type: 3}

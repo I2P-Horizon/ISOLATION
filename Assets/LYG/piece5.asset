@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 733dbb93024dfcd41819e725d3898dd9, type: 3}
-  m_Name: sword
+  m_Name: piece5
   m_EditorClassIdentifier: 
-  itemName: sword
-  itemImage: {fileID: 21300000, guid: 05b3b4103a867bf4c9c481d10260a05b, type: 3}
+  itemName: piece5
+  itemImage: {fileID: 21300000, guid: f07136de93e9e714da28ed602a113540, type: 3}

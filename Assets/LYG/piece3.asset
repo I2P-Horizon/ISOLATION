@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 733dbb93024dfcd41819e725d3898dd9, type: 3}
-  m_Name: axe
+  m_Name: piece3
   m_EditorClassIdentifier: 
-  itemName: axe
-  itemImage: {fileID: 21300000, guid: 03d844678479acf4e9aeb9dc2572369e, type: 3}
+  itemName: piece3
+  itemImage: {fileID: 21300000, guid: bcf7af26635ae33498edfb7823b8f679, type: 3}

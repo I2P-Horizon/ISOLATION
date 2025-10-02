@@ -19,7 +19,7 @@ public class player : MonoBehaviour
     bool isMoving = false;
     bool hungerInvoked = false;
     bool hpInvoked = false;
-    bool Trigger = false;
+    //bool Trigger = false;
 
     // Start is called before the first frame update
     void Start()
@@ -57,37 +57,37 @@ public class player : MonoBehaviour
 
         isMoving = nowMoving;
 
-        if(Input.GetKeyDown(KeyCode.F) && Trigger)
-        {
-            ui.SetActive(true);
-        }
+        //if(Input.GetKeyDown(KeyCode.F) && Trigger)
+        //{
+        //    ui.SetActive(true);
+        //}
     }
 
     public void hungerdecrease()
     {
         hunger -= 1;
-        Debug.Log("Hunger: " + hunger);
+        //Debug.Log("Hunger: " + hunger);
     }
 
     public void hpdecrease()
     {
         hp -= 1;
-        Debug.Log("HP: " + hp);
+        //Debug.Log("HP: " + hp);
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.tag == "box")
-        {
-            Trigger = true;
-        }
-    }
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if(other.gameObject.tag == "box")
+    //    {
+    //        Trigger = true;
+    //    }
+    //}
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.tag == "box")
-        {
-            Trigger = false;
-        }
-    }
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.gameObject.tag == "box")
+    //    {
+    //        Trigger = false;
+    //    }
+    //}
 }

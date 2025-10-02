@@ -10,6 +10,8 @@ public class energy : MonoBehaviour
     public List<Item> neededpiece;
     public LYG_Inventory inventory;
     Button button;
+
+    public bool interaction;
    
 
     // Start is called before the first frame update
@@ -56,6 +58,7 @@ public class energy : MonoBehaviour
         inventory.Resetslot();
         Invoke("Textoff", 2f);
         button.interactable = false;
+        interaction = true;
     }
 
     public void Textoff()
