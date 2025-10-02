@@ -1,71 +1,60 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    private UIManager uiManager;
-
-    public GameObject pauseUI;
-
-    public Button continueButton;
-    public Button settingButton;
-    public Button exitButton;
-
-    #region 教臂沛
     private static GameManager instance;
+    public static GameManager Instance => instance;
 
-    public static GameManager Instance { get { return instance; } }
+    private PlayerState playerState;
+
+    private bool isGameOver = false;
+
+    /// <summary>
+    /// Game Over 贸府
+    /// </summary>
+    public IEnumerator GameOver()
+    {
+        yield return null;
+        Debug.Log("Game Over 惯积");
+        //UIManager.Instance?.PopUpShow(UIManager.Instance.gameOverUI);
+        Time.timeScale = 0;
+    }
+
+    /// <summary>
+    /// Scene 傈券
+    /// </summary>
+    public void SceneChange(string sceneName)
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(sceneName);
+    }
+
+    private void Update()
+    {
+        if (playerState != null && playerState.Die && !isGameOver)
+        {
+            isGameOver = true;
+        }
+    }
+
+    private void Start()
+    {
+        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
+        Time.timeScale = 1;
+
+        playerState = FindFirstObjectByType<PlayerState>();
+    }
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
 
-        else Destroy(this.gameObject);
-    }
-    #endregion
-
-    #region Pause
-    public void Pause() { if (!pauseUI.activeSelf) uiManager.PopUpShow(pauseUI); else uiManager.PopUpClose(pauseUI); }
-
-    private void Continue() { Pause(); }
-
-    private void Settings() { uiManager.PopUpShow(GameSettings.Instance.gameSettingsUI); }
-
-    private void Exit() { SceneManager.LoadScene("MainScene"); }
-    #endregion
-
-    public IEnumerator GameOver()
-    {
-        yield return new WaitForSeconds(0.01f);
-        uiManager.PopUpShow(uiManager.gameOverUI);
-        Time.timeScale = 0;
-    }
-
-    public void SceneChange(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape)) Pause();
-    }
-
-    private void Start()
-    {
-        uiManager = FindFirstObjectByType<UIManager>();
-        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
-
-        Time.timeScale = 1;
-
-        continueButton.onClick.AddListener(Continue);
-        settingButton.onClick.AddListener(Settings);
-        exitButton.onClick.AddListener(Exit);
+        else Destroy(gameObject);
     }
 }

@@ -4,7 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
+<<<<<<< HEAD
   - box
+=======
+  - Creature
+>>>>>>> main
   layers:
   - Default
   - TransparentFX

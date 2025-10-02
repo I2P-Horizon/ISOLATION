@@ -222,8 +222,9 @@ namespace InventorySystem
 
         private void InitButtonEvents()
         {
+            /* _inventory.TrimAll(), SortAll() 함수 미정의.
             _trimButton.onClick.AddListener(() => _inventory.TrimAll());
-            _sortButton.onClick.AddListener(() => _inventory.SortAll());
+            _sortButton.onClick.AddListener(() => _inventory.SortAll());*/
         }
 
         private void InitToggleEvents()
@@ -415,15 +416,25 @@ namespace InventorySystem
                 // 1) 마우스 클릭 떼는 순간 좌측 Ctrl 또는 Shift 키 유지
                 // 2) begin : 셀 수 있는 아이템 / end : 비어있는 슬롯
                 // 3) begin 아이템의 수량 > 1
+
+                /*-------------------------------------------------------------------------------------------------*/
+
+                /* _inventory.IsCountableItem() 보호 수준 때문에 접근 불가능. (private 선언)
                 bool isSeparatable = 
                     (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift)) &&
-                    (_inventory.IsCountableItem(_beginDragSlot.Index) && !_inventory.HasItem(endDragSlot.Index));
+                    (_inventory.IsCountableItem(_beginDragSlot.Index) && !_inventory.HasItem(endDragSlot.Index));*/
+
+                /*-------------------------------------------------------------------------------------------------*/
 
                 // true : 수량 나누기, false : 교환 또는 이동
                 bool isSeparation = false;
                 int currentAmount = 0;
 
                 // 현재 개수 확인
+
+                /*-------------------------------------------------------------------------------------------------*/
+
+                /* 위 쪽 주석 처리로 isSeparatable 미정의.
                 if (isSeparatable)
                 {
                     currentAmount = _inventory.GetCurrentAmount(_beginDragSlot.Index);
@@ -431,10 +442,12 @@ namespace InventorySystem
                     {
                         isSeparation = true;
                     }
-                }
+                }*/
+
+                /*-------------------------------------------------------------------------------------------------*/
 
                 // 1. 개수 나누기
-                if(isSeparation)
+                if (isSeparation)
                     TrySeparateAmount(_beginDragSlot.Index, endDragSlot.Index, currentAmount);
                 // 2. 교환 또는 이동
                 else
@@ -449,18 +462,32 @@ namespace InventorySystem
             if (!IsOverUI())
             {
                 // 확인 팝업 띄우고 콜백 위임
+
+                /*-------------------------------------------------------------------------------------------------*/
+
+                /* _inventory.GetCurrentAmount() 미정의.
                 int index = _beginDragSlot.Index;
                 string itemName = _inventory.GetItemName(index);
-                int amount = _inventory.GetCurrentAmount(index);
+                int amount = _inventory.GetCurrentAmount(index);\
+                */
+
+                /*-------------------------------------------------------------------------------------------------*/
 
                 // 셀 수 있는 아이템의 경우, 수량 표시
-                if(amount > 1)
+
+                /*-------------------------------------------------------------------------------------------------*/
+
+                /* amount 미정의.
+                if (amount > 1)
                     itemName += $" x{amount}";
 
                 if(_showRemovingPopup)
                     _popup.OpenConfirmationPopup(() => TryRemoveItem(index), itemName);
                 else
                     TryRemoveItem(index);
+                /*
+
+                /*-------------------------------------------------------------------------------------------------*/
             }
             // 슬롯이 아닌 다른 UI 위에 놓은 경우
             else
@@ -519,10 +546,15 @@ namespace InventorySystem
 
             string itemName = $"{_inventory.GetItemName(indexA)} x{amount}";
 
+            /*-------------------------------------------------------------------------------------------------*/
+
+            /*
             _popup.OpenAmountInputPopup(
                 amt => _inventory.SeparateAmount(indexA, indexB, amt),
                 amount, itemName
-            );
+            );*/
+
+            /*-------------------------------------------------------------------------------------------------*/
         }
 
         /// <summary> 툴팁 UI의 슬롯 데이터 갱신 </summary>
@@ -532,7 +564,7 @@ namespace InventorySystem
                 return;
 
             // 툴팁 정보 갱신
-            _itemTooltip.SetItemInfo(_inventory.GetItemData(slot.Index));
+            //_itemTooltip.SetItemInfo(_inventory.GetItemData(slot.Index));
 
             // 툴팁 위치 조정
             _itemTooltip.SetRectPosition(slot.SlotRect);
@@ -629,8 +661,8 @@ namespace InventorySystem
 
             for (int i = 0; i < capacity; i++)
             {
-                ItemData data = _inventory.GetItemData(i);
-                UpdateSlotFilterState(i, data);
+                //ItemData data = _inventory.GetItemData(i);
+                //UpdateSlotFilterState(i, data);
             }
         }
 
