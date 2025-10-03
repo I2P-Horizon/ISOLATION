@@ -16,7 +16,7 @@ public class SynopsisManager : MonoBehaviour
     /// 장면
     /// </summary>
     /// <returns></returns>
-    private IEnumerator Scene()
+    private IEnumerator CutScene()
     {
         ChangePosition(mainCamera.gameObject, -15.29f, 15f, 17.7f);
         ChangeRotation(mainCamera.gameObject, 26f, 135f, 0f);
@@ -113,7 +113,10 @@ public class SynopsisManager : MonoBehaviour
         ChangeRotation(player, 0, -10.5f, 0);
 
         playerMotion.SetBool("Standing", true);
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(1f);
+
+        yield return StartCoroutine(IncreaseFog(0.15f, 0.05f));
+
         playerMotion.SetBool("Sad", true);
         yield return new WaitForSeconds(2f);
         yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
@@ -179,8 +182,20 @@ public class SynopsisManager : MonoBehaviour
         mainCamera.transform.localPosition = originalPos;
     }
 
+    private IEnumerator IncreaseFog(float targetDensity, float speed)
+    {
+        RenderSettings.fog = true; // Fog 켜기
+        while (RenderSettings.fogDensity < targetDensity)
+        {
+            RenderSettings.fogDensity += speed * Time.deltaTime;
+            yield return null;
+        }
+        RenderSettings.fogDensity = targetDensity; // 정확히 맞춤
+    }
+
+
     private void Start()
     {
-        StartCoroutine(Scene());
+        StartCoroutine(CutScene());
     }
 }

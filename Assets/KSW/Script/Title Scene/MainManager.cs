@@ -7,9 +7,19 @@ public class MainManager : MonoBehaviour
 {
     public GameObject mainPanel;
 
+    public GameObject HUD;
+    public GameObject OVERLAY;
+
     public Button newGameButton;
     public Button settingButton;
     public Button exitButton;
+
+    private void NewStart()
+    {
+        HUD.SetActive(false);
+        OVERLAY.SetActive(false);
+        StartCoroutine(Loading.Instance.LoadGameScene());
+    }
 
     private void Exit()
     {
@@ -30,7 +40,7 @@ public class MainManager : MonoBehaviour
         SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
         SceneManager.LoadScene("LoadingScene", LoadSceneMode.Additive);
 
-        newGameButton.onClick.AddListener(() => StartCoroutine(Loading.Instance.LoadGameScene()));
+        newGameButton.onClick.AddListener(() => NewStart());
         settingButton.onClick.AddListener(() => GameSettings.Instance.GameSettingsUI());
         exitButton.onClick.AddListener(() => Exit());
     }

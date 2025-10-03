@@ -35,6 +35,12 @@ public class Loading : MonoBehaviour
 
     public IEnumerator LoadGameScene()
     {
+        yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
+        SceneManager.LoadScene("Synopsis", LoadSceneMode.Additive);
+        yield return new WaitForSeconds(35f);
+        SceneManager.UnloadSceneAsync("Synopsis");
+        StartCoroutine(Fade.Instance.FadeIn(Color.black));
+
         loadingPanel.SetActive(true);
         isLoading = true;
 
