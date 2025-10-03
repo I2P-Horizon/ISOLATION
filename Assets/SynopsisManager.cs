@@ -10,23 +10,23 @@ public class SynopsisManager : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private Animator playerMotion;
 
-    private Fade fade;
+    [SerializeField] private GameObject video;
 
     /// <summary>
-    /// 카메라 무빙 씬
+    /// 장면
     /// </summary>
     /// <returns></returns>
-    private IEnumerator Scene1()
+    private IEnumerator Scene()
     {
-        mainCamera.transform.position = new Vector3(-15.29f, 15f, 17.7f);
-        mainCamera.transform.rotation = Quaternion.Euler(26f, 135f, 0f);
+        ChangePosition(mainCamera.gameObject, -15.29f, 15f, 17.7f);
+        ChangeRotation(mainCamera.gameObject, 26f, 135f, 0f);
+
+        ChangePosition(player, 0.9504719f, 2.277f, 1.199228f);
+        ChangeRotation(player, 0f, 0f, 0f);
+
         playerMotion.Play("sit");
 
-        if (fade != null)
-        {
-            // 이동과 동시에 페이드 아웃 시작
-            StartCoroutine(fade.FadeIn(Color.black));
-        }
+        StartCoroutine(Fade.Instance.FadeIn(Color.black));
 
         float timer = 0f;
         Vector3 startPos = mainCamera.transform.position;
@@ -46,54 +46,87 @@ public class SynopsisManager : MonoBehaviour
 
         // 마지막 위치 정확히 설정
         mainCamera.transform.position = endPos;
+        StartCoroutine(Fade.Instance.FadeOut(Color.black));
 
-        if (fade != null)
-        {
-            // 이동하면서 동시에 FadeIn 코루틴 실행
-            StartCoroutine(fade.FadeOut(Color.black));
-        }
+        /* 페이드인 시작 */
+        StartCoroutine(Fade.Instance.FadeIn(Color.black));
 
-        StartCoroutine(Scene2());
-    }
+        /* 카메라 위치 설정 */
+        ChangePosition(mainCamera.gameObject, 0.1f, 3.9f, 2.5f);
+        ChangeRotation(mainCamera.gameObject, 4.02f, 135f, 0f);
 
-    /// <summary>
-    /// 플레이어 의자
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator Scene2()
-    {
-        StartCoroutine(fade.FadeIn(Color.black));
-        mainCamera.transform.position = new Vector3(0.258f, 4.056f, 4.052f);
-        mainCamera.transform.rotation = Quaternion.Euler(4.021f, 135f, 0f);
+        /* 3초 뒤에 선글라스 올림 */
         yield return new WaitForSeconds(3f);
-        StartCoroutine(Scene3());
-    }
 
-    /// <summary>
-    /// 플레이어 의자에서 선글라스 올림
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator Scene3()
-    {
         yield return null;
-        playerMotion.SetBool("Scene2", true);
-        yield return new WaitForSeconds(5f);
+        playerMotion.SetBool("Sunglasses Up", true);
+
+        /* 3초 기다린 후 앞으로 걸어감 */
+        yield return new WaitForSeconds(3f);
 
         playerMotion.SetBool("Walking", true);
-        yield return StartCoroutine(MovePlayerForward(1.5f, 1));
+        yield return StartCoroutine(MovePlayerForward(1.5f, 1f));
 
+        ChangePosition(mainCamera.gameObject, 2.5f, 4.5f, 6.6f);
+        ChangeRotation(mainCamera.gameObject, 3.8f, 213f, 0f);
+
+        yield return StartCoroutine(MovePlayerForward(1.5f, 1f));
+
+        /* 배 앞 쪽에서 멈춤 */
         playerMotion.SetBool("Idle", true);
         yield return new WaitForSeconds(0.1f);
-        StartCoroutine(Scene4());
+
+        yield return StartCoroutine(MoveCameraForwardSmooth(0.5f, 2.5f));
+
+        video.SetActive(true);
+
+        yield return new WaitForSeconds(3f);
+        video.SetActive(false);
+
+        yield return new WaitForSeconds(2f);
+
+        /* 뒤로 넘어짐 */
+        playerMotion.SetBool("fall", true);
+        yield return StartCoroutine(CameraShake(1.5f, 0.2f));
+        StartCoroutine(CameraShake(5f, 0.03f));
+        yield return new WaitForSeconds(2f);
+
+        ChangePosition(player, -1.6f, 2.277f, -0.64f);
+        ChangeRotation(player, 0, -178, 0);
+
+        playerMotion.Play("Crawl");
+
+        /* 로컬 좌표 문제로 카메라 전환할 때마다 진동 강제로 off -> 변경 후 on */
+        StartCoroutine(CameraShake(0f, 0f));
+        ChangePosition(mainCamera.gameObject, -2.5f, 4.3f, -4.9f);
+        ChangeRotation(mainCamera.gameObject, 23.8f, 5.1f, 1.7f);
+        StartCoroutine(CameraShake(5f, 0.03f));
+
+        yield return StartCoroutine(MovePlayerForward(1.5f, 0.6f));
+
+        StartCoroutine(CameraShake(0f, 0f));
+        ChangePosition(mainCamera.gameObject, -0.75f, 4f, -1.5f);
+        ChangeRotation(mainCamera.gameObject, -0.6f, 163f, 0f);
+        StartCoroutine(CameraShake(10f, 0.03f));
+
+        ChangePosition(player, -0.17f, 2.277f, -3.594f);
+        ChangeRotation(player, 0, -10.5f, 0);
+
+        playerMotion.SetBool("Standing", true);
+        yield return new WaitForSeconds(5f);
+        playerMotion.SetBool("Sad", true);
+        yield return new WaitForSeconds(2f);
+        yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
     }
 
-    private IEnumerator Scene4()
+    private void ChangePosition(GameObject obj, float x, float y, float z)
     {
-        yield return null;
-        mainCamera.transform.position = new Vector3(2.5f, 4.3f, 6.6f);
-        mainCamera.transform.rotation = Quaternion.Euler(3.8f, 213f, 0f);
+        obj.transform.position = new Vector3(x, y, z);
+    }
 
-        StartCoroutine(MoveCameraForwardSmooth(0.5f, 5f));
+    private void ChangeRotation(GameObject obj, float x, float y, float z)
+    {
+        obj.transform.rotation = Quaternion.Euler(x, y, z);
     }
 
     private IEnumerator MovePlayerForward(float distance, float speed)
@@ -125,14 +158,29 @@ public class SynopsisManager : MonoBehaviour
             yield return null;
         }
 
-        // 마지막 위치 보정
         mainCamera.transform.position = endPos;
     }
 
+    private IEnumerator CameraShake(float duration, float magnitude)
+    {
+        Vector3 originalPos = mainCamera.transform.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
+
+            mainCamera.transform.localPosition = originalPos + new Vector3(x, y, 0f);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        mainCamera.transform.localPosition = originalPos;
+    }
 
     private void Start()
     {
-        fade = FindFirstObjectByType<Fade>();
-        StartCoroutine(Scene1());
+        StartCoroutine(Scene());
     }
 }

@@ -19,7 +19,7 @@ public class MainManager : MonoBehaviour
     private IEnumerator StartEffect()
     {
         mainPanel.GetComponent<UIAnimator>().Close();
-        StartCoroutine(Fade.Instance.FadeOut(Color.white));
+        StartCoroutine(Fade.Instance.FadeIn(Color.white));
         yield return new WaitForSeconds(0.5f);
         mainPanel.GetComponent<UIAnimator>().Show();
     }
