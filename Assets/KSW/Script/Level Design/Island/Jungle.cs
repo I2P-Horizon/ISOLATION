@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Jungle : Shape
+public class Jungle : Island, IGeneratable
 {
-    private Island island;
-    private Height height;
+    #region Jungle Data
+    private IslandGenerator island;
     private Temple temple;
     private MapObject mapObject;
 
@@ -16,14 +16,15 @@ public class Jungle : Shape
     public int maxTreesPerJungle = 70;
     public GameObject[] treePrefabs;
 
-    public void Set(Island island, Height height, Temple temple, MapObject mapObject)
+    public void Set(IslandGenerator island, Temple temple, MapObject mapObject)
     {
-        this.island = island; this.height = height; this.temple = temple; this.mapObject = mapObject;
+        this.island = island; this.temple = temple; this.mapObject = mapObject;
     }
+    #endregion
 
-    public void Spawn()
+    protected override IEnumerator Generate()
     {
-        if (treePrefabs == null || treePrefabs.Length == 0) return;
+        if (treePrefabs == null || treePrefabs.Length == 0) yield break;
 
         for (int i = 0; i < count; i++)
         {
@@ -35,9 +36,10 @@ public class Jungle : Shape
 
             if (Physics.Raycast(center + Vector3.up * 100f, Vector3.down, out hit, 200f))
             {
-                if (hit.point.y > height.seaLevel + 1f)
+                if (hit.point.y > seaLevel + 1f)
                 {
-                    if (temple.exists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius)
+                    if (temple.exists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z),
+                        new Vector3(temple.pos.x, 0, temple.pos.z)) <= radius)
                         continue;
 
                     SpawnJungleCluster(hit.point, island.Root);
@@ -45,6 +47,8 @@ public class Jungle : Shape
             }
         }
     }
+
+    IEnumerator IGeneratable.Generate() => Generate();
 
     private void SpawnJungleCluster(Vector3 centerPos, Transform parent)
     {
@@ -70,9 +74,9 @@ public class Jungle : Shape
                 /* 모래 블록, 돌 블록 위에는 생성되지 않도록 함. */
                 if (groundName.Contains("sand") || groundName.Contains("rock")) continue;
 
-                if (hit.point.y > height.seaLevel + 1f)
+                if (hit.point.y > seaLevel + 1f)
                 {
-                    if (temple.exists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius)
+                    if (temple.exists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= radius)
                         continue;
 
                     spawnPos.x = Mathf.Round(hit.point.x / blockSize) * blockSize;

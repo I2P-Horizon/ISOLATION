@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class RockArea
+public class RockArea : IslandData
 {
     private Temple temple;
     private MapObject mapObject;
@@ -47,7 +47,7 @@ public class RockArea
     /// <param name="rockObject"></param>
     public void Generate(Vector3 pos, GameObject rockBlock, GameObject rockObject)
     {
-        if (temple.exists && Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius)
+        if (temple.exists && Vector3.Distance(new Vector3(pos.x, 0, pos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= radius)
             return;
 
         /* 돌 블록 생성 */

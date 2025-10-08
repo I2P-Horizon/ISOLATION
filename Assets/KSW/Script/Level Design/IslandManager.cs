@@ -1,18 +1,18 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class IslandManager : MonoBehaviour
+public interface IGeneratable
 {
+    IEnumerator Generate();
+}
+
+public class IslandManager : MonoBehaviour, IGeneratable
+{
+    #region IslandManager Data
     [Header("Settings")]
-    [SerializeField] private Island island;
+    [SerializeField] private IslandGenerator island;
     [SerializeField] private Temple temple;
     [SerializeField] private Jungle jungle;
-
-    [SerializeField] private Height height;
-    [SerializeField] private Shape shape;
-    [SerializeField] private Grid grid;
-    [SerializeField] private Noise noise;
 
     [Header("Data")]
     [SerializeField] private BlockData blockData;
@@ -23,40 +23,40 @@ public class IslandManager : MonoBehaviour
     private ObjectSpawner objectSpawner = new ObjectSpawner();
     private MapObject mapObject = new MapObject();
 
+
     public MapObject mapObj => mapObject;
+    #endregion
 
     /// <summary>
     /// 섬 생성 코루틴
     /// </summary>
     /// <returns></returns>
-    private IEnumerator Generation()
+    public IEnumerator Generate()
     {
         /* 시드 생성 */
-        noise.Seed();
+        island.Seed();
 
         /* 사원 위치 생성 */
-        temple.Placement();
-
+        if (temple is IGeneratable t) StartCoroutine(t.Generate());
         /* 섬 생성 */
-        yield return StartCoroutine(island.Spawn(island.pos));
+        if (island is IGeneratable i) yield return StartCoroutine(i.Generate());
+        /* 정글 생성 */
+        if (jungle is IGeneratable j) yield return StartCoroutine(j.Generate());
 
         /* 섬 생성이 완료되면 오브젝트/플레이어 생성 */
         objectSpawner.SpawnObjects();
-        jungle.Spawn();
         island.SpawnPlayer();
 
-        /* Game Scene 으로 변경 */
+        /* GameScene으로 변경 */
         yield return StartCoroutine(island.SceneChange());
     }
 
     private void Start()
     {
-        island.Set(height, grid, noise, temple, blockData, mapObject);
-        jungle.Set(island, height, temple, mapObject);
-        temple.Set(height, noise);
-        mapObject.Set(grid);
-        objectSpawner.Set(island, grid, temple, objectData, mapObject);
+        island.Set(temple, blockData, mapObject);
+        jungle.Set(island, temple, mapObject);
+        objectSpawner.Set(island, temple, objectData, mapObject);
 
-        StartCoroutine(Generation());
+        StartCoroutine(Generate());
     }
 }

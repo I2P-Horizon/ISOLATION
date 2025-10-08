@@ -2,42 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Height
-{
-    [Header("Heights")]
-    public int maxHeight = 32;
-    public int seaLevel = 8;
-}
-
-public class Shape
+public abstract class IslandData
 {
     [Header("Shape")]
-    public float radius = 200f;
-    public float falloffPower = 0.15f;
-    public float beachWidth = 3f;
-}
+    [SerializeField] protected float radius = 200f;
 
-[System.Serializable]
-public class Grid
-{
+    [Header("Terrain")]
+    protected float falloffPower = 0.15f;
+    protected float beachWidth = 3f;
+
+    [Header("Heights")]
+    protected int maxHeight = 32;
+    protected int seaLevel = 8;
+
     [Header("Grid")]
-    public int width = 800;
-    public int height = 800;
-    public int chunkSize = 32;
+    protected int width = 800;
+    protected int height = 800;
+    protected int chunkSize = 32;
+
+    [Header("Noise")]
+    protected float scale = 80f;
+    protected float persistence = 0.5f;
+    protected float lacunarity = 2f;
+    protected int octaves = 4;
+    protected int seed = 0;   
 }
 
-[System.Serializable]
-public class Noise
+public abstract class Island : IslandData
 {
-    [Header("Noise")]
-    public float scale = 80f;
-    public int octaves = 4;
-    public float persistence = 0.5f;
-    public float lacunarity = 2f;
-    public int seed = 0;
-
-    public void Seed() { if (seed == 0) seed = Random.Range(1, 100000); }
+    protected virtual IEnumerator Generate() { yield return null; }
+    public virtual void Seed() { if (seed == 0) seed = Random.Range(1, 100000); }
 }
 
 [System.Serializable]
@@ -70,14 +64,14 @@ public class BlockData
     [HideInInspector]
     public Dictionary<GameObject, Vector3> scaleCache = new Dictionary<GameObject, Vector3>();
 
-    public void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
+    public virtual void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
     {
         if (prefab == null) return;
         GameObject block = MonoBehaviour.Instantiate(prefab, pos, Quaternion.identity, parent);
         if (scaleCache.TryGetValue(prefab, out Vector3 s)) block.transform.localScale = s;
     }
 
-    public Vector3 GetScaleToFit(GameObject prefab, Vector3 targetSize)
+    public virtual Vector3 GetScaleToFit(GameObject prefab, Vector3 targetSize)
     {
         GameObject temp = MonoBehaviour.Instantiate(prefab);
         Renderer rend = temp.GetComponentInChildren<Renderer>();

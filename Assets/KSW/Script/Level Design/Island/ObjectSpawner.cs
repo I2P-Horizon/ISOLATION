@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ObjectSpawner
+public class ObjectSpawner : IslandData
 {
-    private Island island;
-    private Grid grid;
+    #region ObjectSpawner Data
+    private IslandGenerator island;
     private Temple temple;
     private ObjectData[] objectData;
     private MapObject mapObject;
 
-    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject)
+    public void Set(IslandGenerator island, Temple temple, ObjectData[] objectData, MapObject mapObject)
     {
-        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject;
+        this.island = island; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject;
     }
+    #endregion
 
     public void SpawnObjects()
     {
@@ -31,7 +32,7 @@ public class ObjectSpawner
 
             foreach (var grassPos in island.TopGrassPositions)
             {
-                if (temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius) continue;
+                if (temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= radius) continue;
 
                 if (Random.value < obj.spawnChance)
                 {
@@ -39,8 +40,8 @@ public class ObjectSpawner
 
                     if (obj.chunkSeparate)
                     {
-                        int chunkX = Mathf.FloorToInt((grassPos.x + grid.width / 2f) / grid.chunkSize);
-                        int chunkZ = Mathf.FloorToInt((grassPos.z + grid.height / 2f) / grid.chunkSize);
+                        int chunkX = Mathf.FloorToInt((grassPos.x + width) / chunkSize);
+                        int chunkZ = Mathf.FloorToInt((grassPos.z + height / 2f) / chunkSize);
                         string chunkKey = $"{chunkX}_{chunkZ}";
 
                         if (!chunkParents.ContainsKey(chunkKey))
@@ -89,15 +90,9 @@ public class ObjectSpawner
 
 public class MapObject
 {
-    private Grid grid;
     private List<GameObject> allObjects = new List<GameObject>();
 
     private Dictionary<Vector2Int, GameObject> chunkMap = new Dictionary<Vector2Int, GameObject>();
-
-    public void Set(Grid grid)
-    {
-        this.grid = grid;
-    }
 
     public void RegisterChunk(Vector2Int chunkIndex, GameObject chunkObj)
     {
