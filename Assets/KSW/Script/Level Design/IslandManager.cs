@@ -4,6 +4,151 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/*
+ * ============================================================
+ * Procedural Island Generation System
+ * ============================================================
+ * 
+ * 섬을 절차적으로 생성하고,
+ * 오브젝트, 나무, 돌, 사원 등을 배치하며,
+ * 플레이어 스폰 및 씬 전환까지 관리하는 구조.
+ * 
+ * 1. Data Classes
+ *    - Shape: 섬/지형 기본 형태 정보
+ *    - Height: 높이/해수면 설정
+ *    - Grid: 지형 블록 그리드 정보
+ *    - Noise: 펄린 노이즈 설정
+ *    - ObjectData: 오브젝트 스폰 정보
+ *    - BlockData: 블록 프리팹과 배치/스케일 관련 기능
+ * 
+ * 2. RockArea
+ *    - 섬 내 돌 영역 생성 및 블록/오브젝트 배치
+ *    - 메쉬 병합 지원
+ * 
+ * 3. MapObject
+ *    - 생성된 모든 오브젝트 관리
+ *    - 특정 영역 오브젝트 비활성화 기능 제공
+ * 
+ * 4. ObjectSpawner
+ *    - 섬 위 오브젝트 배치 (풀, 나무 등)
+ *    - 청크 단위 메쉬 병합 지원
+ * 
+ * 5. Jungle (Shape 상속)
+ *    - 정글 생성
+ *    - 나무 클러스터 배치
+ * 
+ * 6. Temple (Shape 상속)
+ *    - 사원 위치 결정 및 배치
+ * 
+ * 7. Island (Shape 상속)
+ *    - 섬 생성의 핵심 클래스
+ *    - 지형 블록 배치, 물, 모래, 돌, 늪지대 처리
+ *    - RockArea 및 ObjectSpawner, Jungle, Temple과 연동
+ *    - 플레이어 스폰과 씬 전환 기능 포함
+ * 
+ * 8. IslandManager (MonoBehaviour)
+ *    - 전체 생성 과정을 코루틴으로 관리
+ *    - 시드 생성, 사원 위치 배치, 섬 생성, 오브젝트/플레이어 생성
+ *    - 씬 전환 처리
+ *
+ * ============================================================
+ */
+
+#region Data
+public class Shape
+{
+    [Header("Shape")]
+    public float radius = 200f;
+    public float falloffPower = 0.15f;
+    public float beachWidth = 3f;
+}
+
+[System.Serializable]
+public class Height
+{
+    [Header("Heights")]
+    public int maxHeight = 32;
+    public int seaLevel = 8;
+}
+
+[System.Serializable]
+public class Grid
+{
+    [Header("Grid")]
+    public int width = 800;
+    public int height = 800;
+    public int chunkSize = 32;
+}
+
+[System.Serializable]
+public class Noise
+{
+    [Header("Noise")]
+    public float scale = 80f;
+    public int octaves = 4;
+    public float persistence = 0.5f;
+    public float lacunarity = 2f;
+    public int seed = 0;
+
+    public void Seed() { if (seed == 0) seed = Random.Range(1, 100000); }
+}
+
+[System.Serializable]
+public class ObjectData
+{
+    [Header("오브젝트 설정")]
+    public GameObject prefab;
+
+    [Range(0, 1)]
+    [Tooltip("스폰 확률")]
+    public float spawnChance = 0.05f;
+
+    [Header("메쉬 병합 설정")]
+    [Tooltip("메쉬 병합 여부")] public bool mergeMeshes = true;
+    [Tooltip("청크 단위 병합 여부")] public bool chunkSeparate = true;
+}
+
+[System.Serializable]
+public class BlockData
+{
+    [Header("Block Prefabs")]
+    public GameObject grassBlock;
+    public GameObject dirtBlock;
+    public GameObject sandBlock;
+    public GameObject waterPlane;
+    public GameObject templeFloorBlock;
+    public GameObject swampBlock;
+    public GameObject rockBlock;
+
+    [HideInInspector]
+    public Dictionary<GameObject, Vector3> scaleCache = new Dictionary<GameObject, Vector3>();
+
+    public void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
+    {
+        if (prefab == null) return;
+        GameObject block = MonoBehaviour.Instantiate(prefab, pos, Quaternion.identity, parent);
+        if (scaleCache.TryGetValue(prefab, out Vector3 s)) block.transform.localScale = s;
+    }
+
+    public Vector3 GetScaleToFit(GameObject prefab, Vector3 targetSize)
+    {
+        GameObject temp = MonoBehaviour.Instantiate(prefab);
+        Renderer rend = temp.GetComponentInChildren<Renderer>();
+
+        if (rend == null) { MonoBehaviour.DestroyImmediate(temp); return Vector3.one; }
+
+        Vector3 originalSize = rend.bounds.size;
+        MonoBehaviour.DestroyImmediate(temp);
+
+        if (originalSize == Vector3.zero) return Vector3.one;
+
+        float yScale = originalSize.y < 0.01f ? 1f : targetSize.y / originalSize.y;
+        return new Vector3(targetSize.x / originalSize.x, yScale, targetSize.z / originalSize.z);
+    }
+}
+#endregion
+
+#region RockArea
 [System.Serializable]
 public class RockArea
 {
@@ -85,91 +230,9 @@ public class RockArea
         if (combiner != null) combiner.Combine(rockBlockParent, rockBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{Parent.name}_Rock");
     }
 }
+#endregion
 
-public class ObjectSpawner
-{
-    private Island island;
-    private Grid grid;
-    private Temple temple;
-    private ObjectData[] objectData;
-    private MapObject mapObject;
-
-    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject)
-    {
-        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject;
-    }
-
-    public void SpawnObjects()
-    {
-        if (objectData == null || objectData.Length == 0) return;
-        CombineMesh combiner = MonoBehaviour.FindAnyObjectByType<CombineMesh>();
-
-        foreach (var obj in objectData)
-        {
-            if (obj.prefab == null) continue;
-            Transform objectParent = new GameObject(obj.prefab.name + "_Objects").transform;
-            objectParent.SetParent(island.Root);
-
-            Dictionary<string, Transform> chunkParents = new Dictionary<string, Transform>();
-
-            foreach (var grassPos in island.TopGrassPositions)
-            {
-                if (temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius) continue;
-
-                if (Random.value < obj.spawnChance)
-                {
-                    Transform parentForSpawn = objectParent;
-
-                    if (obj.chunkSeparate)
-                    {
-                        int chunkX = Mathf.FloorToInt((grassPos.x + grid.width / 2f) / grid.chunkSize);
-                        int chunkZ = Mathf.FloorToInt((grassPos.z + grid.height / 2f) / grid.chunkSize);
-                        string chunkKey = $"{chunkX}_{chunkZ}";
-
-                        if (!chunkParents.ContainsKey(chunkKey))
-                        {
-                            Transform chunkObjParent = new GameObject($"Chunk_{chunkKey}_{obj.prefab.name}").transform;
-                            chunkObjParent.SetParent(objectParent);
-                            chunkParents.Add(chunkKey, chunkObjParent);
-
-                            mapObject.RegisterChunk(new Vector2Int(chunkX, chunkZ), chunkObjParent.gameObject);
-                        }
-
-                        parentForSpawn = chunkParents[chunkKey];
-                    }
-
-                    GameObject mapObj = MonoBehaviour.Instantiate(obj.prefab, grassPos + Vector3.up * 1f, Quaternion.identity, parentForSpawn);
-                    mapObject.RegisterObject(mapObj);
-                }
-            }
-
-            if (obj.mergeMeshes && combiner != null)
-            {
-                if (obj.chunkSeparate)
-                {
-                    foreach (var kvp in chunkParents)
-                    {
-                        if (kvp.Value.childCount > 0)
-                        {
-                            GameObject merged = combiner.Combine(kvp.Value, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged_{kvp.Key}");
-                            if (merged != null) mapObject.RegisterObject(merged);
-                        }
-                    }
-                }
-
-                else
-                {
-                    if (objectParent.childCount > 0)
-                    {
-                        GameObject merged = combiner.Combine(objectParent, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged");
-                        if (merged != null) mapObject.RegisterObject(merged);
-                    }
-                }
-            }
-        }
-    }
-}
-
+#region MapObject
 public class MapObject
 {
     private Grid grid;
@@ -256,7 +319,95 @@ public class MapObject
         }
     }
 }
+#endregion
 
+#region ObjectSpawner
+public class ObjectSpawner
+{
+    private Island island;
+    private Grid grid;
+    private Temple temple;
+    private ObjectData[] objectData;
+    private MapObject mapObject;
+
+    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject)
+    {
+        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject;
+    }
+
+    public void SpawnObjects()
+    {
+        if (objectData == null || objectData.Length == 0) return;
+        CombineMesh combiner = MonoBehaviour.FindAnyObjectByType<CombineMesh>();
+
+        foreach (var obj in objectData)
+        {
+            if (obj.prefab == null) continue;
+            Transform objectParent = new GameObject(obj.prefab.name + "_Objects").transform;
+            objectParent.SetParent(island.Root);
+
+            Dictionary<string, Transform> chunkParents = new Dictionary<string, Transform>();
+
+            foreach (var grassPos in island.TopGrassPositions)
+            {
+                if (temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius) continue;
+
+                if (Random.value < obj.spawnChance)
+                {
+                    Transform parentForSpawn = objectParent;
+
+                    if (obj.chunkSeparate)
+                    {
+                        int chunkX = Mathf.FloorToInt((grassPos.x + grid.width / 2f) / grid.chunkSize);
+                        int chunkZ = Mathf.FloorToInt((grassPos.z + grid.height / 2f) / grid.chunkSize);
+                        string chunkKey = $"{chunkX}_{chunkZ}";
+
+                        if (!chunkParents.ContainsKey(chunkKey))
+                        {
+                            Transform chunkObjParent = new GameObject($"Chunk_{chunkKey}_{obj.prefab.name}").transform;
+                            chunkObjParent.SetParent(objectParent);
+                            chunkParents.Add(chunkKey, chunkObjParent);
+
+                            mapObject.RegisterChunk(new Vector2Int(chunkX, chunkZ), chunkObjParent.gameObject);
+                        }
+
+                        parentForSpawn = chunkParents[chunkKey];
+                    }
+
+                    GameObject mapObj = MonoBehaviour.Instantiate(obj.prefab, grassPos + Vector3.up * 1f, Quaternion.identity, parentForSpawn);
+                    mapObject.RegisterObject(mapObj);
+                }
+            }
+
+            if (obj.mergeMeshes && combiner != null)
+            {
+                if (obj.chunkSeparate)
+                {
+                    foreach (var kvp in chunkParents)
+                    {
+                        if (kvp.Value.childCount > 0)
+                        {
+                            GameObject merged = combiner.Combine(kvp.Value, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged_{kvp.Key}");
+                            if (merged != null) mapObject.RegisterObject(merged);
+                        }
+                    }
+                }
+
+                else
+                {
+                    if (objectParent.childCount > 0)
+                    {
+                        GameObject merged = combiner.Combine(objectParent, obj.prefab.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{obj.prefab.name}_Merged");
+                        if (merged != null) mapObject.RegisterObject(merged);
+                    }
+                }
+            }
+        }
+    }
+}
+#endregion
+
+#region Junble : Shape
 [System.Serializable]
 public class Jungle : Shape
 {
@@ -341,7 +492,77 @@ public class Jungle : Shape
         }
     }
 }
+#endregion
 
+#region Temple : Shape
+[System.Serializable]
+public class Temple : Shape
+{
+    private Height height;
+    private Noise noise;
+
+    [Header("Temple Settings")]
+    public GameObject prefab;
+    public float scaleY = 5f;
+    public float maxDistanceFromCenter = 50f;
+
+    [HideInInspector]
+    public Vector3 pos;
+    public bool exists = false;
+
+    public void Set(Height height, Noise noise)
+    {
+        this.height = height; this.noise = noise;
+    }
+
+    public void Placement()
+    {
+        exists = false;
+
+        if (prefab == null) return;
+
+        for (int i = 0; i < 100; i++)
+        {
+            Vector2 offset = Random.insideUnitCircle * maxDistanceFromCenter;
+            int testX = Mathf.RoundToInt(offset.x);
+            int testZ = Mathf.RoundToInt(offset.y);
+
+            float dist = Mathf.Sqrt(testX * testX + testZ * testZ) / radius;
+            float noiseMask = Mathf.PerlinNoise((testX + noise.seed) / noise.scale, (testZ + noise.seed) / noise.scale);
+            float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
+            islandMask = Mathf.Pow(islandMask, falloffPower);
+            islandMask = Mathf.Max(islandMask, 0.05f);
+
+            float heightNoise = 0f; float amplitude = 1f; float frequency = 1f; float maxAmp = 0f;
+
+            for (int o = 0; o < noise.octaves; o++)
+            {
+                float sampleX = (testX + noise.seed) / noise.scale * frequency;
+                float sampleZ = (testZ + noise.seed) / noise.scale * frequency;
+                heightNoise += Mathf.PerlinNoise(sampleX, sampleZ) * amplitude;
+                maxAmp += amplitude;
+                amplitude *= noise.persistence;
+                frequency *= noise.lacunarity;
+            }
+
+            if (maxAmp > 0f) heightNoise /= maxAmp;
+
+            int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
+
+            if (landHeight <= height.seaLevel) landHeight = height.seaLevel + 1;
+
+            if (islandMask > 0f && landHeight > height.seaLevel + 1)
+            {
+                pos = new Vector3(testX, landHeight, testZ);
+                exists = true;
+                break;
+            }
+        }
+    }
+}
+#endregion
+
+#region Island : Shape
 [System.Serializable]
 public class Island : Shape
 {
@@ -620,164 +841,7 @@ public class Island : Shape
         }
     }
 }
-
-[System.Serializable]
-public class Height
-{
-    [Header("Heights")]
-    public int maxHeight = 32;
-    public int seaLevel = 8;
-}
-
-public class Shape
-{
-    [Header("Shape")]
-    public float radius = 200f;
-    public float falloffPower = 0.15f;
-    public float beachWidth = 3f;
-}
-
-[System.Serializable]
-public class Grid
-{
-    [Header("Grid")]
-    public int width = 800;
-    public int height = 800;
-    public int chunkSize = 32;
-}
-
-[System.Serializable]
-public class Noise
-{
-    [Header("Noise")]
-    public float scale = 80f;
-    public int octaves = 4;
-    public float persistence = 0.5f;
-    public float lacunarity = 2f;
-    public int seed = 0;
-
-    public void Seed() { if (seed == 0) seed = Random.Range(1, 100000); }
-}
-
-[System.Serializable]
-public class ObjectData
-{
-    [Header("오브젝트 설정")]
-    public GameObject prefab;
-
-    [Range(0, 1)]
-    [Tooltip("스폰 확률")]
-    public float spawnChance = 0.05f;
-
-    [Header("메쉬 병합 설정")]
-    [Tooltip("메쉬 병합 여부")] public bool mergeMeshes = true;
-    [Tooltip("청크 단위 병합 여부")] public bool chunkSeparate = true;
-}
-
-[System.Serializable]
-public class BlockData
-{
-    [Header("Block Prefabs")]
-    public GameObject grassBlock;
-    public GameObject dirtBlock;
-    public GameObject sandBlock;
-    public GameObject waterPlane;
-    public GameObject templeFloorBlock;
-    public GameObject swampBlock;
-    public GameObject rockBlock;
-
-    [HideInInspector]
-    public Dictionary<GameObject, Vector3> scaleCache = new Dictionary<GameObject, Vector3>();
-
-    public void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
-    {
-        if (prefab == null) return;
-        GameObject block = MonoBehaviour.Instantiate(prefab, pos, Quaternion.identity, parent);
-        if (scaleCache.TryGetValue(prefab, out Vector3 s)) block.transform.localScale = s;
-    }
-
-    public Vector3 GetScaleToFit(GameObject prefab, Vector3 targetSize)
-    {
-        GameObject temp = MonoBehaviour.Instantiate(prefab);
-        Renderer rend = temp.GetComponentInChildren<Renderer>();
-
-        if (rend == null) { MonoBehaviour.DestroyImmediate(temp); return Vector3.one; }
-
-        Vector3 originalSize = rend.bounds.size;
-        MonoBehaviour.DestroyImmediate(temp);
-
-        if (originalSize == Vector3.zero) return Vector3.one;
-
-        float yScale = originalSize.y < 0.01f ? 1f : targetSize.y / originalSize.y;
-        return new Vector3(targetSize.x / originalSize.x, yScale, targetSize.z / originalSize.z);
-    }
-}
-
-[System.Serializable]
-public class Temple : Shape
-{
-    private Height height;
-    private Noise noise;
-
-    [Header("Temple Settings")]
-    public GameObject prefab;
-    public float scaleY = 5f;
-    public float maxDistanceFromCenter = 50f;
-
-    [HideInInspector]
-    public Vector3 pos;
-    public bool exists = false;
-
-    public void Set(Height height, Noise noise)
-    {
-        this.height = height; this.noise = noise;
-    }
-
-    public void Placement()
-    {
-        exists = false;
-
-        if (prefab == null) return;
-
-        for (int i = 0; i < 100; i++)
-        {
-            Vector2 offset = Random.insideUnitCircle * maxDistanceFromCenter;
-            int testX = Mathf.RoundToInt(offset.x);
-            int testZ = Mathf.RoundToInt(offset.y);
-
-            float dist = Mathf.Sqrt(testX * testX + testZ * testZ) / radius;
-            float noiseMask = Mathf.PerlinNoise((testX + noise.seed) / noise.scale, (testZ + noise.seed) / noise.scale);
-            float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
-            islandMask = Mathf.Pow(islandMask, falloffPower);
-            islandMask = Mathf.Max(islandMask, 0.05f);
-
-            float heightNoise = 0f; float amplitude = 1f; float frequency = 1f; float maxAmp = 0f;
-
-            for (int o = 0; o < noise.octaves; o++)
-            {
-                float sampleX = (testX + noise.seed) / noise.scale * frequency;
-                float sampleZ = (testZ + noise.seed) / noise.scale * frequency;
-                heightNoise += Mathf.PerlinNoise(sampleX, sampleZ) * amplitude;
-                maxAmp += amplitude;
-                amplitude *= noise.persistence;
-                frequency *= noise.lacunarity;
-            }
-
-            if (maxAmp > 0f) heightNoise /= maxAmp;
-
-            int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
-
-            if (landHeight <= height.seaLevel) landHeight = height.seaLevel + 1;
-
-            if (islandMask > 0f && landHeight > height.seaLevel + 1)
-            {
-                pos = new Vector3(testX, landHeight, testZ);
-                exists = true;
-                break;
-            }
-        }
-    }
-}
+#endregion
 
 public class IslandManager : MonoBehaviour
 {
