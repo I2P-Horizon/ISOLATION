@@ -579,6 +579,8 @@ public class Island : Shape
 
     [SerializeField] private RockArea rockArea;
 
+    [HideInInspector] public List<Vector3> rockPositions = new List<Vector3>();
+
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
@@ -586,6 +588,19 @@ public class Island : Shape
     {
         this.height = height; this.grid = grid; this.noise = noise; this.temple = temple; this.blockData = blockData;
     }
+
+    public void SpawnMineEntrance(GameObject minePrefab)
+    {
+        if (rockPositions.Count == 0 || minePrefab == null) return;
+
+        Vector3 selectedRockPos = rockPositions[Random.Range(0, rockPositions.Count)];
+
+        // 돌 위로 1~2 유닛 올려서 배치
+        Vector3 spawnPos = selectedRockPos + Vector3.up * 1f;
+
+        MonoBehaviour.Instantiate(minePrefab, spawnPos, Quaternion.identity, Root);
+    }
+
 
     public IEnumerator Spawn(Transform parent)
     {
@@ -700,6 +715,8 @@ public class Island : Shape
                                 {
                                     Vector3 rockPos = new Vector3(worldX, landHeight, worldZ);
                                     rockArea.Generate(rockPos, blockData.rockBlock, rockArea.rockObject);
+
+                                    rockPositions.Add(rockPos);
 
                                     /* 돌을 생성했으므로 placed를 true로 변경 */
                                     /* 이후 모래나 잔디를 배치하는 로직에서는 이 좌표를 건너뜀. */
@@ -866,6 +883,8 @@ public class IslandManager : MonoBehaviour
 
     public MapObject mapObj => mapObject;
 
+    public GameObject mine;
+
     /// <summary>
     /// 섬 생성 코루틴
     /// </summary>
@@ -884,6 +903,7 @@ public class IslandManager : MonoBehaviour
         /* 섬 생성이 완료되면 오브젝트/플레이어 생성 */
         objectSpawner.SpawnObjects();
         jungle.Spawn();
+        island.SpawnMineEntrance(mine);
         island.SpawnPlayer();
 
         /* Game Scene 으로 변경 */

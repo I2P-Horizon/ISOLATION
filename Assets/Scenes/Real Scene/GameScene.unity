@@ -3465,15 +3465,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   island:
     radius: 200
+    falloffPower: 0.15
+    beachWidth: 3
     pos: {fileID: 1026859752}
     player: {fileID: 1344258696}
     rockArea:
-      radius: 10
       rockObject: {fileID: 2814076585106460190, guid: 7c5e62986dca2c14c99281849829cc4d, type: 3}
       spawnChance: 0.03
+    rockPositions: []
     sandPositions: []
   temple:
     radius: 10
+    falloffPower: 0.15
+    beachWidth: 3
     prefab: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
     scaleY: 6
     maxDistanceFromCenter: 50
@@ -3481,12 +3485,27 @@ MonoBehaviour:
     exists: 0
   jungle:
     radius: 80
+    falloffPower: 0.15
+    beachWidth: 3
     count: 20
     minTreesPerJungle: 60
     maxTreesPerJungle: 70
     treePrefabs:
     - {fileID: 1756647234048005588, guid: 87d7813b90466c34085663eb9518e20a, type: 3}
     - {fileID: 6091739994827031229, guid: 8be4d495e4f5d154cb3e398be3bcf557, type: 3}
+  height:
+    maxHeight: 32
+    seaLevel: 8
+  grid:
+    width: 800
+    height: 800
+    chunkSize: 32
+  noise:
+    scale: 80
+    octaves: 4
+    persistence: 0.5
+    lacunarity: 2
+    seed: 0
   blockData:
     grassBlock: {fileID: 1784206446667002742, guid: cbe2eba3308ec58459024c5892708459, type: 3}
     dirtBlock: {fileID: 8298600285529855524, guid: e3b69154605f9d14187f0c6ae6cca326, type: 3}
@@ -3508,6 +3527,7 @@ MonoBehaviour:
     spawnChance: 0.0005
     mergeMeshes: 1
     chunkSeparate: 1
+  mine: {fileID: 7215336328548157457, guid: e6fe0ad434c015640a06aaa76d20fe14, type: 3}
 --- !u!4 &1425729661
 Transform:
   m_ObjectHideFlags: 0
