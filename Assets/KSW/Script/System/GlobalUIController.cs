@@ -31,23 +31,11 @@ public class GlobalUIController : MonoBehaviour
         background.SetActive(false);
     }
 
-    void UpdateFPS()
-    {
-        if (GameSettings.Instance == null || GameSettings.Instance.fpsText == null) return;
-
-        if (GameSettings.Instance.frameText == 1) GameSettings.Instance.fpsText.gameObject.SetActive(true);
-        else GameSettings.Instance.fpsText.gameObject.SetActive(false);
-
-        float fps = 1.0f / Time.unscaledDeltaTime;
-        GameSettings.Instance.fpsText.text = Mathf.Ceil(fps).ToString();
-    }
-
     private void LateUpdate()
     {
         fpsTimer += Time.unscaledDeltaTime;
         if (fpsTimer >= fpsUpdateInterval)
         {
-            UpdateFPS();
             fpsTimer = 0f;
         }
     }

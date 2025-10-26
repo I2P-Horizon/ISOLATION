@@ -57,11 +57,14 @@ public class Loading : MonoBehaviour
     /// <returns></returns>
     public IEnumerator LoadGameScene()
     {
-        /* 시놉시스 끝나고 페이드 인되어 실행 */
+        ///* 시놉시스 끝나고 페이드 인되어 실행 */
+        //yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
+        //SceneManager.LoadScene("Synopsis", LoadSceneMode.Additive);
+        //yield return new WaitForSeconds(35f);
+        //SceneManager.UnloadSceneAsync("Synopsis");
+        //StartCoroutine(Fade.Instance.FadeIn(Color.black));
+
         yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
-        SceneManager.LoadScene("Synopsis", LoadSceneMode.Additive);
-        yield return new WaitForSeconds(35f);
-        SceneManager.UnloadSceneAsync("Synopsis");
         StartCoroutine(Fade.Instance.FadeIn(Color.black));
 
         /* 로딩 패널, 로딩 활성화 */

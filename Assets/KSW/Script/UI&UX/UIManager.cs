@@ -156,19 +156,14 @@ public class UIManager : MonoBehaviour
 
     public void Pause()
     {
-        if (!pauseUI.activeSelf && !GameSettings.Instance.gameSettingsUI.activeSelf)
+        if (!pauseUI.activeSelf)
         {
             GlobalUIController.Instance.PopUpShow(pauseUI);
         }
 
-        else if(pauseUI.activeSelf && !GameSettings.Instance.gameSettingsUI.activeSelf)
+        else if(pauseUI.activeSelf)
         {
             GlobalUIController.Instance.PopUpClose(pauseUI);
-        }
-
-        else
-        {
-            GlobalUIController.Instance.PopUpClose(GameSettings.Instance.gameSettingsUI);
         }
     }
 
@@ -179,7 +174,6 @@ public class UIManager : MonoBehaviour
 
     private void Settings()
     {
-        GlobalUIController.Instance.PopUpShow(GameSettings.Instance.gameSettingsUI);
         GlobalUIController.Instance.PopUpClose(pauseUI);
     }
 

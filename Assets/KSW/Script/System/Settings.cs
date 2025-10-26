@@ -1,8 +1,60 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+[Serializable]
+public class Selector<T>
+{
+    /* 선택지 목록 */
+    public T[] options;
+    /* 선택된 항목 표시용 UI */
+    public Text displayText;
+    /* 선택 시 적용할 액션 */
+    public Action<T> onApply;
+    /* 현재 인덱스 */
+    private int currentIndex = 0;
+
+    public T GetCurrent() => options[currentIndex];
+
+    public int GetIndex() => currentIndex;
+    public void SetIndex(int index)
+    {
+        currentIndex = Mathf.Clamp(index, 0, options.Length - 1);
+        ApplyCurrentOption();
+    }
+
+
+    public void Next()
+    {
+        currentIndex = (currentIndex + 1) % options.Length;
+        Apply();
+    }
+
+    public void Prev()
+    {
+        currentIndex = (currentIndex - 1 + options.Length) % options.Length;
+        Apply();
+    }
+
+    private void Apply()
+    {
+        onApply?.Invoke(GetCurrent());
+        UpdateDisplay();
+    }
+
+    private void ApplyCurrentOption()
+    {
+        onApply?.Invoke(GetCurrent());
+        UpdateDisplay();
+    }
+
+    private void UpdateDisplay()
+    {
+        if (GetCurrent() is Vector2Int res) displayText.text = $"{res.x} X {res.y}";
+        else displayText.text = GetCurrent().ToString();
+    }
+}
 
 public class Settings : MonoBehaviour
 {
@@ -41,45 +93,49 @@ public class Settings : MonoBehaviour
 
     private bool isSaving = false;
 
+    private const string KEY_RES = "settings.resolution";
+    private const string KEY_FPS = "settings.fps";
+    private const string KEY_SCREENMODE = "settings.screenmode";
+    private const string KEY_GRAPHICS = "settings.graphics";
+    private const string KEY_AA = "settings.aa";
+    private const string KEY_SHADOW = "settings.shadow";
+
     public void Init()
     {
-        /* 화면 해상도 적용 */
-        resolution.onApply = (res) =>
-        {
-            Screen.SetResolution(res.x, res.y, Screen.fullScreen);
-        };
+        /* ----------------------------- 불러오기 ----------------------------- */
+        resolution.SetIndex(PlayerPrefs.GetInt(KEY_RES, 0));
+        fps.SetIndex(PlayerPrefs.GetInt(KEY_FPS, 0));
+        ScreenMode.SetIndex(PlayerPrefs.GetInt(KEY_SCREENMODE, 0));
+        graphics.SetIndex(PlayerPrefs.GetInt(KEY_GRAPHICS, 0));
+        antiAliasing.SetIndex(PlayerPrefs.GetInt(KEY_AA, 0));
+        shawdow.SetIndex(PlayerPrefs.GetInt(KEY_SHADOW, 0));
 
-        /* FPS 적용 */
-        fps.onApply = (fps) =>
-        {
-            Application.targetFrameRate = fps;
-        };
+        /* ----------------------------- 옵션 적용 ----------------------------- */
+        resolution.onApply = (res) => { Screen.SetResolution(res.x, res.y, Screen.fullScreen); };
+        fps.onApply = (fpsValue) => { Application.targetFrameRate = fpsValue; };
 
-        /* 화면 모드 적용 */
         ScreenMode.onApply = (mode) =>
         {
+            Vector2Int res = resolution.GetCurrent();
             switch (mode)
             {
                 case "Full":
                     Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                    Screen.SetResolution(res.x, res.y, true);
                     break;
                 case "Windowed":
                     Screen.fullScreenMode = FullScreenMode.Windowed;
+                    Screen.SetResolution(res.x, res.y, false);
                     break;
             }
-
-            Vector2Int res = resolution.GetCurrent();
-            Screen.SetResolution(res.x, res.y, Screen.fullScreen);
         };
 
-        /* 그래픽 품질 적용 */
         graphics.onApply = (level) =>
         {
             int index = Array.IndexOf(graphics.options, level);
             if (index >= 0) QualitySettings.SetQualityLevel(index);
         };
 
-        /* 안티앨리어싱 적용 */
         antiAliasing.onApply = (aa) =>
         {
             int value = 0;
@@ -93,7 +149,6 @@ public class Settings : MonoBehaviour
             QualitySettings.antiAliasing = value;
         };
 
-        /* 그림자 적용 */
         shawdow.onApply = (shawdowLevel) =>
         {
             switch (shawdowLevel)
@@ -103,7 +158,7 @@ public class Settings : MonoBehaviour
             }
         };
 
-        /* 버튼 연결 */
+        /* ----------------------------- 버튼 연결 ----------------------------- */
         nextResButton.onClick.AddListener(() => resolution.Next());
         prevResButton.onClick.AddListener(() => resolution.Prev());
 
@@ -124,16 +179,10 @@ public class Settings : MonoBehaviour
 
         saveButton.onClick.AddListener(() => StartCoroutine(Save()));
 
-
-
         /* 탭 버튼 연결 */
         buttons[0].onClick.AddListener(ScreenTab);
         buttons[1].onClick.AddListener(GraphicsTab);
         buttons[2].onClick.AddListener(AudioTab);
-
-        //resolution.Next();
-        //graphics.Next();
-        //antiAliasing.Next();
     }
 
     public void ScreenTab()
@@ -162,10 +211,22 @@ public class Settings : MonoBehaviour
         if (!isSaving)
         {
             isSaving = true;
+
+            /* 현재 인덱스 저장 */
+            PlayerPrefs.SetInt(KEY_RES, resolution.GetIndex());
+            PlayerPrefs.SetInt(KEY_FPS, fps.GetIndex());
+            PlayerPrefs.SetInt(KEY_SCREENMODE, ScreenMode.GetIndex());
+            PlayerPrefs.SetInt(KEY_GRAPHICS, graphics.GetIndex());
+            PlayerPrefs.SetInt(KEY_AA, antiAliasing.GetIndex());
+            PlayerPrefs.SetInt(KEY_SHADOW, shawdow.GetIndex());
+            PlayerPrefs.Save();
+
+            /* 메시지 표시 */
             message.GetComponent<UIAnimator>().Show();
             yield return new WaitForSeconds(1.5f);
             message.GetComponent<UIAnimator>().Close();
             yield return new WaitForSeconds(0.1f);
+
             isSaving = false;
         }
     }

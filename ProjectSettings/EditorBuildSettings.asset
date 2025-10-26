@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Real Scene/CaveScene.unity
     guid: ba96f107640fdee46aa8997f2d173f7b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Real Scene/GameSetting.unity
     guid: 4eb18ebd9f4faab49baaae4d47c6f7c4
   - enabled: 1

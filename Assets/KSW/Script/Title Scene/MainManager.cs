@@ -1,50 +1,8 @@
 using System;
 using System.Collections;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
-#region Selector
-[Serializable]
-public class Selector<T>
-{
-    /* 선택지 목록 */
-    public T[] options;
-    /* 선택된 항목 표시용 UI */
-    public Text displayText;
-    /* 선택 시 적용할 액션 */
-    public Action<T> onApply;
-    /* 현재 인덱스 */
-    private int currentIndex = 0;
-
-    public T GetCurrent() => options[currentIndex];
-
-    public void Next()
-    {
-        currentIndex = (currentIndex + 1) % options.Length;
-        Apply();
-    }
-
-    public void Prev()
-    {
-        currentIndex = (currentIndex - 1 + options.Length) % options.Length;
-        Apply();
-    }
-
-    private void Apply()
-    {
-        onApply?.Invoke(GetCurrent());
-        UpdateDisplay();
-    }
-
-    private void UpdateDisplay()
-    {
-        if (GetCurrent() is Vector2Int res) displayText.text = $"{res.x} X {res.y}";
-        else displayText.text = GetCurrent().ToString();
-    }
-}
-#endregion
 
 #region MainManager
 public class MainManager : MonoBehaviour
@@ -77,17 +35,20 @@ public class MainManager : MonoBehaviour
     private bool isConversion = false;
     private float moveDuration = 1f;
 
-    private void NewStart()
+    private void PlayButton()
     {
-        HUD.SetActive(false);
-        OVERLAY.SetActive(false);
         StartCoroutine(Loading.Instance.LoadGameScene());
     }
 
-    private void SettingsScreen()
+    private void SettingsButton()
     {
         if (isConversion) return;
         StartCoroutine(MoveCameraSmoothly(SettingsPosition, Quaternion.Euler(SettingsRotation)));
+    }
+
+    private void ExitButton()
+    {
+        Application.Quit();
     }
 
     private void Back()
@@ -117,10 +78,7 @@ public class MainManager : MonoBehaviour
         isConversion = false;
     }
 
-    private void Exit()
-    {
-        Application.Quit();
-    }
+    
 
     private IEnumerator StartEffect()
     {
@@ -133,14 +91,12 @@ public class MainManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(StartEffect());
-
-        SceneManager.LoadScene("GameSetting", LoadSceneMode.Additive);
         SceneManager.LoadScene("LoadingScene", LoadSceneMode.Additive);
 
         // Main 화면 버튼
-        newGameButton.onClick.AddListener(NewStart);
-        settingButton.onClick.AddListener(SettingsScreen);
-        exitButton.onClick.AddListener(Exit);
+        newGameButton.onClick.AddListener(PlayButton);
+        settingButton.onClick.AddListener(SettingsButton);
+        exitButton.onClick.AddListener(ExitButton);
         s_BackButton.onClick.AddListener(Back);
 
         // Settings 초기화
