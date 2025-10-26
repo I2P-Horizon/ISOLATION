@@ -1,213 +1,134 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Transform 위치를 애니메이션하는 클래스
-/// </summary>
-public class MoveAnimator
-{
-    private readonly Transform target;
-
-    public MoveAnimator(Transform target)
-    {
-        this.target = target;
-    }
-
-    public IEnumerator AnimateTo(Vector3 targetPosition, float duration, float delay = 0f, Action onComplete = null)
-    {
-        if (delay > 0f)
-            yield return new WaitForSecondsRealtime(delay);
-
-        Vector3 startPos = target.localPosition;
-        float time = 0f;
-
-        while (time < duration)
-        {
-            time += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(time / duration);
-            target.localPosition = Vector3.Lerp(startPos, targetPosition, SmoothStep(t));
-            yield return null;
-        }
-
-        target.localPosition = targetPosition;
-        onComplete?.Invoke();
-    }
-
-    private float SmoothStep(float t) => t * t * (3f - 2f * t);
-}
-
-/// <summary>
-/// Transform 스케일을 애니메이션하는 클래스
-/// </summary>
-public class ScaleAnimator
-{
-    private readonly Transform target;
-
-    public ScaleAnimator(Transform target)
-    {
-        this.target = target;
-    }
-
-    public IEnumerator AnimateTo(Vector3 targetScale, float duration, float delay = 0f, Action onComplete = null)
-    {
-        if (delay > 0f)
-            yield return new WaitForSecondsRealtime(delay);
-
-        Vector3 startScale = target.localScale;
-        float time = 0f;
-
-        while (time < duration)
-        {
-            time += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(time / duration);
-            target.localScale = Vector3.Lerp(startScale, targetScale, t);
-            yield return null;
-        }
-
-        target.localScale = targetScale;
-        onComplete?.Invoke();
-    }
-}
-
-/// <summary>
-/// UI 확장/축소 애니메이션을 관리하는 컴포넌트
-/// </summary>
-[RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
+[RequireComponent(typeof(CanvasGroup))]
 public class UIAnimator : MonoBehaviour
 {
-    [Header("Animation Settings")]
-    public float duration = 0.1f;
-    public float delay = 0f;
+    [Header("애니메이션 타입")]
+    [SerializeField] private bool fade;
 
-    [Header("Scale Settings")]
-    public bool useScale = true;
-    public Vector3 scaleShown = Vector3.one;
-    public Vector3 scaleHidden = Vector3.zero;
+    [SerializeField] private bool up;
+    [SerializeField] private bool down;
+    [SerializeField] private bool left;
+    [SerializeField] private bool right;
 
-    [Header("Move Settings")]
-    public bool useMove = false;
-    public Vector3 positionShown = Vector3.zero;
-    public Vector3 positionHidden = new Vector3(0f, 200f, 0f);
-
-    [Header("Fade Settings")]
-    public bool useFade = true;
+    [Header("값 설정")]
+    [SerializeField] private float duration = 0.5f;
+    [SerializeField] private float moveOffset = 200f;
 
     private CanvasGroup canvasGroup;
-    private ScaleAnimator scaleAnimator;
-    private MoveAnimator moveAnimator;
+    private RectTransform rectTransform;
+    private Vector2 originalPosition;
 
-    private Coroutine currentScaleRoutine;
-    private Coroutine currentMoveRoutine;
-    private Coroutine currentFadeRoutine;
+    public bool uiAnimation = false;
 
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
-        scaleAnimator = new ScaleAnimator(transform);
-        moveAnimator = new MoveAnimator(transform);
+        rectTransform = GetComponent<RectTransform>();
+        originalPosition = rectTransform.anchoredPosition;
     }
 
-    private void OnEnable()
-    {
-        if (useScale) transform.localScale = scaleHidden;
-        if (useMove) transform.localPosition = positionHidden;
-        if (useFade) canvasGroup.alpha = 0f;
-
-        PlayAnimation();
-    }
-
-    private void OnDisable()
-    {
-        if (currentScaleRoutine != null) StopCoroutine(currentScaleRoutine);
-        if (currentMoveRoutine != null) StopCoroutine(currentMoveRoutine);
-        if (currentFadeRoutine != null) StopCoroutine(currentFadeRoutine);
-    }
-
+    /// <summary>
+    /// UI 표시 + Animation 실행
+    /// </summary>
     public void Show()
     {
         gameObject.SetActive(true);
+        StopAllCoroutines();
 
-        if (useScale) transform.localScale = scaleHidden;
-        if (useMove) transform.localPosition = positionHidden;
-        if (useFade) canvasGroup.alpha = 0f;
+        canvasGroup.alpha = fade ? 0f : 1f;
 
-        PlayAnimation();
+        Vector2 startPos = originalPosition;
+        if (up) startPos -= new Vector2(0, moveOffset);
+        if (down) startPos += new Vector2(0, moveOffset);
+        if (left) startPos += new Vector2(moveOffset, 0);
+        if (right) startPos -= new Vector2(moveOffset, 0);
+        rectTransform.anchoredPosition = startPos;
+
+        StartCoroutine(In());
     }
 
+
+    /// <summary>
+    /// UI 닫기 + Animation 실행
+    /// </summary>
     public void Close()
     {
-        PlayReverseAnimation(() => gameObject.SetActive(false));
+        /* 실행 중인 코루틴 중지 후 비활성화 코루틴 실행 */
+        StopAllCoroutines();
+        StartCoroutine(Out());
     }
 
-    private void PlayAnimation()
+    /// <summary>
+    /// UI 활성화 애니메이션 처리
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator In()
     {
-        if (useScale)
+        /* 시작 위치 초기화 */
+        Vector2 startPos = originalPosition;
+
+        /* 각 옵션에 따라 시작 위치 변경 */
+        if (up) startPos -= new Vector2(0, moveOffset);
+        if (down) startPos += new Vector2(0, moveOffset);
+        if (left) startPos += new Vector2(moveOffset, 0);
+        if (right) startPos -= new Vector2(moveOffset, 0);
+
+        /* UI의 RectTransform 위치를 시작 위치로 설정 */
+        rectTransform.anchoredPosition = startPos;
+
+        /* 애니메이션 진행 시간 초기화 */
+        float time = 0f;
+
+        /* while 루프를 통해 시간에 따라 점진적으로 이동/페이드 인 처리 */
+        while (time < duration)
         {
-            if (currentScaleRoutine != null) StopCoroutine(currentScaleRoutine);
-            currentScaleRoutine = StartCoroutine(scaleAnimator.AnimateTo(scaleShown, duration, delay));
+            time += Time.unscaledDeltaTime;
+            float t = time / duration;
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            if (fade) canvasGroup.alpha = Mathf.Lerp(0f, 1f, t);
+            rectTransform.anchoredPosition = Vector2.Lerp(startPos, originalPosition, t);
+
+            yield return null;
         }
 
-        if (useMove)
-        {
-            if (currentMoveRoutine != null) StopCoroutine(currentMoveRoutine);
-            currentMoveRoutine = StartCoroutine(moveAnimator.AnimateTo(positionShown, duration, delay));
-        }
-
-        if (useFade)
-        {
-            if (currentFadeRoutine != null) StopCoroutine(currentFadeRoutine);
-            currentFadeRoutine = StartCoroutine(FadeTo(1f, duration, delay));
-        }
+        /* 애니메이션 종료 후, 최종 위치 및 알파값 적용 */
+        canvasGroup.alpha = 1f;
+        rectTransform.anchoredPosition = originalPosition;
     }
 
-    private void PlayReverseAnimation(Action onComplete = null)
+    /// <summary>
+    /// UI 비활성화 애니메이션 처리
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator Out()
     {
-        int completed = 0;
-        int required = (useScale ? 1 : 0) + (useMove ? 1 : 0) + (useFade ? 1 : 0);
+        Vector2 endPos = originalPosition;
 
-        Action callback = () =>
-        {
-            completed++;
-            if (completed >= required)
-                onComplete?.Invoke();
-        };
+        if (up) endPos -= new Vector2(0, moveOffset);
+        if (down) endPos += new Vector2(0, moveOffset);
+        if (left) endPos += new Vector2(moveOffset, 0);
+        if (right) endPos -= new Vector2(moveOffset, 0);
 
-        if (useScale)
-        {
-            if (currentScaleRoutine != null) StopCoroutine(currentScaleRoutine);
-            currentScaleRoutine = StartCoroutine(scaleAnimator.AnimateTo(scaleHidden, duration, delay, callback));
-        }
-
-        if (useMove)
-        {
-            if (currentMoveRoutine != null) StopCoroutine(currentMoveRoutine);
-            currentMoveRoutine = StartCoroutine(moveAnimator.AnimateTo(positionHidden, duration, delay, callback));
-        }
-
-        if (useFade)
-        {
-            if (currentFadeRoutine != null) StopCoroutine(currentFadeRoutine);
-            currentFadeRoutine = StartCoroutine(FadeTo(0f, duration, delay, callback));
-        }
-    }
-
-    private IEnumerator FadeTo(float targetAlpha, float duration, float delay = 0f, Action onComplete = null)
-    {
-        if (delay > 0f) yield return new WaitForSecondsRealtime(delay);
-
-        float startAlpha = canvasGroup.alpha;
         float time = 0f;
 
         while (time < duration)
         {
             time += Time.unscaledDeltaTime;
-            float t = Mathf.Clamp01(time / duration);
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
+            float t = time / duration;
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            if (fade) canvasGroup.alpha = Mathf.Lerp(1f, 0f, t);
+            rectTransform.anchoredPosition = Vector2.Lerp(originalPosition, endPos, t);
+
             yield return null;
         }
 
-        canvasGroup.alpha = targetAlpha;
-        onComplete?.Invoke();
+        canvasGroup.alpha = 0f;
+        rectTransform.anchoredPosition = originalPosition;
+
+        gameObject.SetActive(false);
     }
 }
