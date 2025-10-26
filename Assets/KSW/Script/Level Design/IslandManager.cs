@@ -855,6 +855,8 @@ public class Island : Shape
         {
             Loading.Instance.loadingPanel.SetActive(false);
             Loading.Instance.isLoading = false;
+            yield return new WaitForSeconds(0.5f);
+            TutorialManager.Instance.SetNextState(new T1(TutorialManager.Instance));
         }
     }
 }
