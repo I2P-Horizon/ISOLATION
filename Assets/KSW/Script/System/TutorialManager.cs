@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,7 +34,7 @@ public class T1 : TutorialState
         if (!isCompleted && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.CompleteAndNext(new T2(manager), "완료!"));
+            manager.StartCoroutine(manager.NextState(new T2(manager), "완료!"));
         }
     }
 
@@ -57,7 +58,7 @@ public class T2 : TutorialState
         if (!isCompleted && Input.GetMouseButtonDown(0))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.CompleteAndNext(new T3(manager), "완료!"));
+            manager.StartCoroutine(manager.NextState(new T3(manager), "완료!"));
         }
     }
 
@@ -81,7 +82,7 @@ public class T3 : TutorialState
         if (!isCompleted && Input.GetMouseButtonDown(0))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.CompleteAndNext(new T3(manager), "완료!"));
+            manager.StartCoroutine(manager.NextState(new T3(manager), "완료!"));
         }
     }
 
@@ -97,14 +98,6 @@ public class TutorialManager : MonoBehaviour
 
     private TutorialState currentState;
 
-    /* 상태 전환 */
-    public void SetNextState(TutorialState nextState)
-    {
-        currentState?.Exit();
-        currentState = nextState;
-        currentState?.Enter();
-    }
-
     /* 메시지 출력 */
     public void Message(string msg)
     {
@@ -112,17 +105,26 @@ public class TutorialManager : MonoBehaviour
         if (messageText != null) messageText.text = msg;
     }
 
-    /* 상태 완료 메시지, 대기 후 다음 단계 */
-    public IEnumerator CompleteAndNext(TutorialState nextState, string endMsg)
+    /* 튜토리얼 상태 시작 */
+    public void StartState(TutorialState nextState)
     {
-        //ShowMessage(endMsg);
+        currentState?.Exit();
+        currentState = nextState;
+        currentState?.Enter();
+    }
+
+    /* 이전 튜토리얼 상태 완료 + 다음 상태 시작 */
+    public IEnumerator NextState(TutorialState nextState, string endMsg)
+    {
+        //Message(endMsg);
+        /* Message로 실행하면 새로운 박스가 생성되므로 text만 변경. */
         if (messageText != null) messageText.text = endMsg;
         yield return new WaitForSeconds(1f);
         if (panel != null) panel.GetComponent<UIAnimator>().Close();
         yield return new WaitForSeconds(1.5f);
 
         /* 다음 상태로 전환 */
-        SetNextState(nextState);
+        StartState(nextState);
     }
 
     private void Update()
