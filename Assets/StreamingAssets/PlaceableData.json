@@ -10,5 +10,17 @@
             "maxAmount": 99,
             "prefabName": "CraftingTablePrefab"
         }
+    ],
+    "Tent": [
+        {
+            "id": 60002,
+            "itemName": "텐트",
+            "itemToolTip": "휴식처가 되는 텐트.",
+            "itemExplanation": "사용 시 텐트를 설치합니다.",
+            "itemIcon": "TentIcon",
+            "itemPrice": 1,
+            "maxAmount": 1,
+            "prefabName": "TentPrefab"
+        }
     ]
 }

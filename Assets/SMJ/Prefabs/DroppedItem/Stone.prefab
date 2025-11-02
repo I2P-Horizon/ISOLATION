@@ -70,7 +70,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b875c8b7af1901340b06b99afa1bb6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemData: {fileID: 11400000, guid: 62d1a54587789df4db03bd484da62147, type: 2}
+  _canBePickedUp: 1
+  _itemID: 50002
 --- !u!54 &1474948564564865133
 Rigidbody:
   m_ObjectHideFlags: 0

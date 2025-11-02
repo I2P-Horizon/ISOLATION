@@ -21,6 +21,16 @@
             "itemPrice": 10,
             "maxAmount": 99,
             "value": 10.0
+        },
+        {
+            "id": 45002,
+            "itemName": "코코넛",
+            "itemToolTip": "코코넛워터와 과육.",
+            "itemExplanation": "포만감을 5 회복합니다.",
+            "itemIcon": "CoconutIcon",
+            "itemPrice": 5,
+            "maxAmount": 99,
+            "value": 5.0
         }
     ]
 }
