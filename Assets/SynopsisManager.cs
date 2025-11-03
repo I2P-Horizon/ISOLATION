@@ -21,10 +21,10 @@ public class SynopsisManager : MonoBehaviour
         ChangePosition(mainCamera.gameObject, -15.29f, 15f, 17.7f);
         ChangeRotation(mainCamera.gameObject, 26f, 135f, 0f);
 
-        ChangePosition(player, 0.9504719f, 2.277f, 1.199228f);
+        ChangePosition(player, 1.092f, 1.911f, 2.525f);
         ChangeRotation(player, 0f, 0f, 0f);
 
-        playerMotion.Play("sit");
+        playerMotion.Play("Sit");
 
         StartCoroutine(Fade.Instance.FadeIn(Color.black));
 
@@ -109,15 +109,15 @@ public class SynopsisManager : MonoBehaviour
         ChangeRotation(mainCamera.gameObject, -0.6f, 163f, 0f);
         StartCoroutine(CameraShake(10f, 0.03f));
 
-        ChangePosition(player, -0.17f, 2.277f, -3.594f);
-        ChangeRotation(player, 0, -10.5f, 0);
+        ChangePosition(player, 0.17f, 1.9f, -4.01f);
+        ChangeRotation(player, 0, 103.024f, 0);
 
         playerMotion.SetBool("Standing", true);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         yield return StartCoroutine(IncreaseFog(0.15f, 0.05f));
 
-        playerMotion.SetBool("Sad", true);
+        playerMotion.SetBool("Dying", true);
         yield return new WaitForSeconds(2f);
         yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
     }
