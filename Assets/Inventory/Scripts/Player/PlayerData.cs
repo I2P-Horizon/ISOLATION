@@ -26,6 +26,8 @@ public class PlayerData
     [SerializeField] private float damage;
     [SerializeField] private float defense;
     [SerializeField] private int gold;
+    [SerializeField] private float maxSatiety;
+    [SerializeField] private float curSatiety;
     #endregion
 
     #region ** Player Position **
@@ -42,6 +44,8 @@ public class PlayerData
     public float Damage => damage;
     public float Defense => defense;
     public int Gold => gold;
+    public float MaxSatiety => maxSatiety;
+    public float CurSatiety => curSatiety;
     public float PosX => posX;
     public float PosY => posY;
     public float PosZ => posZ;
@@ -57,6 +61,8 @@ public class PlayerData
         this.damage = dto.Status.damage;
         this.defense = dto.Status.defense;
         this.gold = dto.Status.gold;
+        this.maxSatiety = dto.Status.maxSatiety;
+        this.curSatiety = dto.Status.curSatiety;
 
         this.posX = dto.Position.posX;
         this.posY = dto.Position.posY;
@@ -76,7 +82,9 @@ public class PlayerData
                 rotateSpeed = this.rotateSpeed,
                 damage = this.damage,
                 defense = this.defense,
-                gold = this.gold
+                gold = this.gold,
+                maxSatiety = this.maxSatiety,
+                curSatiety = this.curSatiety
             },
             Position = new PlayerDataDTO.PositionDTO
             {
@@ -134,5 +142,16 @@ public class PlayerData
         curHp -= damage;
         if (curHp <= 0)
             curHp = 0;
+    }
+
+    // 포만감 증가 (포션 사용, 음식 섭취 등)
+    public bool IncreaseSatiety(float value)
+    {
+        // 포만감이 가득 차있으면 false 반환 (사용 실패)
+        if (curSatiety >= maxSatiety)
+            return false;
+
+        curSatiety = Mathf.Min(curSatiety + value, maxSatiety);
+        return true;
     }
 }

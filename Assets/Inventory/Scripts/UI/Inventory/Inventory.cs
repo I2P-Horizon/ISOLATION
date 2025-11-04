@@ -77,31 +77,69 @@ public class Inventory : MonoBehaviour
     // 인벤토리 데이터 로드
     private void LoadInventoryData()
     {
-        string path = Path.Combine(Application.persistentDataPath, "InventoryData.json");
+        //string path = Path.Combine(Application.persistentDataPath, "InventoryData.json");
 
-        if(File.Exists(path))
+        //if(File.Exists(path))
+        //{
+        //    string jsonData = File.ReadAllText(path);
+        //    InventoryDataList dataList = JsonUtility.FromJson<InventoryDataList>(jsonData);
+
+        //    foreach(var data in dataList.itemList)
+        //    {
+        //        itemDataArray[data.slotIndex] = ItemTypeById(data.itemId);
+
+        //        // 해당 슬롯인덱스에 저장된 아이템이 없을 때
+        //        if (itemDataArray[data.slotIndex] == null)
+        //        {
+        //            continue;
+        //        }
+
+        //        // 아이템 생성 후 해당 슬롯에 직접 배치
+        //        Item item = itemDataArray[data.slotIndex].CreateItem();
+
+        //        if (item is CountableItem ci)
+        //            ci.SetAmount(data.amount);
+
+        //        AddItemAt(data.slotIndex, item);
+        //    }
+        //}
+        string persistentPath = Path.Combine(Application.persistentDataPath, "InventoryData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "InventoryData.json");
+
+        if (!File.Exists(persistentPath))
         {
-            string jsonData = File.ReadAllText(path);
-            InventoryDataList dataList = JsonUtility.FromJson<InventoryDataList>(jsonData);
-
-            foreach(var data in dataList.itemList)
+            Debug.Log("InventoryData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+            if (File.Exists(streamingPath))
             {
-                itemDataArray[data.slotIndex] = ItemTypeById(data.itemId);
-
-                // 해당 슬롯인덱스에 저장된 아이템이 없을 때
-                if (itemDataArray[data.slotIndex] == null)
-                {
-                    continue;
-                }
-
-                // 아이템 생성 후 해당 슬롯에 직접 배치
-                Item item = itemDataArray[data.slotIndex].CreateItem();
-
-                if (item is CountableItem ci)
-                    ci.SetAmount(data.amount);
-
-                AddItemAt(data.slotIndex, item);
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("InventoryData.json 파일이 복사되었습니다.");
             }
+            else
+            {
+                Debug.LogWarning("StreamingAssets 폴더에 InventoryData.json 파일이 없습니다.");
+                return;
+            }
+        }
+
+        string jsonData = File.ReadAllText(persistentPath);
+        InventoryDataList dataList = JsonUtility.FromJson<InventoryDataList>(jsonData);
+
+        if (dataList == null || dataList.itemList == null) return;
+
+        foreach(var data in dataList.itemList)
+        {
+            itemDataArray[data.slotIndex] = ItemTypeById(data.itemId);
+            if (itemDataArray[data.slotIndex] == null)
+            {
+                continue;
+            }
+
+            Item item = itemDataArray[data.slotIndex].CreateItem();
+            if (item is CountableItem ci)
+            {
+                ci.SetAmount(data.amount);
+            }
+            AddItemAt(data.slotIndex, item);
         }
 
         // 아이템 타입별 반환
@@ -120,6 +158,21 @@ public class Inventory : MonoBehaviour
             else if (id > 30000 && id < 40000)
             {
                 WeaponItemData temp = DataManager.Instance.GetWeaponDataById(id);
+                return temp;
+            }
+            else if (id > 40000 && id < 50000)
+            {
+                FoodItemData temp = DataManager.Instance.GetFoodDataById(id);
+                return temp;
+            }
+            else if (id > 50000 && id < 60000)
+            {
+                MaterialItemData temp = DataManager.Instance.GetMaterialDataById(id);
+                return temp;
+            }
+            else if (id > 60000 && id < 70000)
+            {
+                PlaceableItemData temp = DataManager.Instance.GetPlaceableDataById(id);
                 return temp;
             }
             else

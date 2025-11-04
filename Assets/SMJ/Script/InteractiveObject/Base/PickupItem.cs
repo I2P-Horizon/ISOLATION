@@ -11,8 +11,20 @@ public class PickupItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private ItemData _itemData;
     [SerializeField] private bool _canBePickedUp = true;
+    [SerializeField] private int _itemID;
 
-    public ItemData ItemData => _itemData;
+    public ItemData ItemData { get; private set; }
+
+    private void Awake()
+    {
+        ItemData = FindItemDataByID(_itemID);
+        if (ItemData == null)
+        {
+            Debug.LogError($"Item ID {_itemID}에 해당하는 ItemData를 찾을 수 없습니다. {gameObject.name} 오브젝트를 확인하세요.");
+            _canBePickedUp = false;
+            gameObject.SetActive(false);
+        }
+    }
 
     /// <summary>
     /// 현재 아이템을 주울 수 있는 상태인지 확인하는 함수.
@@ -39,5 +51,35 @@ public class PickupItem : MonoBehaviour, IInteractable
     {
         if (!_canBePickedUp) return;
         Destroy(gameObject);
+    }
+
+    private ItemData FindItemDataByID(int id)
+    {
+        if (id > 10000 && id < 20000)
+        {
+            return DataManager.Instance.GetPortionDataById(id);
+        }
+        else if (id > 20000 && id < 30000)
+        {
+            return DataManager.Instance.GetArmorDataById(id);
+        }
+        else if (id > 30000 && id < 40000)
+        {
+            return DataManager.Instance.GetWeaponDataById(id);
+        }
+        else if (id > 40000 && id < 50000)
+        {
+            return DataManager.Instance.GetFoodDataById(id);
+        }
+        else if (id > 50000 && id < 60000)
+        {
+            return DataManager.Instance.GetMaterialDataById(id);
+        }
+        else if (id > 60000 && id < 70000)
+        {
+            return DataManager.Instance.GetPlaceableDataById(id);
+        }
+
+        return null;
     }
 }

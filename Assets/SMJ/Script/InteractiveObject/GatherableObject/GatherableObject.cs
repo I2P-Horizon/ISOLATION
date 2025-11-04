@@ -38,7 +38,7 @@ public abstract class GatherableObject : DestructibleObject
         if (_hpCanvas != null)
         {
             // UI가 카메라를 바라보도록 방향 전환
-            _hpCanvas.transform.rotation = Quaternion.LookRotation(_hpCanvas.transform.position - Camera.main.transform.position);
+            _hpCanvas.transform.rotation = Quaternion.LookRotation(-Camera.main.transform.forward);
         }
     }
 

@@ -1,0 +1,15 @@
+{
+  "Top": [
+    {
+      "id": 20001,
+      "itemName": "가죽 조끼",
+      "itemToolTip": "질긴 가죽으로 만든 조끼.",
+      "itemExplanation": "방어력을 3 올려줍니다.",
+      "itemIcon": "LeatherVestIcon",
+      "itemPrice": 40,
+      "defense": 3,
+      "type": "Armor",
+      "subType": "Top"
+    }
+  ]
+}

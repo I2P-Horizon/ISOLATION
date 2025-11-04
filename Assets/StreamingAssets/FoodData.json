@@ -1,0 +1,36 @@
+{
+    "Meat": [
+        {
+            "id": 40001,
+            "itemName": "구운 고기",
+            "itemToolTip": "맛있게 구워진 고기.",
+            "itemExplanation": "포만감을 20 회복합니다.",
+            "itemIcon": "CookedMeatIcon",
+            "itemPrice": 20,
+            "maxAmount": 99,
+            "value": 20.0
+        }
+    ],
+    "Fruit": [
+        {
+            "id": 45001,
+            "itemName": "파인애플",
+            "itemToolTip": "달콤한 파인애플.",
+            "itemExplanation": "포만감을 10 회복합니다.",
+            "itemIcon": "PineappleIcon",
+            "itemPrice": 10,
+            "maxAmount": 99,
+            "value": 10.0
+        },
+        {
+            "id": 45002,
+            "itemName": "코코넛",
+            "itemToolTip": "코코넛워터와 과육.",
+            "itemExplanation": "포만감을 5 회복합니다.",
+            "itemIcon": "CoconutIcon",
+            "itemPrice": 5,
+            "maxAmount": 99,
+            "value": 5.0
+        }
+    ]
+}

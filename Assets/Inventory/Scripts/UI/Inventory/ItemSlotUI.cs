@@ -174,11 +174,9 @@ public class ItemSlotUI : MonoBehaviour
     // 아이템 아이콘 등록
     public void SetItemIcon(string itemSprite)
     {
-        if (itemSprite != null)
+        if (!string.IsNullOrEmpty(itemSprite))
         {
-            // ResourceManager 코드 삭제하고 직접 설정
-            iconName = itemSprite;
-            iconImage.sprite = null; // TODO: 이후 직접 스프라이트 설정 가능
+            iconImage.sprite = Resources.Load<Sprite>($"Icon/{itemSprite}");
             ShowIcon();
         }
         else
@@ -192,8 +190,7 @@ public class ItemSlotUI : MonoBehaviour
     {
         if (itemSprite != null)
         {
-            iconName = itemSprite;
-            iconImage.sprite = null; // TODO: 이후 직접 스프라이트 설정 가능
+            iconImage.sprite = Resources.Load<Sprite>($"Icon/{itemSprite}");
 
             if (amount > 1)
                 ShowText();
