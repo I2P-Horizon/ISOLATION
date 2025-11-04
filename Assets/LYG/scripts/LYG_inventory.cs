@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LYG_Inventory : MonoBehaviour
 {
-    public List<Item> items;
+    public List<LYG_Item> items;
 
     [SerializeField]
     private Transform slotParent;
@@ -12,6 +13,8 @@ public class LYG_Inventory : MonoBehaviour
     private Slot[] slots;
 
     public Slot[] Slots => slots;
+
+    public static System.Action<List<LYG_Item>> OnInventoryChanged;
 
 #if UNITY_EDITOR
     private void OnValidate() {
@@ -35,9 +38,12 @@ public class LYG_Inventory : MonoBehaviour
         {
             slots[i].item = null;
         }
+
+        OnInventoryChanged?.Invoke(items);
+
     }
 
-    public void AddItem(Item _item)
+    public void AddItem(LYG_Item _item)
     {
         if (items.Count < slots.Length)
         {

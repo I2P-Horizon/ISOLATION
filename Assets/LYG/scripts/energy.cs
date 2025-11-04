@@ -7,7 +7,7 @@ using TMPro;
 public class energy : MonoBehaviour
 {
     public TextMeshProUGUI textsuccess;
-    public List<Item> neededpiece;
+    public List<LYG_Item> neededpiece;
     public LYG_Inventory inventory;
     Button button;
 
