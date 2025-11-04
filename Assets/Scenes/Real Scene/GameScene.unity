@@ -2489,7 +2489,7 @@ MonoBehaviour:
   timeValue2: {fileID: 1283933754}
   worldMap: {fileID: 954023519}
   worldMapMarker: {fileID: 1665878771}
-  inventoryUI: {fileID: 0}
+  inventoryUI: {fileID: 1060132381}
   renderLoding: {fileID: 0}
 --- !u!4 &556847263
 Transform:

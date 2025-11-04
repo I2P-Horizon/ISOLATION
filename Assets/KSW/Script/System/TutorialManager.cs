@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +16,7 @@ public abstract class TutorialState
     public abstract void Exit();
 }
 
+#region T1: WASD키로 이동하기
 public class T1 : TutorialState
 {
     private bool isCompleted = false;
@@ -40,7 +40,9 @@ public class T1 : TutorialState
 
     public override void Exit() { }
 }
+#endregion
 
+#region T2: 마우스 좌클릭으로 공격하기
 public class T2 : TutorialState
 {
     private bool isCompleted = false;
@@ -64,7 +66,9 @@ public class T2 : TutorialState
 
     public override void Exit() { }
 }
+#endregion
 
+#region T3: 파인애플 채집하기
 public class T3 : TutorialState
 {
     private bool isCompleted = false;
@@ -82,12 +86,40 @@ public class T3 : TutorialState
         if (!isCompleted && Input.GetMouseButtonDown(0))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.NextState(new T3(manager), "완료!"));
+            manager.StartCoroutine(manager.NextState(new T4(manager), "완료!"));
         }
     }
 
     public override void Exit() { }
 }
+#endregion
+
+#region Tab키로 인벤토리 열기
+public class T4 : TutorialState
+{
+    private bool isCompleted = false;
+
+    public T4(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("Tab키로 인벤토리 열기");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        if (!isCompleted && Input.GetKeyDown(KeyCode.Tab))
+        {
+            isCompleted = true;
+            manager.StartCoroutine(manager.EndTutorial("완료!"));
+            //manager.StartCoroutine(manager.NextState(new T4(manager), "완료!"));
+        }
+    }
+
+    public override void Exit() { }
+}
+#endregion
 
 public class TutorialManager : MonoBehaviour
 {
@@ -125,6 +157,13 @@ public class TutorialManager : MonoBehaviour
 
         /* 다음 상태로 전환 */
         StartState(nextState);
+    }
+
+    public IEnumerator EndTutorial(string endMsg)
+    {
+        if (messageText != null) messageText.text = endMsg;
+        yield return new WaitForSeconds(1f);
+        if (panel != null) panel.GetComponent<UIAnimator>().Close();
     }
 
     private void Update()

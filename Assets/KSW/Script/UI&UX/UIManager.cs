@@ -150,7 +150,8 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            inventoryUI.SetActive(!inventoryUI.activeSelf);
+            if (!inventoryUI.activeSelf) inventoryUI.GetComponent<UIAnimator>().Show();
+            else inventoryUI.GetComponent<UIAnimator>().Close();
         }
     }
 
@@ -210,7 +211,7 @@ public class UIManager : MonoBehaviour
         {
             PlayerStats();
             WorldMapUI();
-            InventoryUI();
+            //InventoryUI();
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) && !Loading.Instance.isLoading) Pause();
