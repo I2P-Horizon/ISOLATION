@@ -29,8 +29,8 @@ public class UIManager : MonoBehaviour
     public Image satietySlider;
 
     [Header("½Ã°£")]
-    public GameObject timeValue1;
-    public GameObject timeValue2;
+    public GameObject timeValue_Day;
+    public GameObject timeValue_Night;
 
     [Header("¿ùµå ¸Ê")]
     public GameObject worldMap;
@@ -101,30 +101,30 @@ public class UIManager : MonoBehaviour
         if (TimeManager.Instance == null || TimeManager.Instance.RealTimePerDaySec <= 0) return;
 
         float currentTime = TimeManager.Instance.CurrentTime;
-        float halfDay = TimeManager.Instance.RealTimePerDaySec / 2f;
+        bool isNight = TimeManager.Instance.IsNight;
+        float dayTime = TimeManager.Instance.RealTimePerDaySec;
 
-        float fill1 = 0f;
-        float fill2 = 0f;
+        float halfDay = dayTime / 2f;
+        float fillDay = 0f;
+        float fillNight = 0f;
 
-        if (currentTime < halfDay)
+        if (!isNight)
         {
-            fill1 = currentTime / halfDay;
-            fill2 = 0f;
+            fillDay = (currentTime % halfDay) / halfDay;
+            fillNight = 0f;
         }
+
         else
         {
-            fill1 = 1f;
-            fill2 = (currentTime - halfDay) / halfDay;
-
-            if (fill2 >= 1f)
-            {
-                fill1 = 0f;
-                fill2 = 0f;
-            }
+            fillNight = (currentTime % halfDay) / halfDay;
+            fillDay = 0f;
         }
 
-        timeValue1.GetComponent<Image>().fillAmount = fill1;
-        timeValue2.GetComponent<Image>().fillAmount = fill2;
+        timeValue_Day.SetActive(!isNight);
+        timeValue_Night.SetActive(isNight);
+
+        timeValue_Day.GetComponent<Image>().fillAmount = fillDay;
+        timeValue_Night.GetComponent<Image>().fillAmount = fillNight;
     }
 
     /// <summary>

@@ -31,7 +31,11 @@ public class T1 : TutorialState
 
     public override void Update()
     {
-        if (!isCompleted && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)))
+        if (!isCompleted &&
+            (Input.GetKey(KeyCode.W) ||
+            Input.GetKey(KeyCode.A) ||
+            Input.GetKey(KeyCode.S) ||
+            Input.GetKey(KeyCode.D)))
         {
             isCompleted = true;
             manager.StartCoroutine(manager.NextState(new T2(manager), "¿Ï·á!"));
