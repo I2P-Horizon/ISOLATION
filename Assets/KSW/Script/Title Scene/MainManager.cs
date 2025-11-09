@@ -7,17 +7,9 @@ using UnityEngine.UI;
 #region MainManager
 public class MainManager : MonoBehaviour
 {
-    [Header("Main Camera Position")]
-    [SerializeField] private Vector3 MainPosition = Vector3.zero;
-    [SerializeField] private Vector3 MainRotation = Vector3.zero;
-
-    [Header("Settings Camera Position")]
-    [SerializeField] private Vector3 SettingsPosition = new Vector3(3.35f, 0, 0);
-    [SerializeField] private Vector3 SettingsRotation = new Vector3(0f, 90f, 0f);
-
     [Header("Panel")]
     public GameObject mainPanel;
-    public GameObject mainCamera;
+    public GameObject settingsPanel;
 
     [Header("Canvas")]
     public GameObject HUD;
@@ -32,9 +24,6 @@ public class MainManager : MonoBehaviour
 
     public Settings settings;
 
-    private bool isConversion = false;
-    private float moveDuration = 1f;
-
     private void PlayButton()
     {
         StartCoroutine(Loading.Instance.LoadGameScene());
@@ -42,43 +31,14 @@ public class MainManager : MonoBehaviour
 
     private void SettingsButton()
     {
-        if (isConversion) return;
-        StartCoroutine(MoveCameraSmoothly(SettingsPosition, Quaternion.Euler(SettingsRotation)));
+        if (!settingsPanel.activeSelf) settingsPanel.GetComponent<UIAnimator>().Show();
+        else settingsPanel.GetComponent<UIAnimator>().Close();
     }
 
     private void ExitButton()
     {
         Application.Quit();
     }
-
-    private void Back()
-    {
-        if (isConversion) return;
-        StartCoroutine(MoveCameraSmoothly(MainPosition, Quaternion.Euler(MainRotation)));
-    }
-
-    private IEnumerator MoveCameraSmoothly(Vector3 targetPosition, Quaternion targetRotation)
-    {
-        isConversion = true;
-        Vector3 startPos = mainCamera.transform.position;
-        Quaternion startRot = mainCamera.transform.rotation;
-        float elapsed = 0f;
-
-        while (elapsed < moveDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / moveDuration);
-            mainCamera.transform.position = Vector3.Lerp(startPos, targetPosition, t);
-            mainCamera.transform.rotation = Quaternion.Slerp(startRot, targetRotation, t);
-            yield return null;
-        }
-
-        mainCamera.transform.position = targetPosition;
-        mainCamera.transform.rotation = targetRotation;
-        isConversion = false;
-    }
-
-    
 
     private IEnumerator StartEffect()
     {
@@ -105,14 +65,11 @@ public class MainManager : MonoBehaviour
         newGameButton.onClick.AddListener(PlayButton);
         settingButton.onClick.AddListener(SettingsButton);
         exitButton.onClick.AddListener(ExitButton);
-        s_BackButton.onClick.AddListener(Back);
+
+        s_BackButton.onClick.AddListener(SettingsButton);
 
         // Settings 초기화
         settings.Init();
-
-        // 카메라 초기 위치
-        mainCamera.transform.position = Vector3.zero;
-        mainCamera.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 }
 #endregion
