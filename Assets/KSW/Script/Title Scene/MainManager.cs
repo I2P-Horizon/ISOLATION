@@ -88,6 +88,14 @@ public class MainManager : MonoBehaviour
         mainPanel.GetComponent<UIAnimator>()?.Show();
     }
 
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.N))
+        {
+            SceneManager.LoadScene("TitleBackground");
+        }
+    }
+
     private void Start()
     {
         StartCoroutine(StartEffect());
