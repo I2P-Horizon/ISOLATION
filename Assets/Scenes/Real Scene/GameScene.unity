@@ -2696,8 +2696,8 @@ MonoBehaviour:
   mainButton: {fileID: 1005745307}
   hpSlider: {fileID: 1168853776}
   satietySlider: {fileID: 1503443527}
-  timeValue1: {fileID: 786089811}
-  timeValue2: {fileID: 1470992423}
+  timeValue_Day: {fileID: 786089811}
+  timeValue_Night: {fileID: 1470992423}
   worldMap: {fileID: 954023519}
   worldMapMarker: {fileID: 1665878771}
   inventoryUI: {fileID: 1060132381}
@@ -3933,6 +3933,8 @@ GameObject:
   - component: {fileID: 786089815}
   - component: {fileID: 786089814}
   - component: {fileID: 786089813}
+  - component: {fileID: 786089817}
+  - component: {fileID: 786089816}
   m_Layer: 5
   m_Name: Time Value (Day)
   m_TagString: Untagged
@@ -4012,6 +4014,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 786089811}
   m_CullTransparentMesh: 1
+--- !u!114 &786089816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 786089811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fade: 1
+  up: 0
+  down: 0
+  left: 0
+  right: 0
+  duration: 0.5
+  moveOffset: 200
+  uiAnimation: 0
+--- !u!225 &786089817
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 786089811}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &798340808
 GameObject:
   m_ObjectHideFlags: 0
@@ -8556,6 +8590,8 @@ GameObject:
   - component: {fileID: 1470992427}
   - component: {fileID: 1470992426}
   - component: {fileID: 1470992425}
+  - component: {fileID: 1470992429}
+  - component: {fileID: 1470992428}
   m_Layer: 5
   m_Name: Time Value (night)
   m_TagString: Untagged
@@ -8635,6 +8671,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1470992423}
   m_CullTransparentMesh: 1
+--- !u!114 &1470992428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470992423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fade: 1
+  up: 0
+  down: 0
+  left: 0
+  right: 0
+  duration: 0.5
+  moveOffset: 200
+  uiAnimation: 0
+--- !u!225 &1470992429
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470992423}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1491206039
 GameObject:
   m_ObjectHideFlags: 0

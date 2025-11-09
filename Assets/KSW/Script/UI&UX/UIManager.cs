@@ -103,8 +103,8 @@ public class UIManager : MonoBehaviour
         float currentTime = TimeManager.Instance.CurrentTime;
         bool isNight = TimeManager.Instance.IsNight;
         float dayTime = TimeManager.Instance.RealTimePerDaySec;
-
         float halfDay = dayTime / 2f;
+
         float fillDay = 0f;
         float fillNight = 0f;
 
@@ -112,16 +112,19 @@ public class UIManager : MonoBehaviour
         {
             fillDay = (currentTime % halfDay) / halfDay;
             fillNight = 0f;
+
+            if (!timeValue_Day.activeSelf) timeValue_Day.GetComponent<UIAnimator>().Show();
+            if (timeValue_Night.activeSelf) timeValue_Night.SetActive(false);
         }
 
         else
         {
             fillNight = (currentTime % halfDay) / halfDay;
             fillDay = 0f;
-        }
 
-        timeValue_Day.SetActive(!isNight);
-        timeValue_Night.SetActive(isNight);
+            if (!timeValue_Night.activeSelf) timeValue_Night.GetComponent<UIAnimator>().Show();
+            if (timeValue_Day.activeSelf) timeValue_Day.SetActive(false);
+        }
 
         timeValue_Day.GetComponent<Image>().fillAmount = fillDay;
         timeValue_Night.GetComponent<Image>().fillAmount = fillNight;
