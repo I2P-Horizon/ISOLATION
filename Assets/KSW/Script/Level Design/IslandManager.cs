@@ -593,14 +593,21 @@ public class Island : Shape
     {
         if (rockPositions.Count == 0 || minePrefab == null) return;
 
-        Vector3 selectedRockPos = rockPositions[Random.Range(0, rockPositions.Count)];
+        /* y >= 13.7 필터링 */
+        var validRocks = rockPositions.Where(r => r.y >= 13.7f).ToList();
+        if (validRocks.Count == 0) return;
 
-        // 돌 위로 1~2 유닛 올려서 배치
-        Vector3 spawnPos = selectedRockPos + Vector3.up * 1f;
+        Vector3 baseRockPos = validRocks[Random.Range(0, validRocks.Count)];
+
+        /* 같은 x, z 좌표의 돌들 중 최대 y값 찾기 */
+        float maxY = rockPositions
+            .Where(r => Mathf.RoundToInt(r.x) == Mathf.RoundToInt(baseRockPos.x) && Mathf.RoundToInt(r.z) == Mathf.RoundToInt(baseRockPos.z))
+            .Max(r => r.y);
+
+        Vector3 spawnPos = new Vector3(baseRockPos.x, maxY, baseRockPos.z);
 
         MonoBehaviour.Instantiate(minePrefab, spawnPos, Quaternion.identity, Root);
     }
-
 
     public IEnumerator Spawn(Transform parent)
     {
