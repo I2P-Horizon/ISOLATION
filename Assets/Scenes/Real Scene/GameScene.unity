@@ -5906,6 +5906,14 @@ PrefabInstance:
       propertyPath: _inventory
       value: 
       objectReference: {fileID: 1741778111}
+    - target: {fileID: 5795745674052447348, guid: c0c5efab403f25b458188259047a430c, type: 3}
+      propertyPath: m_Radius
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5795745674052447348, guid: c0c5efab403f25b458188259047a430c, type: 3}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

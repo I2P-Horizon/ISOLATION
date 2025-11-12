@@ -3628,7 +3628,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1307748302}
   m_Layer: 0
-  m_Name: Spawn Pos
+  m_Name: SpawnPoint_Temple(Inside)
   m_TagString: SpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3643,7 +3643,7 @@ Transform:
   m_GameObject: {fileID: 1307748301}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -5.178, z: -1.715}
+  m_LocalPosition: {x: 0, y: -5.178, z: -0.725}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5634,13 +5634,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2070887716}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b55247c22a6c1f40bff0faeecf83691, type: 3}
+  m_Script: {fileID: 11500000, guid: 9edd3a1eb295af84eaf6a7b32045c74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: YYG_Test
-  isEntrance: 0
-  spawnTag: SpawnPoint
-  mainSpawnTag: SpawnPointMain
+  _sceneName: GameScene
+  _spawnPoint: Temple(Outside)
+  _triggerDistance: 1.8
 --- !u!1 &2088433700 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -941854237613234409, guid: a3ca714daceecd349a3c2f8e46f88cf8, type: 3}

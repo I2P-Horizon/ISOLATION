@@ -1,3 +1,4 @@
+using Palmmedia.ReportGenerator.Core;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -885,6 +886,14 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private BlockData blockData;
     [SerializeField] private ObjectData[] objectData;
 
+    /// <summary>
+    /// 섬 생성이 완료 여부
+    /// </summary>
+    public static bool Generation { get; private set; } = false;
+
+    /// <summary>
+    /// 섬 생성 진행도 (Loading.cs 에서 필요)
+    /// </summary>
     public static float generationProgress = 0f;
 
     private ObjectSpawner objectSpawner = new ObjectSpawner();
@@ -898,7 +907,7 @@ public class IslandManager : MonoBehaviour
     /// 섬 생성 코루틴
     /// </summary>
     /// <returns></returns>
-    private IEnumerator Generation()
+    private IEnumerator StartGeneration()
     {
         /* 시드 생성 */
         noise.Seed();
@@ -917,6 +926,8 @@ public class IslandManager : MonoBehaviour
 
         /* Game Scene 으로 변경 */
         yield return StartCoroutine(island.SceneChange());
+
+        Generation = true;
     }
 
     private void Start()
@@ -927,6 +938,6 @@ public class IslandManager : MonoBehaviour
         mapObject.Set(grid);
         objectSpawner.Set(island, grid, temple, objectData, mapObject);
 
-        StartCoroutine(Generation());
+        StartCoroutine(StartGeneration());
     }
 }

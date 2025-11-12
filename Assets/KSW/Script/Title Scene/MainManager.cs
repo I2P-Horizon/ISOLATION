@@ -26,6 +26,7 @@ public class MainManager : MonoBehaviour
 
     private void PlayButton()
     {
+        mainPanel.GetComponent<UIAnimator>().Close();
         StartCoroutine(Loading.Instance.LoadGameScene());
     }
 
