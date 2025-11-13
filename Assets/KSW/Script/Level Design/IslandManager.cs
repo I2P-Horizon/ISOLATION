@@ -1,9 +1,10 @@
-using Palmmedia.ReportGenerator.Core;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 /*
  * ============================================================
@@ -887,9 +888,9 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private ObjectData[] objectData;
 
     /// <summary>
-    /// 섬 생성이 완료 여부
+    /// 섬 생성 완료 시점에 보내는 신호
     /// </summary>
-    public static bool Generation { get; private set; } = false;
+    public static event Action OnGenerationComplete;
 
     /// <summary>
     /// 섬 생성 진행도 (Loading.cs 에서 필요)
@@ -927,7 +928,8 @@ public class IslandManager : MonoBehaviour
         /* Game Scene 으로 변경 */
         yield return StartCoroutine(island.SceneChange());
 
-        Generation = true;
+        /* 섬 생성 완료 신호 */
+        OnGenerationComplete?.Invoke();
     }
 
     private void Start()
