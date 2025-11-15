@@ -15,6 +15,21 @@ public class SpawnManager : MonoBehaviour, ICycleListener
         timer += Time.deltaTime;
 
         // JSH TODO: Update()가 아닌, InitSpawn()으로 변경 -> IslandManager.cs 과의 연동 필요 - (김선욱 팀장님)
+    }
+
+    private void OnEnable()
+    {
+        IslandManager.OnGenerationComplete += InitSpawn;
+    }
+
+    private void OnDisable()
+    {
+        IslandManager.OnGenerationComplete -= InitSpawn;
+    }
+
+    // KSW
+    private void InitSpawn()
+    {
         if (timer >= 5.0f)
         {
             timer = -1000.0f;
@@ -35,8 +50,6 @@ public class SpawnManager : MonoBehaviour, ICycleListener
             }
         }
     }
-
-
 
     public void OnCycleChanged()
     {

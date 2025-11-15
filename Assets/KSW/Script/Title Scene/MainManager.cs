@@ -8,21 +8,21 @@ using UnityEngine.UI;
 public class MainManager : MonoBehaviour
 {
     [Header("Panel")]
-    public GameObject mainPanel;
-    public GameObject settingsPanel;
+    [SerializeField] private GameObject mainPanel;
+    [SerializeField] private GameObject settingsPanel;
 
     [Header("Canvas")]
-    public GameObject HUD;
-    public GameObject OVERLAY;
+    [SerializeField] private GameObject HUD;
+    [SerializeField] private GameObject OVERLAY;
 
     [Header("Button")]
-    public Button newGameButton;
-    public Button settingButton;
-    public Button exitButton;
-    public Button s_BackButton;
-    public Button s_SaveButton;
+    [SerializeField] private Button newGameButton;
+    [SerializeField] private Button settingButton;
+    [SerializeField] private Button exitButton;
+    [SerializeField] private Button s_BackButton;
+    [SerializeField] private Button s_SaveButton;
 
-    public Settings settings;
+    [SerializeField] private Settings settings;
 
     private void PlayButton()
     {
@@ -51,7 +51,7 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.N))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             SceneManager.LoadScene("TitleBackground");
         }
