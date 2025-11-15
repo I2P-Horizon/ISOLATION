@@ -37,7 +37,7 @@ public class SpawnManager : MonoBehaviour, ICycleListener
 
             TimeManager.Instance.Register(this);
 
-            InitSpawnArea(-80, 80, 50, -60, 60); // Tmp
+            InitSpawnArea(-500, -500, 500, -500, 500); // Tmp
 
             // Spawn creatures when game starts
             for (int creatureID = 0; creatureID < CreaturePoolsManager.Instance.GetCreaturePoolListCount(); creatureID++)
