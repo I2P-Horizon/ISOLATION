@@ -88,9 +88,9 @@ public class CreaturePoolsManager : MonoBehaviour
         _creaturePoolMaxSize = new List<int>(_creaturePrefabs.Count);
 
         // 최대 개체수
-        for (int index = 0; index < _creaturePrefabs.Count; index++)
+        for (int creatureID = 0; creatureID < _creaturePrefabs.Count; creatureID++)
         {
-            if (index == 3) _creaturePoolInitSize.Add(20);
+            if (creatureID == 3) _creaturePoolInitSize.Add(20);
             else _creaturePoolInitSize.Add(15);
 
             _creaturePoolMaxSize.Add(20);
@@ -98,14 +98,14 @@ public class CreaturePoolsManager : MonoBehaviour
 
 
         // 각 Creature별 Pool 생성 -> 람다식 및 캡처 개념을 이용하여 각 Pool마다 Instantiate()시 생성되는 creaturePrefab을 다르게 함.
-        for (int index = 0; index < _creaturePrefabs.Count; index++)
+        for (int creatureID = 0; creatureID < _creaturePrefabs.Count; creatureID++)
         {
-            GameObject creaturePrefab = _creaturePrefabs[index];
+            GameObject creaturePrefab = _creaturePrefabs[creatureID];
             
             ObjectPool<GameObject> creaturePool = new ObjectPool<GameObject>(
                 () => Instantiate(creaturePrefab),
                 ActivatePoolCreature, DisablePoolCreature, DestroyPoolCreature,
-                false, _creaturePoolInitSize[index], _creaturePoolMaxSize[index]
+                false, _creaturePoolInitSize[creatureID], _creaturePoolMaxSize[creatureID]
                 );
 
             _creaturePoolList.Add(creaturePool);

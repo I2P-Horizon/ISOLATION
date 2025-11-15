@@ -280,13 +280,12 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
     }
     protected override void DestroyObject()
     {
-        if (!TimeManager.Instance) return;
+        if (!TimeManager.Instance || !CreaturePoolsManager.Instance) return;
 
         TimeManager.Instance.UnRegister(this);
-        //base.DestroyObject();
-
         CreaturePoolsManager.Instance.OnCreatureDie(gameObject);
-        Debug.Log("Creature UnRegister Complete");
+
+        Debug.Log("Creature UnRegister & Back to pool Complete");
     }
     public override void Interact(object context = null)
     {
