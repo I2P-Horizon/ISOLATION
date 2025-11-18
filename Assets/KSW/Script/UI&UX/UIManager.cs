@@ -14,9 +14,6 @@ public class UIManager : MonoBehaviour
     [Header("Game Over UI")]
     public GameObject gameOverUI;
 
-    [Header("팝업 반투명 배경")]
-    public GameObject background;
-
     [Header("버튼 연결")]
     public Button continueButton;
     public Button settingButton;
@@ -38,51 +35,6 @@ public class UIManager : MonoBehaviour
 
     [Header("인벤토리")]
     public GameObject inventoryUI;
-
-    private int backgroundCount = 0;
-
-    public GameObject renderLoding;
-
-    /// <summary>
-    /// 반투명 배경 컨트롤
-    /// </summary>
-    public void ShowBackground()
-    {
-        backgroundCount++;
-        background.SetActive(true);
-    }
-
-    public void HideBackground()
-    {
-        backgroundCount--;
-        if (backgroundCount <= 0)
-        {
-            backgroundCount = 0;
-            background.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// 팝업창 컨트롤
-    /// </summary>
-    /// <param name="ui"></param>
-    public void PopUpShow(GameObject ui)
-    {
-        ShowBackground();
-        ui.GetComponent<UIAnimator>().Show();
-    }
-
-    public void PopUpClose(GameObject ui)
-    {
-        StartCoroutine(PopUpCloseRoutine(ui));
-    }
-
-    private IEnumerator PopUpCloseRoutine(GameObject ui)
-    {
-        ui.GetComponent<UIAnimator>().Close();
-        yield return new WaitForSeconds(0f);
-        HideBackground();
-    }
 
     /// <summary>
     /// 플레이어 상태 실시간 반영
