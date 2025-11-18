@@ -17,6 +17,7 @@ public class DialogManager : MonoBehaviour
 
     [SerializeField] private GameObject dialogUI;
     [SerializeField] private Text text;
+    [SerializeField] private Image image;
     [SerializeField] private Dialog[] dialog;
     [SerializeField] private Button nextButton;
     [SerializeField] private GameObject inventoryHUD;
@@ -54,6 +55,11 @@ public class DialogManager : MonoBehaviour
         inventoryHUD.GetComponent<UIAnimator>().Close();
         dialogUI.GetComponent<UIAnimator>().Show();
 
+        image.sprite = dialog[startIndex].sprite;
+
+        image.GetComponent<UIAnimator>().Show();
+        StartCoroutine(ShowDelay(image, 0.1f));
+
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(TypeText(dialog[startIndex].text, dialog[startIndex].typingSpeed));
     }
@@ -78,6 +84,9 @@ public class DialogManager : MonoBehaviour
         }
 
         currentIndex++;
+
+        image.sprite = dialog[currentIndex].sprite;
+
         typingCoroutine = StartCoroutine(TypeText(dialog[currentIndex].text, dialog[currentIndex].typingSpeed));
     }
 
@@ -95,7 +104,9 @@ public class DialogManager : MonoBehaviour
         OnDialogFinished?.Invoke();
 
         inventoryHUD.GetComponent<UIAnimator>().Show();
-        dialogUI.GetComponent<UIAnimator>().Close();
+
+        image.GetComponent<UIAnimator>().Close();
+        StartCoroutine(CloseDelay(image, 0.1f));
     }
 
     /// <summary>
@@ -115,6 +126,18 @@ public class DialogManager : MonoBehaviour
         }
 
         typingCoroutine = null;
+    }
+
+    private IEnumerator ShowDelay(Image ui, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        image.GetComponent<UIAnimator>().Show();
+    }
+
+    private IEnumerator CloseDelay(Image ui, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        dialogUI.GetComponent<UIAnimator>().Close();
     }
 
     private void Start()

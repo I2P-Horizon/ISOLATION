@@ -28,6 +28,7 @@ public class FlowManager : MonoBehaviour
 
     private IEnumerator Flow1()
     {
+        yield return new WaitForSeconds(1f);
         dialogDone = false;
         DialogManager.Instance.OnDialogFinished += OnDialogFinishedCallback;
         DialogManager.Instance.Show(0, 2);

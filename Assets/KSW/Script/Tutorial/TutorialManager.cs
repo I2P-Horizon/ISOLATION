@@ -2,25 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class TutorialState
-{
-    protected TutorialManager manager;
-
-    public TutorialState(TutorialManager manager)
-    {
-        this.manager = manager;
-    }
-
-    public abstract void Enter();
-    public abstract void Update();
-    public abstract void Exit();
-}
-
 #region T1: WASD키로 이동하기
 public class T1 : TutorialState
 {
-    private bool isCompleted = false;
-
     public T1(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
@@ -49,8 +33,6 @@ public class T1 : TutorialState
 #region T2: 마우스 좌클릭으로 공격하기
 public class T2 : TutorialState
 {
-    private bool isCompleted = false;
-
     public T2(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
@@ -75,8 +57,6 @@ public class T2 : TutorialState
 #region T3: 파인애플 채집하기
 public class T3 : TutorialState
 {
-    private bool isCompleted = false;
-
     public T3(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
@@ -101,8 +81,6 @@ public class T3 : TutorialState
 #region Tab키로 인벤토리 열기
 public class T4 : TutorialState
 {
-    private bool isCompleted = false;
-
     public T4(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
