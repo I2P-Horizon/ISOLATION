@@ -22,7 +22,8 @@ public class T1 : TutorialState
             Input.GetKey(KeyCode.D)))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.NextState(new T2(manager), "완료!"));
+            manager.StartCoroutine(manager.EndTutorial("완료!"));
+            FlowManager.Instance.StartFlow2();
         }
     }
 
@@ -30,23 +31,24 @@ public class T1 : TutorialState
 }
 #endregion
 
-#region T2: 마우스 좌클릭으로 공격하기
+#region T2: M키로 지도 열기
 public class T2 : TutorialState
 {
     public T2(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
     {
-        manager.Message("마우스 좌클릭으로 공격하기");
+        manager.Message("M키로 지도 열기");
         isCompleted = false;
     }
 
     public override void Update()
     {
-        if (!isCompleted && Input.GetMouseButtonDown(0))
+        if (!isCompleted && Input.GetKeyDown(KeyCode.M))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.NextState(new T3(manager), "완료!"));
+            manager.StartCoroutine(manager.EndTutorial("완료!"));
+            FlowManager.Instance.StartFlow3();
         }
     }
 
@@ -54,14 +56,14 @@ public class T2 : TutorialState
 }
 #endregion
 
-#region T3: 파인애플 채집하기
+#region T3: 마우스 우클릭
 public class T3 : TutorialState
 {
     public T3(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
     {
-        manager.Message("파인애플 채집하기");
+        manager.Message("마우스 우클릭으로 공격하기");
         isCompleted = false;
     }
 
@@ -78,14 +80,14 @@ public class T3 : TutorialState
 }
 #endregion
 
-#region Tab키로 인벤토리 열기
+#region 나무 조각 4개 획득
 public class T4 : TutorialState
 {
     public T4(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
     {
-        manager.Message("Tab키로 인벤토리 열기");
+        manager.Message("나무 조각 4개 획득");
         isCompleted = false;
     }
 
@@ -95,7 +97,6 @@ public class T4 : TutorialState
         {
             isCompleted = true;
             manager.StartCoroutine(manager.EndTutorial("완료!"));
-            //manager.StartCoroutine(manager.NextState(new T4(manager), "완료!"));
         }
     }
 
@@ -161,6 +162,5 @@ public class TutorialManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 }

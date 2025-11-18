@@ -15,9 +15,9 @@ public class DialogManager : MonoBehaviour
     }
     #endregion
 
-    [SerializeField] private GameObject dialogUI;
-    [SerializeField] private Text text;
+    [SerializeField] private Image dialogUI;
     [SerializeField] private Image image;
+    [SerializeField] private Text text;
     [SerializeField] private Dialog[] dialog;
     [SerializeField] private Button nextButton;
     [SerializeField] private GameObject inventoryHUD;
@@ -53,11 +53,10 @@ public class DialogManager : MonoBehaviour
         this.endIndex = Mathf.Min(endIndex, dialog.Length - 1);
 
         inventoryHUD.GetComponent<UIAnimator>().Close();
-        dialogUI.GetComponent<UIAnimator>().Show();
 
         image.sprite = dialog[startIndex].sprite;
 
-        image.GetComponent<UIAnimator>().Show();
+        dialogUI.GetComponent<UIAnimator>().Show();
         StartCoroutine(ShowDelay(image, 0.1f));
 
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
@@ -106,7 +105,7 @@ public class DialogManager : MonoBehaviour
         inventoryHUD.GetComponent<UIAnimator>().Show();
 
         image.GetComponent<UIAnimator>().Close();
-        StartCoroutine(CloseDelay(image, 0.1f));
+        StartCoroutine(CloseDelay(dialogUI, 0.1f));
     }
 
     /// <summary>
@@ -131,13 +130,13 @@ public class DialogManager : MonoBehaviour
     private IEnumerator ShowDelay(Image ui, float delay)
     {
         yield return new WaitForSeconds(delay);
-        image.GetComponent<UIAnimator>().Show();
+        ui.GetComponent<UIAnimator>().Show();
     }
 
     private IEnumerator CloseDelay(Image ui, float delay)
     {
         yield return new WaitForSeconds(delay);
-        dialogUI.GetComponent<UIAnimator>().Close();
+        ui.GetComponent<UIAnimator>().Close();
     }
 
     private void Start()
