@@ -13,7 +13,6 @@ public class MainManager : MonoBehaviour
 
     [Header("Canvas")]
     [SerializeField] private GameObject HUD;
-    [SerializeField] private GameObject OVERLAY;
 
     [Header("Button")]
     [SerializeField] private Button newGameButton;
