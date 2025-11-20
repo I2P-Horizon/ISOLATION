@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/LYG/piece1.asset.meta
+guid: fbc4f9b1221877a42958b2522259de20
+NativeFormatImporter:
+========
 guid: c915d1935641dd54daf4979448b3b4d2
 DefaultImporter:
+>>>>>>>> main:Assets/JSH/TEST.unity.meta
   externalObjects: {}
+  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

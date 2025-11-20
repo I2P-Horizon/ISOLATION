@@ -17,6 +17,6 @@ public class Energysystem : MonoBehaviour
     }
     public void close()
     {
-        gameObject.GetComponent<UIAnimator>().Close();
+        gameObject.SetActive(false);
     }
 }

@@ -18,7 +18,7 @@ public class cube : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F) && Trigger)
         {
-            ui.GetComponent<UIAnimator>().Show();
+            ui.SetActive(true);
         }
     }
 
