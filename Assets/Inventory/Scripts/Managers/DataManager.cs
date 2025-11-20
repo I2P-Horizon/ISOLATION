@@ -19,6 +19,7 @@ public class DataManager : Singleton<DataManager>
     private string foodItemDataPath;        // 음식 데이터 저장경로
     private string materialItemDataPath;    // 재료 데이터 저장경로
     private string placeableItemDataPath;   // 설치 아이템 데이터 저장경로
+    private string recipeDataPath;        // 조합 레시피 데이터 저장경로
 
     private Dictionary<int, WeaponItemData> weaponDataDictionary;
     private Dictionary<int, PortionItemData> portionDataDictionary;
@@ -27,6 +28,8 @@ public class DataManager : Singleton<DataManager>
     private Dictionary<int, MaterialItemData> materialDataDictionary;
     private Dictionary<int, PlaceableItemData> placeableDataDictionary;
     private PlayerData playerData;
+
+    public List<RecipeData> RecipeList { get; private set; }
 
     protected override void Awake()
     {
@@ -43,6 +46,7 @@ public class DataManager : Singleton<DataManager>
         foodItemDataPath = Path.Combine(Application.persistentDataPath, "FoodData.json");
         materialItemDataPath = Path.Combine(Application.persistentDataPath, "MaterialData.json");
         placeableItemDataPath = Path.Combine(Application.persistentDataPath, "PlaceableData.json");
+        recipeDataPath = Path.Combine(Application.persistentDataPath, "RecipeData.json");
 
         playerData = LoadPlayerData();
         weaponDataDictionary = LoadWeaponData();
@@ -51,6 +55,7 @@ public class DataManager : Singleton<DataManager>
         foodDataDictionary = LoadFoodData();
         materialDataDictionary = LoadMaterialData();
         placeableDataDictionary = LoadPlaceableData();
+        RecipeList = LoadRecipeData();
     }
 
     // 데이터 저장
@@ -363,6 +368,44 @@ public class DataManager : Singleton<DataManager>
         }
     }
 
+    // 조합 레시피 데이터 불러오기
+    private List<RecipeData> LoadRecipeData()
+    {
+        string persistentPath = Path.Combine(Application.persistentDataPath, "RecipeData.json");
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, "RecipeData.json");
+
+        if (!File.Exists(persistentPath))
+        {
+            Debug.Log("RecipeData.json 세이브 파일이 없어 StreamingAssets 폴더에서 복사합니다.");
+
+            if (File.Exists(streamingPath))
+            {
+                File.Copy(streamingPath, persistentPath);
+                Debug.Log("RecipeData.json 파일이 복사되었습니다.");
+            }
+            else
+            {
+                Debug.LogWarning("StreamingAssets 폴더에 RecipeData.json 파일이 없습니다.");
+                return new List<RecipeData>();
+            }
+        }
+
+        string jsonData = File.ReadAllText(persistentPath);
+
+        List<RecipeData> recipes = JsonConvert.DeserializeObject<List<RecipeData>>(jsonData);
+
+        if (recipes != null)
+        {
+            Debug.Log("조합 레시피 데이터 로드 완료. 총 " + recipes.Count + "개의 레시피가 로드되었습니다.");
+            return recipes;
+        }
+        else
+        {
+            Debug.LogWarning("Json 데이터를 파싱할 수 없음.");
+            return new List<RecipeData>();
+        }
+    }
+
     // ID로 무기 데이터 가져오기
     public WeaponItemData GetWeaponDataById(int id)
     {
@@ -461,4 +504,36 @@ public class DataManager : Singleton<DataManager>
         Debug.Log("세이브 완료!!");
     }
 
+    public ItemData GetItemDataByID(int id)
+    {
+        if (id > 10000 && id < 20000)
+        {
+            return GetPortionDataById(id);
+        }
+        else if (id > 20000 && id < 30000)
+        {
+            return GetArmorDataById(id);
+        }
+        else if (id > 30000 && id < 40000)
+        {
+            return GetWeaponDataById(id);
+        }
+        else if (id > 40000 && id < 50000)
+        {
+            return GetFoodDataById(id);
+        }
+        else if (id > 50000 && id < 60000)
+        {
+            return GetMaterialDataById(id);
+        }
+        else if (id > 60000 && id < 70000)
+        {
+            return GetPlaceableDataById(id);
+        }
+        else
+        {
+            Debug.LogWarning("ID에 해당하는 아이템데이터가 없음.");
+            return null;
+        }
+    }
 }

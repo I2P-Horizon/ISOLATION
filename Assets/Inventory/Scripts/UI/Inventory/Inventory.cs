@@ -354,6 +354,27 @@ public class Inventory : MonoBehaviour
 
         return items[index].Data.ItemName;
     }
+
+    // 특정 ID의 아이템을 몇 개 가지고 있는지 반환
+    public int GetTotalAmountOfItem(int itemID)
+    {
+        int totalAmount = 0;
+        for(int i = 0; i < Capacity; i++)
+        {
+            if (items[i] != null && items[i].Data.ID == itemID)
+            {
+                if (items[i] is CountableItem ci)
+                {
+                    totalAmount += ci.Amount;
+                }
+                else
+                {
+                    totalAmount++;
+                }
+            }
+        }
+        return totalAmount;
+    }
     #endregion
 
     #region ** Public Methods **
@@ -558,6 +579,45 @@ public class Inventory : MonoBehaviour
         }
 
         UpdateSlot(index); 
+    }
+
+    // 특정 ID의 아이템을 지정된 수량만큼 제거
+    public void ConsumeItem(int itemID, int amount)
+    {
+        int amountToConsume = amount;
+
+        for (int i = Capacity - 1; i >= 0; i--)
+        {
+            if (amountToConsume <= 0) break;
+
+            Item item = items[i];
+            if (item != null && item.Data.ID == itemID)
+            {
+                if (item is CountableItem ci)
+                {
+                    if (ci.Amount > amountToConsume)
+                    {
+                        ci.SetAmount(ci.Amount - amountToConsume);
+                        amountToConsume = 0;
+                        if (ci.IsEmpty)
+                        {
+                            Remove(i);
+                        }
+                    }
+                    else
+                    {
+                        amountToConsume -= ci.Amount;
+                        Remove(i);
+                    }
+                }
+                else
+                {
+                    Remove(i);
+                    amountToConsume--;
+                }
+                UpdateSlot(i);
+            }
+        }
     }
     #endregion
 }

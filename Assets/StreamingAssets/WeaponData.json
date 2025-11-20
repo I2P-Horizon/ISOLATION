@@ -13,5 +13,20 @@
             "type": "Weapon",
             "subType": "Sword"
         }
+    ],
+    "Torch": [
+        {
+            "id": 30002,
+            "itemName": "횃불",
+            "itemToolTip": "주변을 밝혀주는 횃불.",
+            "itemExplanation": "공격력 1 상승",
+            "itemIcon": "TorchIcon",
+            "itemPrefeb": "TorchPrefab",
+            "itemPrice": 10,
+            "damage": 1,
+            "rate": 2.0,
+            "type": "Weapon",
+            "subType": "Torch"
+        }
     ]
 }
