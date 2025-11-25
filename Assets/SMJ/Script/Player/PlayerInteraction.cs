@@ -40,6 +40,12 @@ public class PlayerInteraction : MonoBehaviour
     /// <summary>공격 속도</summary>
     [SerializeField] private float _attackInterval = 0.8f;
 
+    [Header("CraftingTable Interaction")]
+    /// <summary>제작대 감지 반경</summary>
+    [SerializeField] private float _ctDetectRadius = 1.0f;
+    /// <summary>제작대 레이어</summary>
+    [SerializeField] private LayerMask _ctLayerMask;
+
     private List<PickupItem> _ItemsInScope; // 플레이어 주변에 감지된 아이템 목록
 
     private InteractionState _currentState = InteractionState.None; // 현재 상태
@@ -73,6 +79,8 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
+            if (TryInteractionWithCraftingTable()) return;
+
             TryPickupItem();
         }
     }
@@ -288,6 +296,35 @@ public class PlayerInteraction : MonoBehaviour
         {
             Debug.DrawRay(transform.position, dir * dist, Color.red, 1f);
             return hit.collider.gameObject == item.gameObject;
+        }
+
+        return false;
+    }
+
+    private bool TryInteractionWithCraftingTable()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _ctDetectRadius, _ctLayerMask);
+
+        CraftingTable nearestCT = null;
+        float nearestDist = float.MaxValue;
+
+        foreach (Collider col in colliders)
+        {
+            if (col.TryGetComponent(out CraftingTable ct))
+            {
+                float dist = Vector3.Distance(transform.position, ct.transform.position);
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearestCT = ct;
+                }
+            }
+        }
+
+        if (nearestCT != null)
+        {
+            nearestCT.Interact();
+            return true;
         }
 
         return false;

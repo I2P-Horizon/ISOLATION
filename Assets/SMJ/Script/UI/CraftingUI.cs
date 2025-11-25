@@ -20,18 +20,22 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] private float slotSize = 80f;
     [SerializeField] private float slotSpacing = 20f;
     [SerializeField] private int columnCount = 6;
+    [SerializeField] private int rowCount = 3;
+    [SerializeField] private int maxIngredientSlots = 5;
 
     [Header("Data")]
     [SerializeField] private Inventory inventory;
 
-    private List<RecipeData> allRecipes;
     private RecipeData currentRecipe;
 
-    private List<CraftingItemSlotUI> createdSlots new List<CraftingItemSlotUI>();
+    private List<CraftingItemSlotUI> createdSlots = new List<CraftingItemSlotUI>();
+    private List<IngredientSlotUI> ingredientSlots = new List<IngredientSlotUI>();
 
     private void Start()
     {
-        allRecipes = DataManager.Instance.RecipeList;
+        initRecipeSlots();
+        initIngredientSlots();
+
         CloseUI();
         craftButton.onClick.AddListener(tryCraftItem);
     }
@@ -44,6 +48,47 @@ public class CraftingUI : MonoBehaviour
             {
                 CloseUI();
             }
+        }
+    }
+
+    private void initRecipeSlots()
+    {
+        int totalSlots = columnCount * rowCount;
+
+        float contentHeight = (rowCount * slotSize) + ((rowCount + 1) * slotSpacing);
+        RectTransform contentRect = itemSlotContent.GetComponent<RectTransform>();
+        contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, contentHeight);
+
+        for (int i = 0; i < totalSlots; i++)
+        {
+            GameObject go = Instantiate(itemSlotPrefab, itemSlotContent);
+
+            int row = i / columnCount;
+            int col = i % columnCount;
+            float posX = slotSpacing + (col * (slotSize + slotSpacing));
+            float posY = -(slotSpacing + (row * (slotSize + slotSpacing)));
+
+            RectTransform slotRect = go.GetComponent<RectTransform>();
+            slotRect.pivot = new Vector2(0, 1);
+            slotRect.anchorMin = new Vector2(0, 1);
+            slotRect.anchorMax = new Vector2(0, 1);
+            slotRect.anchoredPosition = new Vector2(posX, posY);
+            slotRect.sizeDelta = new Vector2(slotSize, slotSize);
+
+            CraftingItemSlotUI slotUI = go.GetComponent<CraftingItemSlotUI>();
+            slotUI.SetEmpty();
+            createdSlots.Add(slotUI);
+        }
+    }
+
+    private void initIngredientSlots()
+    {
+        for (int i = 0; i < maxIngredientSlots; i++)
+        {
+            GameObject go = Instantiate(ingredientSlotPrefab, ingredientSlotParent);
+            IngredientSlotUI ingredientSlot = go.GetComponent<IngredientSlotUI>();
+            ingredientSlot.SetEmpty();
+            ingredientSlots.Add(ingredientSlot);
         }
     }
 
@@ -61,48 +106,57 @@ public class CraftingUI : MonoBehaviour
         backgroundPanel.SetActive(false);
     }
 
-    public void ShowRecipeList(string categoty)
+    public void ShowRecipeList(string category)
     {
-        foreach (Transform child in itemSlotContent) Destroy(child.gameObject);
-        createdSlots.Clear();
+        List<RecipeData> recipes = DataManager.Instance.RecipeList;
 
-        // 현재는 모든 레시피를 보여주지만, 카테고리에 따라 필터링할 수 있도록 수정 필요
-        List<RecipeData> fiteredRecipes = new List<RecipeData>();
-        foreach (var recipe in allRecipes)
+        //for (int i = 0; i < createdSlots.Count; i++)
+        //{
+        //    if (i < recipes.Count)
+        //    {
+        //        RecipeData recipe = recipes[i];
+        //        ItemData resultItem = DataManager.Instance.GetItemDataByID(recipe.resultItemID);
+        //        bool isCraftable = checkIfCraftable(recipe);
+
+        //        createdSlots[i].Setup(this, recipe, resultItem, isCraftable);
+        //    }    
+        //    else
+        //    {
+        //        createdSlots[i].SetEmpty();
+        //    }
+        //}    
+
+        for (int i = 0; i < createdSlots.Count; i++)
         {
-            // 카테고리 필터링 로직 추가 필요
-            fiteredRecipes.Add(recipe);
-        }
+            if (i < recipes.Count)
+            {
+                RecipeData recipe = recipes[i];
+                ItemData resultData = DataManager.Instance.GetItemDataByID(recipe.resultItemID);
 
-        int totalRows = Mathf.CeilToInt((float)fiteredRecipes.Count / columnCount);
-        float contentHeight = (totalRows * slotSize) + ((totalRows + 1) * slotSpacing);
-        RectTransform contentRect = itemSlotContent.GetComponent<RectTransform>();
-        contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, contentHeight);
+                if (resultData == null)
+                {
+                    Debug.LogError($"[오류] 레시피의 결과물 ID({recipe.resultItemID})에 해당하는 아이템 데이터가 없습니다! JSON ID 확인 필요.");
+                }
+                else
+                {
+                    Sprite iconSprite = Resources.Load<Sprite>($"Icon/{resultData.ItemIcon}");
+                    if (iconSprite == null)
+                    {
+                        Debug.LogError($"[오류] 아이템({resultData.ItemName})의 아이콘({resultData.ItemIcon})을 Resources/Icons 폴더에서 찾을 수 없습니다!");
+                    }
+                    else
+                    {
+                        Debug.Log($"[성공] 아이템({resultData.ItemName}) 로드 성공. 아이콘: {resultData.ItemIcon}");
+                    }
+                }
 
-        for (int i = 0; i < fiteredRecipes.Count; i++)
-        {
-            RecipeData recipe = fiteredRecipes[i];
-            GameObject go = Instantiate(itemSlotPrefab, itemSlotContent);
-
-            int row = i / columnCount;
-            int col = i % columnCount;
-
-            float posX = slotSpacing + (col * (slotSize + slotSpacing));
-            float posY = -(slotSpacing + (row * (slotSize + slotSpacing)));
-
-            RectTransform slotRect = go.GetComponent<RectTransform>();
-            slotRect.pivot = new Vector2(0, 1);
-            slotRect.anchorMin = new Vector2(0, 1);
-            slotRect.anchorMax = new Vector2(0, 1);
-            slotRect.anchoredPosition = new Vector2(posX, posY);
-            slotRect.sizeDelta = new Vector2(slotSize, slotSize);
-
-            CraftingItemSlotUI slotUI = go.GetComponent<CraftingItemSlotUI>();
-            ItemData resultItem = DataManager.Instance.GetItemDataByID(recipe.resultItemID);
-            bool isCraftable = checkIfCraftable(recipe);
-
-            slotUI.Setup(this, recipe, resultItem, isCraftable);
-            createdSlots.Add(slotUI);
+                bool isCraftable = checkIfCraftable(recipe);
+                createdSlots[i].Setup(this, recipe, resultData, isCraftable);
+            }
+            else
+            {
+                createdSlots[i].SetEmpty();
+            }
         }
     }
 
@@ -110,29 +164,42 @@ public class CraftingUI : MonoBehaviour
     {
         currentRecipe = recipe;
 
-        foreach (var ingredient in recipe.ingredients)
+        foreach (var slot in createdSlots)
         {
-            GameObject go = Instantiate(ingredientSlotPrefab, ingredientSlotParent);
-            CraftingIngredientSlotUI ingredientSlot = go.GetComponent<CraftingIngredientSlotUI>();
+            slot.SetSelected(slot.recipeData == recipe);
+        }
 
-            ItemData itemData = DataManager.Instance.GetItemDataByID(ingredient.itemID);
-            int hasAmount = inventory.GetTotalAmountOfItem(ingredient.itemID);
+        updateIngredientUI(recipe);
+        updateCraftButtonState(recipe);
+    }
 
-            ingredientSlot.Setup(itemData, ingredient.amount, hasAmount);
+    private void updateIngredientUI(RecipeData recipe)
+    {
+        for (int i = 0; i < ingredientSlots.Count; i++)
+        {
+            if (i < recipe.ingredients.Count)
+            {
+                var ing = recipe.ingredients[i];
+                ItemData data = DataManager.Instance.GetItemDataByID(ing.itemID);
+                int hasAmount = inventory.GetTotalAmountOfItem(ing.itemID);
+
+                ingredientSlots[i].Setup(data, ing.amount, hasAmount);
+            }
+            else
+            {
+                ingredientSlots[i].SetEmpty();
+            }
         }
     }
 
     private void clearIngredients()
     {
-        foreach (Transform child in ingredientSlotParent)
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (var slot in ingredientSlots) slot.SetEmpty();
     }
 
-    private void updateCraftButtonState()
+    private void updateCraftButtonState(RecipeData recipe)
     {
-        bool canCraft = checkIfCraftable(currentRecipe);
+        bool canCraft = checkIfCraftable(recipe);
         craftButton.interactable = canCraft;
     }    
 
@@ -149,6 +216,18 @@ public class CraftingUI : MonoBehaviour
         return true;
     }
 
+    private void refreshAllSlotsState()
+    {
+        foreach (var slot in createdSlots)
+        {
+            if (slot.recipeData != null)
+            {
+                bool isCraftable = checkIfCraftable(slot.recipeData);
+                slot.UpdateCraftability(isCraftable);
+            }
+        }
+    }
+
     private void tryCraftItem()
     {
         if (currentRecipe == null || !checkIfCraftable(currentRecipe)) return;
@@ -163,5 +242,6 @@ public class CraftingUI : MonoBehaviour
 
         ShowRecipeList("All");
         OnRecipeSelected(currentRecipe);
+        refreshAllSlotsState();
     }
 }

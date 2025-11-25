@@ -35,6 +35,7 @@ public class DataManager : Singleton<DataManager>
     {
         base.Awake();
         InitAndLoadData();
+        Debug.Log(Application.persistentDataPath);
     }
 
     private void InitAndLoadData()

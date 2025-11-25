@@ -2,27 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class IngredientSlotUI : MonoBehaviour
 {
-    [SerializeField] private Image itemIcon;
-    [SerializeField] private Text infoText;
+    [SerializeField] private Image iconImage;
+    [SerializeField] private TMP_Text amountText;
 
-    public void Setup(ItemData ingredientData, int requiredAmount, int ownedAmount)
+    public void Setup(ItemData itemData, int requiredAmount, int playerAmount)
     {
-        if (ingredientData != null)
-        {
-            itemIcon.sprite = Resources.Load<Sprite>($"Icon/{ingredientData.ItemIcon}");
-            infoText.text = $"{ingredientData.ItemName}: {ownedAmount} / {requiredAmount}";
+        gameObject.SetActive(true);
+        iconImage.gameObject.SetActive(true);
+        amountText.gameObject.SetActive(true);
 
-            if (ownedAmount < requiredAmount)
-            {
-                infoText.color = Color.red;
-            }
-            else
-            {
-                infoText.color = Color.green;
-            }
-        }
+        if (itemData == null) return;
+
+        iconImage.sprite = Resources.Load<Sprite>($"Icon/{itemData.ItemIcon}");
+        amountText.text = $"{playerAmount}/{requiredAmount}";
+        amountText.color = (playerAmount >= requiredAmount) ? Color.white : Color.red;
+    }
+
+    public void SetEmpty()
+    {
+        iconImage.gameObject.SetActive(false);
+        amountText.gameObject.SetActive(false);
     }
 }
