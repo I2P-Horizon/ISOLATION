@@ -1,0 +1,25 @@
+[
+    {
+        "resultItemID": 30001,
+        "resultAmount": 1,
+        "ingredients": [
+            { "itemID": 50001, "amount": 2 },
+            { "itemID": 50002, "amount": 4 }
+        ]
+    },
+    {
+        "resultItemID": 30002,
+        "resultAmount": 1,
+        "ingredients": [
+            { "itemID": 50001, "amount": 2 },
+            { "itemID": 50004, "amount": 2 }
+        ]
+    },
+    {
+        "resultItemID": 60003,
+        "resultAmount": 1,
+        "ingredients": [
+            { "itemID": 50002, "amount": 2 }
+        ]
+    }
+]
