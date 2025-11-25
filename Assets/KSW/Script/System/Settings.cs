@@ -62,36 +62,36 @@ public class Settings : MonoBehaviour
     public Button[] buttons;
 
     [Header("Screen Settings")]
-    public Selector<Vector2Int> resolution;
-    public Button nextResButton;
-    public Button prevResButton;
+    [SerializeField] private Selector<Vector2Int> resolution;
+    [SerializeField] private Button nextResButton;
+    [SerializeField] private Button prevResButton;
 
-    public Selector<int> fps;
-    public Button nextButton_FPS;
-    public Button prevButton_FPS;
+    [SerializeField] private Selector<int> fps;
+    [SerializeField] private Button nextButton_FPS;
+    [SerializeField] private Button prevButton_FPS;
 
-    public Selector<string> ScreenMode;
-    public Button nextButton_ScreenMode;
-    public Button prevButton_ScreenMode;
+    [SerializeField] private Selector<string> ScreenMode;
+    [SerializeField] private Button nextButton_ScreenMode;
+    [SerializeField] private Button prevButton_ScreenMode;
 
     [Header("Graphics Settings")]
-    public Selector<string> graphics;
-    public Button nextGraphicsButton;
-    public Button prevGraphicsButton;
+    [SerializeField] private Selector<string> graphics;
+    [SerializeField] private Button nextGraphicsButton;
+    [SerializeField] private Button prevGraphicsButton;
 
-    public Selector<string> antiAliasing;
-    public Button nextButton_AntiAliasing;
-    public Button prevButton_AntiAliasing;
+    [SerializeField] private Selector<string> antiAliasing;
+    [SerializeField] private Button nextButton_AntiAliasing;
+    [SerializeField] private Button prevButton_AntiAliasing;
 
-    public Selector<string> shawdow;
-    public Button nextButton_Shawdow;
-    public Button prevButton_Shawdow;
+    [SerializeField] private Selector<string> shawdow;
+    [SerializeField] private Button nextButton_Shawdow;
+    [SerializeField] private Button prevButton_Shawdow;
 
     [Header("Message")]
-    public GameObject message;
-    public Button saveButton;
+    [SerializeField] private GameObject message;
+    [SerializeField] private Button saveButton;
 
-    private bool isSaving = false;
+    private bool _isSaving = false;
 
     private const string KEY_RES = "settings.resolution";
     private const string KEY_FPS = "settings.fps";
@@ -208,9 +208,9 @@ public class Settings : MonoBehaviour
 
     public IEnumerator Save()
     {
-        if (!isSaving)
+        if (!_isSaving)
         {
-            isSaving = true;
+            _isSaving = true;
 
             /* 현재 인덱스 저장 */
             PlayerPrefs.SetInt(KEY_RES, resolution.GetIndex());
@@ -227,7 +227,7 @@ public class Settings : MonoBehaviour
             message.GetComponent<UIAnimator>().Close();
             yield return new WaitForSeconds(0.1f);
 
-            isSaving = false;
+            _isSaving = false;
         }
     }
 }
