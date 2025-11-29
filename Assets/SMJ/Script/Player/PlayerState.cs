@@ -41,6 +41,9 @@ public class PlayerState : MonoBehaviour
     [SerializeField] private float _hpDecreaseInterval = 1.0f;
     [SerializeField] private float _hpDecreaseAmount = 0.1f;
 
+    [Header("Hit Effect")]
+    [SerializeField] private HitEffect _hitEffect;
+
     private void Awake()
     {
         _player = GetComponent<Player>();
@@ -117,6 +120,9 @@ public class PlayerState : MonoBehaviour
     public void DecreaseHP(float amount)
     {
         _hp = Mathf.Max(0, _hp - amount);
+        #region JSH: Hit Effect Apply
+        _hitEffect.ApplyEffect();
+        #endregion
     }
 
     public void SetMoveSpeed(float speed)
