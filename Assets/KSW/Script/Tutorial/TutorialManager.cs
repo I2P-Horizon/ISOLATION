@@ -85,11 +85,8 @@ public class T4 : TutorialState
 {
     public T4(TutorialManager manager) : base(manager) { }
 
-    private Inventory inventory;
-
     public override void Enter()
     {
-        inventory = MonoBehaviour.FindAnyObjectByType<Inventory>();
         manager.Message("³ª¹« Á¶°¢ 4°³ È¹µæ");
         isCompleted = false;
     }
@@ -97,7 +94,6 @@ public class T4 : TutorialState
     public override void Update()
     {
         // ³ª¹« Á¶°¢ 4°³ È¹µæ
-
         if (inventory.GetTotalAmountOfItem(50001) == 4)
         {
             manager.StartCoroutine(manager.NextState(new T5(manager), "¿Ï·á!"));
@@ -132,7 +128,7 @@ public class T5 : TutorialState
 }
 #endregion
 
-#region T7: ³ª¹« °î±ªÀÌ Á¦ÀÛ
+#region T6: ³ª¹« °î±ªÀÌ Á¦ÀÛ
 public class T7 : TutorialState
 {
     public T7(TutorialManager manager) : base(manager) { }
@@ -152,7 +148,7 @@ public class T7 : TutorialState
 }
 #endregion
 
-#region T8: µ¹ Á¶°¢ 4°³ È¹µæ
+#region T7: µ¹ Á¶°¢ 4°³ È¹µæ
 public class T8 : TutorialState
 {
     public T8(TutorialManager manager) : base(manager) { }
@@ -172,7 +168,7 @@ public class T8 : TutorialState
 }
 #endregion
 
-#region T9: ¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ
+#region T8: ¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ
 public class T9 : TutorialState
 {
     public T9(TutorialManager manager) : base(manager) { }
