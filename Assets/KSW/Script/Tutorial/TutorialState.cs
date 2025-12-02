@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class TutorialState
 {
     protected TutorialManager manager;
+    protected Inventory inventory;
 
     protected bool isCompleted = false;
 
@@ -16,4 +17,9 @@ public abstract class TutorialState
     public abstract void Enter();
     public abstract void Update();
     public abstract void Exit();
+
+    protected virtual void Start()
+    {
+        inventory = MonoBehaviour.FindFirstObjectByType<Inventory>();
+    }
 }
