@@ -87,6 +87,7 @@ public class T4 : TutorialState
 
     public override void Enter()
     {
+        inventory = MonoBehaviour.FindFirstObjectByType<Inventory>();
         manager.Message("³ª¹« Á¶°¢ 4°³ È¹µæ");
         isCompleted = false;
     }
@@ -95,9 +96,7 @@ public class T4 : TutorialState
     {
         // ³ª¹« Á¶°¢ 4°³ È¹µæ
         if (inventory.GetTotalAmountOfItem(50001) == 4)
-        {
             manager.StartCoroutine(manager.NextState(new T5(manager), "¿Ï·á!"));
-        }
     }
 
     public override void Exit() { }
