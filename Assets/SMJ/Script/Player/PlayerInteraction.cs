@@ -52,11 +52,14 @@ public class PlayerInteraction : MonoBehaviour
     private MonoBehaviour _currentTarget = null; // 현재 상호작용 중인 대상
     private float _lastInteractionTime = 0; // 마지막으로 상호작용한 시간
 
+    private Animator _animator;
+
     public bool IsInteracting => _currentState != InteractionState.None;
 
     private void Awake()
     {
         _player = GetComponent<Player>();
+        _animator = GetComponent<Animator>();
         _ItemsInScope = new List<PickupItem>();
     }
 
@@ -192,10 +195,12 @@ public class PlayerInteraction : MonoBehaviour
         switch (_currentState)
         {
             case InteractionState.Gathering:
+                _animator.SetTrigger("Gathering");
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
                 _player.State.DecreaseSatiety(_satietyDecreaseAmount);
                 break;
             case InteractionState.Attacking:
+                _animator.SetTrigger("Gathering");
                 (_currentTarget as CreatureBase)?.Interact(_attackPower);
                 break;
         }
