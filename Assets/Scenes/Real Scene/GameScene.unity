@@ -6715,7 +6715,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1049221653
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13490,6 +13490,7 @@ MonoBehaviour:
   _targetTransform: {fileID: 1344258696}
   _offset: {x: 0, y: 5.5, z: -7}
   _smoothTime: 0.15
+  _rotationAngle: 30
 --- !u!114 &1978927454
 MonoBehaviour:
   m_ObjectHideFlags: 0

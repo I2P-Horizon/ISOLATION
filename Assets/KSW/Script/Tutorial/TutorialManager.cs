@@ -80,14 +80,42 @@ public class T3 : TutorialState
 }
 #endregion
 
-#region ³ª¹« Á¶°¢ 4°³ È¹µæ
+#region T4: ³ª¹« Á¶°¢ 4°³ È¹µæ
 public class T4 : TutorialState
 {
     public T4(TutorialManager manager) : base(manager) { }
 
+    private Inventory inventory;
+
     public override void Enter()
     {
+        inventory = MonoBehaviour.FindAnyObjectByType<Inventory>();
         manager.Message("³ª¹« Á¶°¢ 4°³ È¹µæ");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        // ³ª¹« Á¶°¢ 4°³ È¹µæ
+
+        if (inventory.GetTotalAmountOfItem(50001) == 4)
+        {
+            manager.StartCoroutine(manager.NextState(new T5(manager), "¿Ï·á!"));
+        }
+    }
+
+    public override void Exit() { }
+}
+#endregion
+
+#region T5: ÀÎº¥Åä¸® ¿­±â
+public class T5 : TutorialState
+{
+    public T5(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("ÀÎº¥Åä¸® ¿­±â");
         isCompleted = false;
     }
 
@@ -104,6 +132,66 @@ public class T4 : TutorialState
 }
 #endregion
 
+#region T7: ³ª¹« °î±ªÀÌ Á¦ÀÛ
+public class T7 : TutorialState
+{
+    public T7(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("³ª¹« °î±ªÀÌ Á¦ÀÛ");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        // ³ª¹« °î±ªÀÌ Á¦ÀÛ
+    }
+
+    public override void Exit() { }
+}
+#endregion
+
+#region T8: µ¹ Á¶°¢ 4°³ È¹µæ
+public class T8 : TutorialState
+{
+    public T8(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("µ¹ Á¶°¢ 4°³ È¹µæ");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        // µ¹ Á¶°¢ 4°³ È¹µæ
+    }
+
+    public override void Exit() { }
+}
+#endregion
+
+#region T9: ¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ
+public class T9 : TutorialState
+{
+    public T9(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        // ¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ
+    }
+
+    public override void Exit() { }
+}
+#endregion
+
 public class TutorialManager : MonoBehaviour
 {
     public static TutorialManager Instance { get; private set; }
@@ -111,7 +199,7 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private Text messageText;
 
-    private TutorialState currentState;
+    private TutorialState _currentState;
 
     /* ¸Ş½ÃÁö Ãâ·Â */
     public void Message(string msg)
@@ -123,9 +211,9 @@ public class TutorialManager : MonoBehaviour
     /* Æ©Åä¸®¾ó »óÅÂ ½ÃÀÛ */
     public void StartState(TutorialState nextState)
     {
-        currentState?.Exit();
-        currentState = nextState;
-        currentState?.Enter();
+        _currentState?.Exit();
+        _currentState = nextState;
+        _currentState?.Enter();
     }
 
     /* ÀÌÀü Æ©Åä¸®¾ó »óÅÂ ¿Ï·á + ´ÙÀ½ »óÅÂ ½ÃÀÛ */
@@ -151,7 +239,7 @@ public class TutorialManager : MonoBehaviour
 
     private void Update()
     {
-        currentState?.Update();
+        _currentState?.Update();
     }
 
     private void Awake()
