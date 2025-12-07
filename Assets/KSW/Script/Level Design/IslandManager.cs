@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -575,11 +577,19 @@ public class Island : Shape
     private MapObject mapObject;
     private BlockData blockData;
 
-    public Transform Root { get; private set; }
     public Transform pos;
     public Transform player;
 
     [SerializeField] private RockArea rockArea;
+
+    public Transform Root;
+    public Transform grassRoot;
+    public Transform dirtRoot;
+    public Transform sandRoot;
+    public Transform waterRoot;
+    public Transform templeRoot;
+    public Transform swampRoot;
+    public Transform rockRoot;
 
     [HideInInspector] public List<Vector3> rockPositions = new List<Vector3>();
 
@@ -613,7 +623,6 @@ public class Island : Shape
 
     public IEnumerator Spawn(Transform parent)
     {
-        Root = new GameObject("Island").transform;
         Root.SetParent(parent);
 
         Vector3 targetSize = Vector3.one;
@@ -640,6 +649,7 @@ public class Island : Shape
                 Transform chunkParent = new GameObject($"Chunk_{cx}_{cz}").transform;
                 chunkParent.SetParent(Root);
 
+                /* 청크 단위로 나누기 위해 자식 오브젝트 생성 */
                 Transform grassParent = new GameObject("Grass").transform; grassParent.SetParent(chunkParent);
                 Transform dirtParent = new GameObject("Dirt").transform; dirtParent.SetParent(chunkParent);
                 Transform sandParent = new GameObject("Sand").transform; sandParent.SetParent(chunkParent);
@@ -647,6 +657,15 @@ public class Island : Shape
                 Transform templeParent = new GameObject("Temple").transform; templeParent.SetParent(chunkParent);
                 Transform swampParent = new GameObject("Swamp").transform; swampParent.SetParent(chunkParent);
                 Transform rockParent = new GameObject("Rock").transform; rockParent.SetParent(chunkParent);
+
+                /* 영역마다 부모 오브젝트로 나눔 */
+                grassParent.SetParent(grassRoot);
+                dirtParent.SetParent(dirtRoot);
+                sandParent.SetParent(sandRoot);
+                waterParent.SetParent(waterRoot);
+                templeParent.SetParent(templeRoot);
+                swampParent.SetParent(swampRoot);
+                rockParent.SetParent(rockRoot);
 
                 for (int x = 0; x < grid.chunkSize; x++)
                 {
@@ -903,6 +922,14 @@ public class IslandManager : MonoBehaviour
 
     public GameObject mine;
 
+    private void navMeshBuild(GameObject obj)
+    {
+        NavMeshSurface navMesh = obj.AddComponent<NavMeshSurface>();
+        navMesh.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+        navMesh.collectObjects = CollectObjects.Children;
+        navMesh.BuildNavMesh();
+    }
+
     /// <summary>
     /// 섬 생성 코루틴
     /// </summary>
@@ -923,6 +950,10 @@ public class IslandManager : MonoBehaviour
         jungle.Spawn();
         island.SpawnMineEntrance(mine);
         island.SpawnPlayer();
+
+        /* 경로 Bake */
+        navMeshBuild(island.grassRoot.gameObject);
+        navMeshBuild(island.sandRoot.gameObject);
 
         /* Game Scene 으로 변경 */
         yield return StartCoroutine(island.SceneChange());
