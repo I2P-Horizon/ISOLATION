@@ -13,8 +13,13 @@ public class UIAnimator : MonoBehaviour
     [SerializeField] private bool _right;
 
     [Header("값 설정")]
+    [Tooltip("지속 시간(값이 작을 수록 빨라짐)")]
     [SerializeField] private float _duration = 0.5f;
+
+    [Tooltip("UI 시작 위치 오프셋")]
     [SerializeField] private float _moveOffset = 200f;
+
+    [Tooltip("초기 스케일 값")]
     [SerializeField] private float _startScale = 0f;
 
     private CanvasGroup _canvasGroup;
