@@ -89,15 +89,8 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            if (!worldMap.activeSelf)
-            {
-                GlobalUIController.Instance.PopUpShow(worldMap);
-            }
-
-            else
-            {
-                GlobalUIController.Instance.PopUpClose(worldMap);
-            }
+            if (!worldMap.activeSelf) worldMap.GetComponent<UIAnimator>().Show();
+            else worldMap.GetComponent<UIAnimator>().Close();
         }
     }
 
@@ -112,37 +105,30 @@ public class UIManager : MonoBehaviour
 
     public void Pause()
     {
-        if (!pauseUI.activeSelf)
-        {
-            GlobalUIController.Instance.PopUpShow(pauseUI);
-        }
-
-        else if(pauseUI.activeSelf)
-        {
-            GlobalUIController.Instance.PopUpClose(pauseUI);
-        }
+        if (!pauseUI.activeSelf) pauseUI.GetComponent<UIAnimator>().Show();
+        else if(pauseUI.activeSelf) pauseUI.GetComponent<UIAnimator>().Close();
     }
 
     private void Continue()
     {
-        GlobalUIController.Instance.PopUpClose(pauseUI);
+        pauseUI.GetComponent<UIAnimator>().Close();
     }
 
     private void Settings()
     {
-        GlobalUIController.Instance.PopUpClose(pauseUI);
+        pauseUI.GetComponent<UIAnimator>().Close();
     }
 
     private void Exit()
     {
-        GlobalUIController.Instance.PopUpClose(pauseUI);
+        pauseUI.GetComponent<UIAnimator>().Close();
         SceneManager.LoadScene("MainScene");
     }
 
     public IEnumerator GameOver()
     {
         yield return new WaitForSeconds(0.01f);
-        GlobalUIController.Instance.PopUpShow(gameOverUI);
+        gameOverUI.GetComponent<UIAnimator>().Show();
         Time.timeScale = 0;
     }
 

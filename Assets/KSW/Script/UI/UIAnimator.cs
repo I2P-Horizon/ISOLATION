@@ -35,9 +35,6 @@ public class UIAnimator : MonoBehaviour
         gameObject.SetActive(true);
         StopAllCoroutines();
 
-        Vector2 startPos = initPos(_originalPosition);
-        _rectTransform.anchoredPosition = startPos;
-
         _canvasGroup.alpha = _fade ? 0f : 1f;
         if (_scale) transform.localScale = Vector3.one * _startScale;
 

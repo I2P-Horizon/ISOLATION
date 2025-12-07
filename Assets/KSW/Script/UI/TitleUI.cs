@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-#region MainManager
-public class MainManager : MonoBehaviour
+public class TitleUI : MonoBehaviour
 {
     [Header("Panel")]
     [SerializeField] private GameObject mainPanel;
@@ -72,4 +71,3 @@ public class MainManager : MonoBehaviour
         settings.Init();
     }
 }
-#endregion
