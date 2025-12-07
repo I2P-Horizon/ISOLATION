@@ -35,15 +35,11 @@ public class UIAnimator : MonoBehaviour
         gameObject.SetActive(true);
         StopAllCoroutines();
 
-        _canvasGroup.alpha = _fade ? 0f : 1f;
-
-        Vector2 startPos = _originalPosition;
-        if (_up) startPos -= new Vector2(0, _moveOffset);
-        if (_down) startPos += new Vector2(0, _moveOffset);
-        if (_left) startPos += new Vector2(_moveOffset, 0);
-        if (_right) startPos -= new Vector2(_moveOffset, 0);
-        if (_scale) transform.localScale = Vector3.one * _startScale;
+        Vector2 startPos = initPos(_originalPosition);
         _rectTransform.anchoredPosition = startPos;
+
+        _canvasGroup.alpha = _fade ? 0f : 1f;
+        if (_scale) transform.localScale = Vector3.one * _startScale;
 
         StartCoroutine(openUI());
     }
@@ -58,6 +54,20 @@ public class UIAnimator : MonoBehaviour
     }
 
     /// <summary>
+    /// 시작 위치 초기화 후 반환
+    /// </summary>
+    /// <param name="pos"></param>
+    private Vector2 initPos(Vector2 pos)
+    {
+        if (_up) pos -= new Vector2(0, _moveOffset);
+        if (_down) pos += new Vector2(0, _moveOffset);
+        if (_left) pos += new Vector2(_moveOffset, 0);
+        if (_right) pos -= new Vector2(_moveOffset, 0);
+
+        return pos;
+    }
+
+    /// <summary>
     /// UI 활성화 애니메이션 처리
     /// </summary>
     /// <returns></returns>
@@ -66,15 +76,8 @@ public class UIAnimator : MonoBehaviour
         _uiAnimation = true;
 
         /* 시작 위치 초기화 */
-        Vector2 startPos = _originalPosition;
+        Vector2 startPos = initPos(_originalPosition);
 
-        /* 각 옵션에 따라 시작 위치 변경 */
-        if (_up) startPos -= new Vector2(0, _moveOffset);
-        if (_down) startPos += new Vector2(0, _moveOffset);
-        if (_left) startPos += new Vector2(_moveOffset, 0);
-        if (_right) startPos -= new Vector2(_moveOffset, 0);
-
-        /* UI의 RectTransform 위치를 시작 위치로 설정 */
         _rectTransform.anchoredPosition = startPos;
 
         /* 애니메이션 진행 시간 초기화 */
@@ -112,12 +115,7 @@ public class UIAnimator : MonoBehaviour
     {
         _uiAnimation = true;
 
-        Vector2 endPos = _originalPosition;
-
-        if (_up) endPos -= new Vector2(0, _moveOffset);
-        if (_down) endPos += new Vector2(0, _moveOffset);
-        if (_left) endPos += new Vector2(_moveOffset, 0);
-        if (_right) endPos -= new Vector2(_moveOffset, 0);
+        Vector2 endPos = initPos(_originalPosition);
 
         float time = 0f;
 

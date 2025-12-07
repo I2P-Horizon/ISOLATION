@@ -5671,13 +5671,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fade: 1
   _scale: 0
-  up: 0
-  down: 0
-  left: 0
-  right: 0
-  duration: 0.3
-  moveOffset: 200
-  startScale: 0.8
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &991689314
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -8544,13 +8544,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fade: 0
   _scale: 1
-  up: 0
-  down: 0
-  left: 0
-  right: 0
-  duration: 0.5
-  moveOffset: 200
-  startScale: 0
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &1741775515
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9335,13 +9335,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fade: 0
   _scale: 0
-  up: 0
-  down: 1
-  left: 0
-  right: 0
-  duration: 0.3
-  moveOffset: 100
-  startScale: 0.8
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &1909584125
 CanvasGroup:
   m_ObjectHideFlags: 0
