@@ -805,14 +805,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 1
+  _scale: 0
   up: 0
   down: 0
   left: 0
   right: 0
   duration: 0.5
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &101247786
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1564,14 +1565,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 0
+  _fade: 0
+  _scale: 0
   up: 0
   down: 0
   left: 0
   right: 0
   duration: 0.1
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &216572228
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2255,14 +2257,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 0
+  _scale: 1
   up: 0
-  down: 1
+  down: 0
   left: 0
   right: 0
   duration: 0.1
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0
 --- !u!225 &330493870
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4183,14 +4186,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 1
+  _scale: 0
   up: 1
   down: 0
   left: 0
   right: 0
   duration: 0.4
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &721199717
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4931,14 +4935,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 0
+  _scale: 0
   up: 0
   down: 0
   left: 0
   right: 0
   duration: 0.5
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &786089817
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6019,14 +6024,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 0
+  _scale: 1
   up: 0
-  down: 1
+  down: 0
   left: 0
   right: 0
   duration: 0.2
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0
 --- !u!225 &954023524
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7016,14 +7022,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 0
+  _scale: 0
   up: 0
   down: 0
   left: 0
   right: 0
   duration: 0.5
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &1060132387
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -10002,14 +10009,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 0
+  _scale: 0
   up: 0
   down: 0
   left: 0
   right: 0
   duration: 0.5
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &1470992429
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -12183,14 +12191,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 0
+  _scale: 0
   up: 0
   down: 0
   left: 0
   right: 0
   duration: 0.5
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &1797372974
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -12526,14 +12535,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 0
+  _fade: 0
+  _scale: 0
   up: 0
   down: 1
   left: 0
   right: 0
   duration: 0.5
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &1839689433
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -13261,14 +13271,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
+  _fade: 0
+  _scale: 0
   up: 1
   down: 0
   left: 0
   right: 0
   duration: 0.4
   moveOffset: 200
-  uiAnimation: 0
+  startScale: 0.8
 --- !u!225 &1922717780
 CanvasGroup:
   m_ObjectHideFlags: 0
