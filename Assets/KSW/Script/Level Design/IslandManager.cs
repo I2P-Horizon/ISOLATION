@@ -601,6 +601,51 @@ public class Island : Shape
         this.height = height; this.grid = grid; this.noise = noise; this.temple = temple; this.blockData = blockData;
     }
 
+    /// <summary>
+    /// 주변 블록과 계단식으로 맞춰서 자연스럽게 평탄화
+    /// </summary>
+    private void flattenTempleArea(int steps = 3)
+    {
+        if (!temple.exists) return;
+
+        int r = Mathf.CeilToInt(temple.radius);
+        int centerY = Mathf.RoundToInt(temple.pos.y);
+
+        /* 고대 사원 반경 안 모든 블록 높이 계산 */
+        for (int x = -r; x <= r; x++)
+        {
+            for (int z = -r; z <= r; z++)
+            {
+                Vector2 offset = new Vector2(x, z);
+                float dist = offset.magnitude;
+
+                if (dist > temple.radius) continue;
+
+                /* 계단식 높이 계산 */
+                float t = dist / temple.radius; // 0 ~ 1
+                int stepHeight = Mathf.RoundToInt(centerY - t * steps);
+
+                int worldX = Mathf.RoundToInt(temple.pos.x + x);
+                int worldZ = Mathf.RoundToInt(temple.pos.z + z);
+
+                /* 기존 블록 제거 후 계단식으로 사원 바닥 배치 */
+                Vector3 posXZ = new Vector3(worldX, stepHeight, worldZ);
+
+                /* 기존 블록 제거 */
+                TopGrassPositions.RemoveAll(p => Mathf.RoundToInt(p.x) == worldX && Mathf.RoundToInt(p.z) == worldZ);
+
+                /* 고대 사원 바닥 블록 배치 */
+                blockData.PlaceBlock(blockData.templeFloorBlock, posXZ, templeRoot);
+
+                /* 고대 사원 바닥 아래는 흙 블록으로 채움 */
+                for (int y = height.seaLevel + 1; y < stepHeight; y++)
+                {
+                    blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeRoot);
+                }
+            }
+        }
+    }
+
     public void SpawnMineEntrance(GameObject minePrefab)
     {
         if (rockPositions.Count == 0 || minePrefab == null) return;
@@ -841,6 +886,8 @@ public class Island : Shape
                 yield return null;
             }
         }
+
+        flattenTempleArea();
 
         if (temple.exists && temple.prefab != null)
             MonoBehaviour.Instantiate(temple.prefab, new Vector3(temple.pos.x, Mathf.Max(temple.pos.y, temple.scaleY), temple.pos.z), Quaternion.identity, Root);
