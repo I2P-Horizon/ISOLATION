@@ -9788,10 +9788,11 @@ MonoBehaviour:
     rockPositions: []
     sandPositions: []
   temple:
-    radius: 10
+    radius: 15
     falloffPower: 0.15
     beachWidth: 3
     prefab: {fileID: 4446212970880709517, guid: 507f7bf30415f494f93b639c11953264, type: 3}
+    coreRadius: 8
     scaleY: 10
     maxDistanceFromCenter: 50
     pos: {x: 0, y: 0, z: 0}

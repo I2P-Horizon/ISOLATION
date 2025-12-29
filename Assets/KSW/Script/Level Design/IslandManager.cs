@@ -127,6 +127,12 @@ public class BlockData
     [HideInInspector]
     public Dictionary<GameObject, Vector3> scaleCache = new Dictionary<GameObject, Vector3>();
 
+    /// <summary>
+    /// 블록 프리팹을 지정한 위치에 생성하고, 부모 오브젝트 및 스케일을 적용.
+    /// </summary>
+    /// <param name="prefab">생성할 블록 프리팹</param>
+    /// <param name="pos">월드 좌표 위치</param>
+    /// <param name="parent">부모 Transform</param>
     public void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
     {
         if (prefab == null) return;
@@ -507,6 +513,7 @@ public class Temple : Shape
 
     [Header("Temple Settings")]
     public GameObject prefab;
+    public float coreRadius = 8f;
     public float scaleY = 5f;
     public float maxDistanceFromCenter = 50f;
 
@@ -599,51 +606,6 @@ public class Island : Shape
     public void Set(Height height, Grid grid, Noise noise, Temple temple, BlockData blockData, MapObject mapObject)
     {
         this.height = height; this.grid = grid; this.noise = noise; this.temple = temple; this.blockData = blockData;
-    }
-
-    /// <summary>
-    /// 주변 블록과 계단식으로 맞춰서 자연스럽게 평탄화
-    /// </summary>
-    private void flattenTempleArea(int steps = 3)
-    {
-        if (!temple.exists) return;
-
-        int r = Mathf.CeilToInt(temple.radius);
-        int centerY = Mathf.RoundToInt(temple.pos.y);
-
-        /* 고대 사원 반경 안 모든 블록 높이 계산 */
-        for (int x = -r; x <= r; x++)
-        {
-            for (int z = -r; z <= r; z++)
-            {
-                Vector2 offset = new Vector2(x, z);
-                float dist = offset.magnitude;
-
-                if (dist > temple.radius) continue;
-
-                /* 계단식 높이 계산 */
-                float t = dist / temple.radius; // 0 ~ 1
-                int stepHeight = Mathf.RoundToInt(centerY - t * steps);
-
-                int worldX = Mathf.RoundToInt(temple.pos.x + x);
-                int worldZ = Mathf.RoundToInt(temple.pos.z + z);
-
-                /* 기존 블록 제거 후 계단식으로 사원 바닥 배치 */
-                Vector3 posXZ = new Vector3(worldX, stepHeight, worldZ);
-
-                /* 기존 블록 제거 */
-                TopGrassPositions.RemoveAll(p => Mathf.RoundToInt(p.x) == worldX && Mathf.RoundToInt(p.z) == worldZ);
-
-                /* 고대 사원 바닥 블록 배치 */
-                blockData.PlaceBlock(blockData.templeFloorBlock, posXZ, templeRoot);
-
-                /* 고대 사원 바닥 아래는 흙 블록으로 채움 */
-                for (int y = height.seaLevel + 1; y < stepHeight; y++)
-                {
-                    blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeRoot);
-                }
-            }
-        }
     }
 
     public void SpawnMineEntrance(GameObject minePrefab)
@@ -757,8 +719,45 @@ public class Island : Shape
                         {
                             if (inTempleArea)
                             {
-                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, floorY, worldZ), templeParent);
-                                for (int y = height.seaLevel + 1; y < floorY; y++) blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
+                                Vector2 templeCenterXZ = new Vector2(temple.pos.x, temple.pos.z);
+                                Vector2 currentXZ = new Vector2(worldX, worldZ);
+
+                                float distToCenter = Vector2.Distance(currentXZ, templeCenterXZ);
+
+                                /* 고대 사원 코어 높이 */
+                                int coreHeight = Mathf.RoundToInt(temple.pos.y);
+
+                                int finalHeight;
+
+                                if (distToCenter <= temple.coreRadius)
+                                    finalHeight = coreHeight;
+
+                                else
+                                {
+                                    /* 계단 영역 */
+                                    float stairRange = temple.radius - temple.coreRadius;
+                                    float t = (distToCenter - temple.coreRadius) / stairRange;
+                                    t = Mathf.Clamp01(t);
+
+                                    /* 주변 잔디 높이 */
+                                    int grassHeight = landHeight;
+
+                                    /* 중심 높이 -> 잔디 높이로 보간 */
+                                    finalHeight = Mathf.RoundToInt(Mathf.Lerp(coreHeight, grassHeight, t));
+
+                                    /* 계단 형태와 비슷하게 스냅 */
+                                    finalHeight = (int)Mathf.Round(finalHeight);
+                                }
+
+                                /* 고대 사원 바닥 블록 배치 */
+                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, finalHeight, worldZ),templeParent);
+
+                                /* 아래 흙 채우기 */
+                                for (int y = height.seaLevel + 1; y < finalHeight; y++)
+                                {
+                                    blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
+                                }
+
                                 continue;
                             }
 
@@ -886,8 +885,6 @@ public class Island : Shape
                 yield return null;
             }
         }
-
-        flattenTempleArea();
 
         if (temple.exists && temple.prefab != null)
             MonoBehaviour.Instantiate(temple.prefab, new Vector3(temple.pos.x, Mathf.Max(temple.pos.y, temple.scaleY), temple.pos.z), Quaternion.identity, Root);
