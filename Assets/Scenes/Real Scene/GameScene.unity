@@ -13855,7 +13855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetTransform: {fileID: 1344258696}
-  _offset: {x: 0, y: 5.5, z: -7}
+  _offset: {x: 0, y: 5.5, z: -7.5}
   _smoothTime: 0.15
   _rotationAngle: 30
 --- !u!114 &1978927454
@@ -13942,7 +13942,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 150
+  far clip plane: 130
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -13969,13 +13969,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1978927452}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.19936788, y: 0, z: 0, w: 0.97992474}
+  m_LocalRotation: {x: 0.19509031, y: 0, z: 0, w: 0.98078537}
   m_LocalPosition: {x: 0, y: 4.8, z: -128}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 23, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 22.5, y: 0, z: 0}
 --- !u!114 &1978927458
 MonoBehaviour:
   m_ObjectHideFlags: 0
