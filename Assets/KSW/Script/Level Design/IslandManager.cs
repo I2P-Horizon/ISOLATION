@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -125,6 +127,12 @@ public class BlockData
     [HideInInspector]
     public Dictionary<GameObject, Vector3> scaleCache = new Dictionary<GameObject, Vector3>();
 
+    /// <summary>
+    /// 블록 프리팹을 지정한 위치에 생성하고, 부모 오브젝트 및 스케일을 적용.
+    /// </summary>
+    /// <param name="prefab">생성할 블록 프리팹</param>
+    /// <param name="pos">월드 좌표 위치</param>
+    /// <param name="parent">부모 Transform</param>
     public void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
     {
         if (prefab == null) return;
@@ -505,6 +513,7 @@ public class Temple : Shape
 
     [Header("Temple Settings")]
     public GameObject prefab;
+    public float coreRadius = 8f;
     public float scaleY = 5f;
     public float maxDistanceFromCenter = 50f;
 
@@ -575,11 +584,19 @@ public class Island : Shape
     private MapObject mapObject;
     private BlockData blockData;
 
-    public Transform Root { get; private set; }
     public Transform pos;
     public Transform player;
 
     [SerializeField] private RockArea rockArea;
+
+    public Transform Root;
+    public Transform grassRoot;
+    public Transform dirtRoot;
+    public Transform sandRoot;
+    public Transform waterRoot;
+    public Transform templeRoot;
+    public Transform swampRoot;
+    public Transform rockRoot;
 
     [HideInInspector] public List<Vector3> rockPositions = new List<Vector3>();
 
@@ -613,7 +630,6 @@ public class Island : Shape
 
     public IEnumerator Spawn(Transform parent)
     {
-        Root = new GameObject("Island").transform;
         Root.SetParent(parent);
 
         Vector3 targetSize = Vector3.one;
@@ -640,6 +656,7 @@ public class Island : Shape
                 Transform chunkParent = new GameObject($"Chunk_{cx}_{cz}").transform;
                 chunkParent.SetParent(Root);
 
+                /* 청크 단위로 나누기 위해 자식 오브젝트 생성 */
                 Transform grassParent = new GameObject("Grass").transform; grassParent.SetParent(chunkParent);
                 Transform dirtParent = new GameObject("Dirt").transform; dirtParent.SetParent(chunkParent);
                 Transform sandParent = new GameObject("Sand").transform; sandParent.SetParent(chunkParent);
@@ -647,6 +664,15 @@ public class Island : Shape
                 Transform templeParent = new GameObject("Temple").transform; templeParent.SetParent(chunkParent);
                 Transform swampParent = new GameObject("Swamp").transform; swampParent.SetParent(chunkParent);
                 Transform rockParent = new GameObject("Rock").transform; rockParent.SetParent(chunkParent);
+
+                /* 영역마다 부모 오브젝트로 나눔 */
+                grassParent.SetParent(grassRoot);
+                dirtParent.SetParent(dirtRoot);
+                sandParent.SetParent(sandRoot);
+                waterParent.SetParent(waterRoot);
+                templeParent.SetParent(templeRoot);
+                swampParent.SetParent(swampRoot);
+                rockParent.SetParent(rockRoot);
 
                 for (int x = 0; x < grid.chunkSize; x++)
                 {
@@ -693,8 +719,45 @@ public class Island : Shape
                         {
                             if (inTempleArea)
                             {
-                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, floorY, worldZ), templeParent);
-                                for (int y = height.seaLevel + 1; y < floorY; y++) blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
+                                Vector2 templeCenterXZ = new Vector2(temple.pos.x, temple.pos.z);
+                                Vector2 currentXZ = new Vector2(worldX, worldZ);
+
+                                float distToCenter = Vector2.Distance(currentXZ, templeCenterXZ);
+
+                                /* 고대 사원 코어 높이 */
+                                int coreHeight = Mathf.RoundToInt(temple.pos.y);
+
+                                int finalHeight;
+
+                                if (distToCenter <= temple.coreRadius)
+                                    finalHeight = coreHeight;
+
+                                else
+                                {
+                                    /* 계단 영역 */
+                                    float stairRange = temple.radius - temple.coreRadius;
+                                    float t = (distToCenter - temple.coreRadius) / stairRange;
+                                    t = Mathf.Clamp01(t);
+
+                                    /* 주변 잔디 높이 */
+                                    int grassHeight = landHeight;
+
+                                    /* 중심 높이 -> 잔디 높이로 보간 */
+                                    finalHeight = Mathf.RoundToInt(Mathf.Lerp(coreHeight, grassHeight, t));
+
+                                    /* 계단 형태와 비슷하게 스냅 */
+                                    finalHeight = (int)Mathf.Round(finalHeight);
+                                }
+
+                                /* 고대 사원 바닥 블록 배치 */
+                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, finalHeight, worldZ),templeParent);
+
+                                /* 아래 흙 채우기 */
+                                for (int y = height.seaLevel + 1; y < finalHeight; y++)
+                                {
+                                    blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
+                                }
+
                                 continue;
                             }
 
@@ -903,6 +966,14 @@ public class IslandManager : MonoBehaviour
 
     public GameObject mine;
 
+    private void navMeshBuild(GameObject obj)
+    {
+        NavMeshSurface navMesh = obj.AddComponent<NavMeshSurface>();
+        navMesh.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+        navMesh.collectObjects = CollectObjects.Children;
+        navMesh.BuildNavMesh();
+    }
+
     /// <summary>
     /// 섬 생성 코루틴
     /// </summary>
@@ -923,6 +994,10 @@ public class IslandManager : MonoBehaviour
         jungle.Spawn();
         island.SpawnMineEntrance(mine);
         island.SpawnPlayer();
+
+        /* 경로 Bake */
+        navMeshBuild(island.grassRoot.gameObject);
+        navMeshBuild(island.sandRoot.gameObject);
 
         /* Game Scene 으로 변경 */
         yield return StartCoroutine(island.SceneChange());
