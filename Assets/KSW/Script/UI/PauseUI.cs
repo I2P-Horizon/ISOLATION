@@ -9,10 +9,20 @@ public class PauseUI : Overlay
     [SerializeField] private Button _settingButton;
     [SerializeField] private Button _exitButton;
 
+    protected override void Show()
+    {
+        base.Show();
+        Time.timeScale = 0;
+    }
+
+    protected override void Close()
+    {
+        base.Close();
+        Time.timeScale = 1;
+    }
+
     protected override void Update()
     {
-        base.Update();
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!_pauseUI.activeSelf) Show();

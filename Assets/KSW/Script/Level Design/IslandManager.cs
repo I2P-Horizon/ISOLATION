@@ -598,7 +598,7 @@ public class Island : Shape
     public Transform templeRoot;
     public Transform swampRoot;
     public Transform rockRoot;
-    private Transform mineRoot;
+    public Transform mineRoot;
 
     [HideInInspector] public List<Vector3> rockPositions = new List<Vector3>();
 
@@ -627,9 +627,6 @@ public class Island : Shape
     public IEnumerator Spawn(Transform parent)
     {
         Root.SetParent(parent);
-
-        mineRoot = new GameObject("MineArea").transform;
-        mineRoot.SetParent(Root);
 
         Vector3 targetSize = Vector3.one;
         foreach (var p in new[] { blockData.grassBlock, blockData.dirtBlock, blockData.sandBlock, blockData.waterPlane, blockData.templeFloorBlock, blockData.swampBlock, blockData.rockBlock })
@@ -663,6 +660,7 @@ public class Island : Shape
                 Transform templeParent = new GameObject("Temple").transform; templeParent.SetParent(chunkParent);
                 Transform swampParent = new GameObject("Swamp").transform; swampParent.SetParent(chunkParent);
                 Transform rockParent = new GameObject("Rock").transform; rockParent.SetParent(chunkParent);
+                Transform mineEntranceParent = new GameObject("MineEntrance").transform; mineEntranceParent.SetParent(chunkParent);
 
                 /* 영역마다 부모 오브젝트로 나눔 */
                 grassParent.SetParent(grassRoot);
@@ -672,6 +670,7 @@ public class Island : Shape
                 templeParent.SetParent(templeRoot);
                 swampParent.SetParent(swampRoot);
                 rockParent.SetParent(rockRoot);
+                mineEntranceParent.SetParent(mineRoot);
 
                 for (int x = 0; x < grid.chunkSize; x++)
                 {
@@ -757,7 +756,7 @@ public class Island : Shape
                                 }
 
                                 /* 고대 사원 바닥 블록 배치 */
-                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, finalHeight, worldZ),templeParent);
+                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, finalHeight, worldZ), templeParent);
 
                                 /* 아래 흙 채우기 */
                                 for (int y = height.seaLevel + 1; y < finalHeight; y++)
@@ -795,19 +794,11 @@ public class Island : Shape
                                     finalHeight = Mathf.RoundToInt(finalHeight);
                                 }
 
-                                blockData.PlaceBlock(
-                                    blockData.rockBlock,
-                                    new Vector3(worldX, finalHeight, worldZ),
-                                    mineRoot
-                                );
+                                blockData.PlaceBlock(blockData.rockBlock,new Vector3(worldX, finalHeight, worldZ), mineEntranceParent);
 
                                 for (int y = height.seaLevel + 1; y < finalHeight; y++)
                                 {
-                                    blockData.PlaceBlock(
-                                        blockData.dirtBlock,
-                                        new Vector3(worldX, y, worldZ),
-                                        mineRoot
-                                    );
+                                    blockData.PlaceBlock(blockData.dirtBlock,new Vector3(worldX, y, worldZ), mineEntranceParent);
                                 }
 
                                 continue;
@@ -915,7 +906,7 @@ public class Island : Shape
                     }
                 }
 
-                CombineMesh combiner = MonoBehaviour.FindAnyObjectByType<CombineMesh>();
+                CombineMesh combiner = MonoBehaviour.FindFirstObjectByType<CombineMesh>();
                 if (combiner != null)
                 {
                     if (grassParent.childCount > 0)
@@ -932,6 +923,8 @@ public class Island : Shape
                         combiner.Combine(swampParent, blockData.swampBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Swamp");
                     if (rockParent.childCount > 0)
                         combiner.Combine(rockParent, blockData.rockBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Rock");
+                    if (mineEntranceParent.childCount > 0)
+                        combiner.Combine(mineEntranceParent, blockData.rockBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_MineEntrance");
                 }
 
                 yield return null;
@@ -942,18 +935,7 @@ public class Island : Shape
             MonoBehaviour.Instantiate(temple.prefab, new Vector3(temple.pos.x, Mathf.Max(temple.pos.y, temple.scaleY), temple.pos.z), Quaternion.identity, Root);
 
         if (mineEntrance.exists && mineEntrance.prefab != null)
-        {
-            MonoBehaviour.Instantiate(
-                mineEntrance.prefab,
-                new Vector3(
-                    mineEntrance.pos.x,
-                    Mathf.Max(mineEntrance.pos.y, mineEntrance.scaleY),
-                    mineEntrance.pos.z
-                ),
-                Quaternion.identity,
-                mineRoot
-            );
-        }
+            MonoBehaviour.Instantiate(mineEntrance.prefab, new Vector3(mineEntrance.pos.x, Mathf.Max(mineEntrance.pos.y, mineEntrance.scaleY), mineEntrance.pos.z), Quaternion.identity, Root);
     }
 
     public void SpawnPlayer()
@@ -1075,7 +1057,6 @@ public class MineEntranceArea : Shape
     }
 }
 #endregion
-
 
 public class IslandManager : MonoBehaviour
 {
