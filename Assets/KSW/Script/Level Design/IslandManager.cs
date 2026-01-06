@@ -339,10 +339,11 @@ public class ObjectSpawner
     private Temple temple;
     private ObjectData[] objectData;
     private MapObject mapObject;
+    private MineEntranceArea mineEntrance;
 
-    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject)
+    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject, MineEntranceArea mineEntrance)
     {
-        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject;
+        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject; this.mineEntrance = mineEntrance;
     }
 
     public void SpawnObjects()
@@ -360,7 +361,10 @@ public class ObjectSpawner
 
             foreach (var grassPos in island.TopGrassPositions)
             {
-                if (temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius) continue;
+                bool inTempleArea = temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius;
+                bool inMineArea = mineEntrance.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(mineEntrance.pos.x, 0, mineEntrance.pos.z)) <= mineEntrance.radius;
+
+                if (inTempleArea || inMineArea) continue;
 
                 if (Random.value < obj.spawnChance)
                 {
@@ -876,7 +880,7 @@ public class Island : Shape
 
                                     if (topBlock == blockData.grassBlock)
                                     {
-                                        TopGrassPositions.Add(pos);
+                                        if (!inMineArea) TopGrassPositions.Add(pos);
 
                                         if (inTempleArea == false && Vector3.Distance(new Vector3(temple.pos.x, 0, temple.pos.z), new Vector3(worldX, 0, worldZ)) <= temple.radius + 1f)
                                         {
@@ -1137,7 +1141,7 @@ public class IslandManager : MonoBehaviour
         temple.Set(height, noise);
         mineEntrance.Set(height, noise);
         mapObject.Set(grid);
-        objectSpawner.Set(island, grid, temple, objectData, mapObject);
+        objectSpawner.Set(island, grid, temple, objectData, mapObject, mineEntrance);
 
         StartCoroutine(StartGeneration());
     }
