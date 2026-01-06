@@ -583,6 +583,7 @@ public class Island : Shape
     private Temple temple;
     private MapObject mapObject;
     private BlockData blockData;
+    private MineEntranceArea mineEntrance;
 
     public Transform pos;
     public Transform player;
@@ -597,40 +598,38 @@ public class Island : Shape
     public Transform templeRoot;
     public Transform swampRoot;
     public Transform rockRoot;
+    private Transform mineRoot;
 
     [HideInInspector] public List<Vector3> rockPositions = new List<Vector3>();
 
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
-    public void Set(Height height, Grid grid, Noise noise, Temple temple, BlockData blockData, MapObject mapObject)
+    public void Set(
+    Height height,
+    Grid grid,
+    Noise noise,
+    Temple temple,
+    BlockData blockData,
+    MapObject mapObject,
+    MineEntranceArea mineEntrance
+)
     {
-        this.height = height; this.grid = grid; this.noise = noise; this.temple = temple; this.blockData = blockData;
-    }
-
-    public void SpawnMineEntrance(GameObject minePrefab)
-    {
-        if (rockPositions.Count == 0 || minePrefab == null) return;
-
-        /* y >= 13.7 필터링 */
-        var validRocks = rockPositions.Where(r => r.y >= 13.7f).ToList();
-        if (validRocks.Count == 0) return;
-
-        Vector3 baseRockPos = validRocks[Random.Range(0, validRocks.Count)];
-
-        /* 같은 x, z 좌표의 돌들 중 최대 y값 찾기 */
-        float maxY = rockPositions
-            .Where(r => Mathf.RoundToInt(r.x) == Mathf.RoundToInt(baseRockPos.x) && Mathf.RoundToInt(r.z) == Mathf.RoundToInt(baseRockPos.z))
-            .Max(r => r.y);
-
-        Vector3 spawnPos = new Vector3(baseRockPos.x, maxY, baseRockPos.z);
-
-        MonoBehaviour.Instantiate(minePrefab, spawnPos, Quaternion.identity, Root);
+        this.height = height;
+        this.grid = grid;
+        this.noise = noise;
+        this.temple = temple;
+        this.blockData = blockData;
+        this.mapObject = mapObject;
+        this.mineEntrance = mineEntrance;
     }
 
     public IEnumerator Spawn(Transform parent)
     {
         Root.SetParent(parent);
+
+        mineRoot = new GameObject("MineArea").transform;
+        mineRoot.SetParent(Root);
 
         Vector3 targetSize = Vector3.one;
         foreach (var p in new[] { blockData.grassBlock, blockData.dirtBlock, blockData.sandBlock, blockData.waterPlane, blockData.templeFloorBlock, blockData.swampBlock, blockData.rockBlock })
@@ -712,6 +711,14 @@ public class Island : Shape
                         Vector3 posXZ = new Vector3(worldX, 0, worldZ);
                         bool inTempleArea = temple.exists && Vector3.Distance(new Vector3(temple.pos.x, 0, temple.pos.z), posXZ) <= temple.radius;
 
+                        bool inMineArea =
+                            mineEntrance.exists &&
+                            Vector3.Distance(
+                                new Vector3(mineEntrance.pos.x, 0, mineEntrance.pos.z),
+                                posXZ
+                            ) <= mineEntrance.radius;
+
+
                         int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
                         float floorY = Mathf.Max(temple.pos.y, temple.scaleY + 2);
 
@@ -756,6 +763,28 @@ public class Island : Shape
                                 for (int y = height.seaLevel + 1; y < finalHeight; y++)
                                 {
                                     blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
+                                }
+
+                                continue;
+                            }
+
+                            if (inMineArea)
+                            {
+                                int coreHeight = Mathf.RoundToInt(mineEntrance.pos.y);
+
+                                blockData.PlaceBlock(
+                                    blockData.rockBlock,
+                                    new Vector3(worldX, coreHeight, worldZ),
+                                    mineRoot
+                                );
+
+                                for (int y = height.seaLevel + 1; y < coreHeight; y++)
+                                {
+                                    blockData.PlaceBlock(
+                                        blockData.dirtBlock,
+                                        new Vector3(worldX, y, worldZ),
+                                        mineRoot
+                                    );
                                 }
 
                                 continue;
@@ -888,6 +917,20 @@ public class Island : Shape
 
         if (temple.exists && temple.prefab != null)
             MonoBehaviour.Instantiate(temple.prefab, new Vector3(temple.pos.x, Mathf.Max(temple.pos.y, temple.scaleY), temple.pos.z), Quaternion.identity, Root);
+
+        if (mineEntrance.exists && mineEntrance.prefab != null)
+        {
+            MonoBehaviour.Instantiate(
+                mineEntrance.prefab,
+                new Vector3(
+                    mineEntrance.pos.x,
+                    Mathf.Max(mineEntrance.pos.y, mineEntrance.scaleY),
+                    mineEntrance.pos.z
+                ),
+                Quaternion.identity,
+                mineRoot
+            );
+        }
     }
 
     public void SpawnPlayer()
@@ -933,12 +976,91 @@ public class Island : Shape
 }
 #endregion
 
+#region MineEntranceArea : Shape
+[System.Serializable]
+public class MineEntranceArea : Shape
+{
+    private Height height;
+    private Noise noise;
+
+    [Header("Mine Settings")]
+    public GameObject prefab;
+    public float coreRadius = 6f;
+    public float scaleY = 4f;
+
+    [Header("Placement")]
+    public float minX = -160f;
+    public float maxX = -40f;
+    public float minZ = 40f;
+    public float maxZ = 160f;
+
+    [HideInInspector] public Vector3 pos;
+    public bool exists;
+
+    public void Set(Height height, Noise noise)
+    {
+        this.height = height;
+        this.noise = noise;
+    }
+
+    public void Placement(float islandRadius)
+    {
+        exists = false;
+        if (prefab == null) return;
+
+        for (int i = 0; i < 100; i++)
+        {
+            float x = Random.Range(minX, maxX);
+            float z = Random.Range(minZ, maxZ);
+
+            int wx = Mathf.RoundToInt(x);
+            int wz = Mathf.RoundToInt(z);
+
+            float dist = Mathf.Sqrt(wx * wx + wz * wz) / islandRadius;
+            if (dist > 1f) continue;
+
+            float noiseMask = Mathf.PerlinNoise(
+                (wx + noise.seed) / noise.scale,
+                (wz + noise.seed) / noise.scale
+            );
+
+            float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
+            islandMask = Mathf.Pow(islandMask, falloffPower);
+
+            float h = 0f, amp = 1f, freq = 1f, maxAmp = 0f;
+            for (int o = 0; o < noise.octaves; o++)
+            {
+                h += Mathf.PerlinNoise(
+                    (wx + noise.seed) / noise.scale * freq,
+                    (wz + noise.seed) / noise.scale * freq
+                ) * amp;
+                maxAmp += amp;
+                amp *= noise.persistence;
+                freq *= noise.lacunarity;
+            }
+
+            h /= maxAmp;
+            int landHeight = Mathf.RoundToInt(h * islandMask * height.maxHeight);
+
+            if (landHeight > height.seaLevel + 1)
+            {
+                pos = new Vector3(wx, landHeight, wz);
+                exists = true;
+                break;
+            }
+        }
+    }
+}
+#endregion
+
+
 public class IslandManager : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private Island island;
     [SerializeField] private Temple temple;
     [SerializeField] private Jungle jungle;
+    [SerializeField] private MineEntranceArea mineEntrance;
 
     [SerializeField] private Height height;
     [SerializeField] private Shape shape;
@@ -964,8 +1086,6 @@ public class IslandManager : MonoBehaviour
 
     public MapObject mapObj => mapObject;
 
-    public GameObject mine;
-
     private void navMeshBuild(GameObject obj)
     {
         NavMeshSurface navMesh = obj.AddComponent<NavMeshSurface>();
@@ -985,6 +1105,7 @@ public class IslandManager : MonoBehaviour
 
         /* 사원 위치 생성 */
         temple.Placement();
+        mineEntrance.Placement(island.radius);
 
         /* 섬 생성 */
         yield return StartCoroutine(island.Spawn(island.pos));
@@ -992,7 +1113,6 @@ public class IslandManager : MonoBehaviour
         /* 섬 생성이 완료되면 오브젝트/플레이어 생성 */
         objectSpawner.SpawnObjects();
         jungle.Spawn();
-        island.SpawnMineEntrance(mine);
         island.SpawnPlayer();
 
         /* 경로 Bake */
@@ -1008,9 +1128,10 @@ public class IslandManager : MonoBehaviour
 
     private void Start()
     {
-        island.Set(height, grid, noise, temple, blockData, mapObject);
+        island.Set(height, grid, noise, temple, blockData, mapObject, mineEntrance);
         jungle.Set(island, height, temple, mapObject);
         temple.Set(height, noise);
+        mineEntrance.Set(height, noise);
         mapObject.Set(grid);
         objectSpawner.Set(island, grid, temple, objectData, mapObject);
 
