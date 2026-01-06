@@ -770,15 +770,38 @@ public class Island : Shape
 
                             if (inMineArea)
                             {
+                                Vector2 mineCenterXZ = new Vector2(mineEntrance.pos.x, mineEntrance.pos.z);
+                                Vector2 currentXZ = new Vector2(worldX, worldZ);
+
+                                float distToCenter = Vector2.Distance(currentXZ, mineCenterXZ);
+
                                 int coreHeight = Mathf.RoundToInt(mineEntrance.pos.y);
+                                int finalHeight;
+
+                                if (distToCenter <= mineEntrance.coreRadius) finalHeight = coreHeight;
+
+                                else
+                                {
+                                    float stairRange = mineEntrance.radius - mineEntrance.coreRadius;
+                                    float t = (distToCenter - mineEntrance.coreRadius) / stairRange;
+                                    t = Mathf.Clamp01(t);
+
+                                    int naturalHeight = landHeight;
+
+                                    finalHeight = Mathf.RoundToInt(
+                                        Mathf.Lerp(coreHeight, naturalHeight, t)
+                                    );
+
+                                    finalHeight = Mathf.RoundToInt(finalHeight);
+                                }
 
                                 blockData.PlaceBlock(
                                     blockData.rockBlock,
-                                    new Vector3(worldX, coreHeight, worldZ),
+                                    new Vector3(worldX, finalHeight, worldZ),
                                     mineRoot
                                 );
 
-                                for (int y = height.seaLevel + 1; y < coreHeight; y++)
+                                for (int y = height.seaLevel + 1; y < finalHeight; y++)
                                 {
                                     blockData.PlaceBlock(
                                         blockData.dirtBlock,
