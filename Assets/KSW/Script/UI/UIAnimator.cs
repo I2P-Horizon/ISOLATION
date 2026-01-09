@@ -35,7 +35,7 @@ public class UIAnimator : MonoBehaviour
     /// </summary>
     public void Show()
     {
-        if (_uiAnimation) return;
+        //if (_uiAnimation) return;
 
         gameObject.SetActive(true);
         StopAllCoroutines();
@@ -51,7 +51,7 @@ public class UIAnimator : MonoBehaviour
     /// </summary>
     public void Close()
     {
-        if (_uiAnimation) return;
+        //if (_uiAnimation) return;
         StartCoroutine(closeUI());
     }
 
