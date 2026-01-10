@@ -18,9 +18,10 @@ public class TitleUI : MonoBehaviour
     [SerializeField] private Button settingButton;
     [SerializeField] private Button exitButton;
     [SerializeField] private Button s_BackButton;
-    [SerializeField] private Button s_SaveButton;
 
     [SerializeField] private Settings settings;
+
+    [SerializeField] private GameObject _background;
 
     private void PlayButton()
     {
@@ -30,8 +31,17 @@ public class TitleUI : MonoBehaviour
 
     private void SettingsButton()
     {
-        if (!settingsPanel.activeSelf) settingsPanel.GetComponent<UIAnimator>().Show();
-        else settingsPanel.GetComponent<UIAnimator>().Close();
+        if (!settingsPanel.activeSelf)
+        {
+            settingsPanel.GetComponent<UIAnimator>().Show();
+            _background.GetComponent<UIAnimator>().Show();
+        }
+
+        else
+        {
+            settingsPanel.GetComponent<UIAnimator>().Close();
+            _background.GetComponent<UIAnimator>().Close();
+        }
     }
 
     private void ExitButton()
@@ -51,7 +61,7 @@ public class TitleUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.N))
         {
-            SceneManager.LoadScene("TitleBackground");
+            //SceneManager.LoadScene("TitleBackground");
         }
     }
 
