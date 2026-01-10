@@ -7245,7 +7245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fade: 0
-  _scale: 0
+  _scale: 1
   _up: 0
   _down: 0
   _left: 0
