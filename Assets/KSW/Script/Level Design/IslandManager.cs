@@ -468,40 +468,48 @@ public class Jungle : Shape
 
     private void SpawnJungleCluster(Vector3 centerPos, Transform parent)
     {
-        Transform clusterParent = new GameObject("ForestCluster").transform;
+        /* 정글 클러스터 */
+        Transform clusterParent = new GameObject("JungleCluster").transform;
         clusterParent.SetParent(parent);
         clusterParent.position = centerPos;
 
         GameObject selectedTreePrefab = treePrefabs[Random.Range(0, treePrefabs.Length)];
         int treeCount = Random.Range(minTreesPerJungle, maxTreesPerJungle + 1);
 
-        float blockSize = 1f;
+        float radiusSquared = radius * radius;
 
         for (int i = 0; i < treeCount; i++)
         {
+            /* 중심점 기준 랜덤 오프셋 생성 */
             Vector2 offset2D = Random.insideUnitCircle * radius;
-            Vector3 spawnPos = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
+            Vector3 spawnPosXZ = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
 
-            RaycastHit hit;
-            if (Physics.Raycast(spawnPos + Vector3.up * 50f, Vector3.down, out hit, 100f))
+            /* TopGrassPositions에서 가장 가까운 위치 찾기 */
+            Vector3? closestGrass = null;
+            float minDist = float.MaxValue;
+            foreach (var grassPos in island.TopGrassPositions)
             {
-                string groundName = hit.collider.gameObject.name.ToLower();
+                float dx = grassPos.x - spawnPosXZ.x;
+                float dz = grassPos.z - spawnPosXZ.z;
+                float distSqr = dx * dx + dz * dz;
 
-                /* 모래 블록, 돌 블록 위에는 생성되지 않도록 함. */
-                if (groundName.Contains("sand") || groundName.Contains("rock")) continue;
-
-                if (hit.point.y > height.seaLevel + 1f)
+                if (distSqr < minDist)
                 {
-                    if (temple.exists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius)
-                        continue;
-
-                    spawnPos.x = Mathf.Round(hit.point.x / blockSize) * blockSize;
-                    spawnPos.z = Mathf.Round(hit.point.z / blockSize) * blockSize;
-                    spawnPos.y = Mathf.Round(hit.point.y / blockSize) * blockSize;
-
-                    GameObject tree = MonoBehaviour.Instantiate(selectedTreePrefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0), clusterParent);
-                    mapObject.RegisterObject(tree);
+                    minDist = distSqr;
+                    closestGrass = grassPos;
                 }
+            }
+
+            if (closestGrass.HasValue)
+            {
+                Vector3 finalPos = closestGrass.Value;
+
+                /* 고대 사원 영역 제외 */
+                if (temple.exists && Vector3.Distance(new Vector3(finalPos.x, 0, finalPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius) continue;
+
+                /* 나무 생성 */
+                GameObject tree = MonoBehaviour.Instantiate(selectedTreePrefab, finalPos, Quaternion.Euler(0, Random.Range(0f, 360f), 0), clusterParent);
+                mapObject.RegisterObject(tree);
             }
         }
     }

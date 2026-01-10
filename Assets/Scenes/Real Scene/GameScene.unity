@@ -9822,7 +9822,7 @@ MonoBehaviour:
     pos: {x: 0, y: 0, z: 0}
     exists: 0
   jungle:
-    radius: 80
+    radius: 100
     falloffPower: 0.15
     beachWidth: 3
     count: 20
