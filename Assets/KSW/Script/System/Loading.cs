@@ -12,6 +12,7 @@ public class Loading : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Text loadingText;
     [SerializeField] private Text tipText;
+    [SerializeField] private Image fillImage;
 
     [SerializeField] private float interval = 5f;
 
@@ -49,6 +50,15 @@ public class Loading : MonoBehaviour
             index = (index + 1) % tips.Length;
             yield return new WaitForSeconds(interval);
         }
+    }
+
+    private void UpdateLoadingBar(float progress)
+    {
+        loadingBar.value = progress;
+
+        Color startColor = new Color(0f, 0.5f, 0f);
+        Color endColor = new Color(0.4f, 0f, 1f);
+        fillImage.color = Color.Lerp(startColor, endColor, progress);
     }
 
     /// <summary>
@@ -89,7 +99,8 @@ public class Loading : MonoBehaviour
         while (IslandManager.generationProgress < 0.9f)
         {
             loadingBar.value = IslandManager.generationProgress;
-            loadingText.text = "Loading...";
+            UpdateLoadingBar(IslandManager.generationProgress);
+            loadingText.text = "LOADING...";
             yield return null;
         }
 
@@ -99,7 +110,8 @@ public class Loading : MonoBehaviour
         while (IslandManager.generationProgress < 1f)
         {
             loadingBar.value = IslandManager.generationProgress;
-            loadingText.text = "Rendering...";
+            UpdateLoadingBar(IslandManager.generationProgress);
+            loadingText.text = "RENDERING...";
             yield return null;
         }
     }
