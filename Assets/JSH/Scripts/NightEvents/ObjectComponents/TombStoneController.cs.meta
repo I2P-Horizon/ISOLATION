@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 09d055d768b3c8248ab44354a17de428
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _dropItem: {instanceID: 0}
+  - _hpUI: {instanceID: 0}
+  - golemPrefab: {fileID: 8688624321822278009, guid: b659fe8d6807edf4aaf8ea55cb1d80c1, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
