@@ -156,11 +156,12 @@ public class PlayerInteraction : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, mask, QueryTriggerInteraction.Ignore))
         {
             Debug.Log($"Camera : {mouseHit.collider.name}");
-            Vector3 dir = (mouseHit.point - transform.position);
+            Debug.DrawRay(ray.origin, ray.direction * 100.0f, Color.green, 1f);
+            Vector3 dir = (mouseHit.transform.position - transform.position).normalized;
 
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, mask, QueryTriggerInteraction.Ignore))
             {
-                Debug.Log($"Player {hit.collider.name}");
+                Debug.Log($"Player : {hit.collider.name}");
                 Debug.DrawRay(transform.position, dir * _interactionDistance, Color.green, 1f);
                 if (hit.collider.TryGetComponent(out DestructibleObject destructible))
                 {

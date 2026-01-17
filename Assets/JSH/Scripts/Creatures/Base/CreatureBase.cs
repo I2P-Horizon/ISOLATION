@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -15,7 +14,7 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
     [Header("MonsterState")]
     [SerializeField] private bool _monsterState = false;
-    [SerializeField] private GameObject _monsterShape;
+    [SerializeField] private GameObject _monsterShape;   
 
     [Header("Stats")]
     [SerializeField] private float _moveSpeed;
@@ -44,12 +43,8 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
     [SerializeField] private bool _isPatrolling;
     [SerializeField] private bool _isChasing;
     [SerializeField] private bool _isAttacking;
+    
 
-    // Hit effect
-    [SerializeField] private HitEffect _hitEffect;
-
-    // Animator
-    private Animator[] _animators;
 
     private void Awake()
     {
@@ -59,14 +54,6 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
         _playerTransform = GameObject.FindWithTag("Player").transform;
         rb = GetComponent<Rigidbody>();
         MeshCollider collider = GetComponentInChildren<MeshCollider>();
-
-        _animators = GetComponentsInChildren<Animator>(true);
-    }
-
-    void Start()
-    {
-        if (TimeManager.Instance.IsNight) _animalShape.SetActive(false);
-        else if (!TimeManager.Instance.IsNight) _monsterShape.SetActive(false);
     }
 
     protected virtual void OnEnable()
@@ -198,7 +185,7 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
         _agent.angularSpeed = 120.0f;
 
         //Debug.Log("Patrol");
-        if (!_agent.pathPending && (_agent.remainingDistance <= 0.5f))
+        if (_agent.isOnNavMesh && !_agent.pathPending && (_agent.remainingDistance <= 0.5f))
             SetNextPatrolPoint();
 
         if (_distanceToPlayer <= _detectionRadius)
@@ -209,13 +196,6 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
     }
     protected virtual void SetNextPatrolPoint()
     {
-        foreach (var animator in _animators)
-        {
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsWalking", true);
-            animator.SetBool("IsRunning", false);
-            animator.SetBool("IsAttacking", false);
-        }
         //Debug.Log("New Destination Setting");
         int randomHeight = Random.Range(1, 7);
         Vector2 randomRadius = Random.insideUnitCircle * patrolRadius;
@@ -228,14 +208,6 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
     protected virtual void Chase()
     {
-        foreach (var animator in _animators)
-        {
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsWalking", false);
-            animator.SetBool("IsRunning", true);
-            animator.SetBool("IsAttacking", false);
-        }
-
         //Debug.Log("Chase");
         if (_distanceToPlayer > _detectionRadius)
         {
@@ -259,13 +231,6 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
     private void Attack()
     {
-        foreach (var animator in _animators)
-        {
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsWalking", false);
-            animator.SetBool("IsRunning", false);
-            animator.SetBool("IsAttacking", true);
-        }
         StartCoroutine(AttackCoroutine());
     }
 
@@ -282,44 +247,11 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
         yield return new WaitForSeconds(2.5f);
 
-        foreach (var animator in _animators)
-        {
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsWalking", true);
-            animator.SetBool("IsRunning", false);
-            animator.SetBool("IsAttacking", false);
-        }
-
-        rb.transform.LookAt(_playerPos);
         rb.velocity = Vector3.zero;
         rb.isKinematic = true;
         _agent.enabled = true;
 
         _isAttacking = false;
-    }
-
-    private IEnumerator HitCoroutine()
-    {
-        foreach (var animator in _animators)
-        {
-            animator.SetBool("IsIdle", true);
-            animator.SetBool("IsWalking", false);
-            animator.SetBool("IsRunning", false);
-            animator.SetBool("IsAttacking", false);
-        }
-
-        _agent.enabled = false;
-        rb.isKinematic = false;
-
-        Vector3 backDir =  (-1.0f)*(_playerPos - transform.position).normalized;
-        backDir.y = 0.3f;
-        rb.AddForce((backDir) * 7.0f, ForceMode.Impulse);
-
-        yield return new WaitForSeconds(0.5f);
-
-        rb.velocity = Vector3.zero;
-        rb.isKinematic = true;
-        _agent.enabled = true;
     }
 
 
@@ -355,13 +287,13 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
         Debug.Log("Creature UnRegister & Back to pool Complete");
     }
+
+    // JSH TODO: Add condition based on player's equipped equipment
     public override void Interact(object context = null)
     {
         if (context is float amount)
         {
             _hp -= amount;
-            _hitEffect.ApplyEffect();
-            StartCoroutine(HitCoroutine());
 
             if (_hp > 0)
             {
@@ -393,11 +325,5 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
         {
             _hpSlider.gameObject.SetActive(false);
         }
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.CompareTag("Player"))
-            collision.gameObject.GetComponent<PlayerState>().DecreaseHP(10.0f);
     }
 }
