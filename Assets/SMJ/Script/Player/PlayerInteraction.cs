@@ -157,7 +157,10 @@ public class PlayerInteraction : MonoBehaviour
         {
             Debug.Log($"Camera : {mouseHit.collider.name}");
             Debug.DrawRay(ray.origin, ray.direction * 100.0f, Color.green, 1f);
-            Vector3 dir = (mouseHit.transform.position - transform.position).normalized;
+            Vector3 dir = (mouseHit.collider.bounds.center - transform.position).normalized;
+            //Debug.Log($"mouseHit.transform.position : {mouseHit.transform.position}");
+            //Debug.Log($"mouseHit.transform.localPosition : {mouseHit.transform.localPosition}");
+            //Debug.Log($"transform.position : {transform.position}");
 
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, mask, QueryTriggerInteraction.Ignore))
             {
