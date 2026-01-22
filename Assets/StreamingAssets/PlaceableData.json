@@ -8,7 +8,7 @@
             "itemIcon": "CraftingTableIcon",
             "itemPrice": 40,
             "maxAmount": 99,
-            "prefabName": "CraftingTablePrefab"
+            "prefabName": "CraftingTable"
         }
     ],
     "Tent": [
@@ -20,7 +20,7 @@
             "itemIcon": "TentIcon",
             "itemPrice": 1,
             "maxAmount": 1,
-            "prefabName": "TentPrefab"
+            "prefabName": "Tent"
         }
     ],
     "Fire": [
@@ -32,7 +32,7 @@
             "itemIcon": "CampfireIcon",
             "itemPrice": 1,
             "maxAmount": 1,
-            "prefabName": "CampfirePrefab"
+            "prefabName": "Campfire"
         }
     ]
 }

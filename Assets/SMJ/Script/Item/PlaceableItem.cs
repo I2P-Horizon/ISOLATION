@@ -11,10 +11,29 @@ public class PlaceableItem : CountableItem, IUsableItem
 
     public bool Use()
     {
-        Amount--;
+        if (PlacementManager.Instance != null)
+        {
+            PlacementManager.Instance.BeginPlacement(this);
+            return true;
+        }
 
-        // 추후 설치 시스템 구현
+        return false;
+    }
 
-        return true;
+    /// <summary>
+    /// 배치 확정 시 외부에서 호출되는 함수
+    /// </summary>
+    public void OnPlaced()
+    {
+        GameObject inventory = GameObject.FindWithTag("Inventory");
+        if (inventory != null)
+        {
+            Inventory inv = inventory.GetComponent<Inventory>();
+            int index = inv.GetItemIndexByID(Data.ID);
+            if (index >= 0)
+            {
+                inv.Remove(index);
+            }
+        }
     }
 }
