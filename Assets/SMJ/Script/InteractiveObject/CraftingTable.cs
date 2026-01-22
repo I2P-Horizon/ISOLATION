@@ -6,6 +6,18 @@ public class CraftingTable : MonoBehaviour, IInteractable
 {
     [SerializeField] private CraftingUI _craftingUI;
 
+    private void OnEnable()
+    {
+        if (_craftingUI == null)
+        {
+            GameObject craftingGo = GameObject.FindWithTag("CraftingUI");
+            if (craftingGo != null)
+            {
+                _craftingUI = craftingGo.GetComponentInChildren<CraftingUI>(true);
+            }
+        }
+    }
+
     public void Interact(object context = null)
     {
         // 제작 UI 열기

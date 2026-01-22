@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Creature
+  - Grass
   layers:
   - Default
   - TransparentFX
@@ -14,8 +15,8 @@ TagManager:
   - UI
   - Post-processing
   - CraftingTable
-  - 
-  - 
+  - Ground
+  - Obstacle
   - 
   - 
   - 

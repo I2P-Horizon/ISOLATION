@@ -376,6 +376,19 @@ public class Inventory : MonoBehaviour
         }
         return totalAmount;
     }
+
+    public int GetItemIndexByID(int itemID)
+    {
+        for (int i = 0; i < Capacity; i++)
+        {
+            if (items[i] != null && items[i].Data.ID == itemID)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
     #endregion
 
     #region ** Public Methods **

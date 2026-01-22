@@ -20,8 +20,8 @@ public class MovableHeaderUI : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            HideUI();
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //    HideUI();
     }
 
     void IDragHandler.OnDrag(PointerEventData eventData)
