@@ -10359,7 +10359,7 @@ MonoBehaviour:
     radius: 8
     falloffPower: 0.15
     beachWidth: 3
-    prefab: {fileID: 6525624881022553124, guid: 734e720543f541f4ebb8847e1ea177eb, type: 3}
+    prefab: {fileID: 6525624881022553124, guid: 9cdaa58ac9e3e6649afb1a283e702e0f, type: 3}
     coreRadius: 6
     scaleY: 10
     minX: -160
@@ -14551,7 +14551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetTransform: {fileID: 1344258696}
-  _offset: {x: 0, y: 6, z: -8.5}
+  _offset: {x: 0, y: 7, z: -10.5}
   _smoothTime: 0.28
   _rotationAngle: 30
 --- !u!114 &1978927454
