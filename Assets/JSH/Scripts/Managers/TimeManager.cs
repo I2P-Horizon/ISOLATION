@@ -47,7 +47,19 @@ public class TimeManager : MonoBehaviour
     //private Color _nightColor = new Color(0.6f, 0.7f, 1.0f);
     private Color _nightColor = new Color(0.2f, 0.2f, 0.4f);
 
+    private bool _isloaded = false;
+    [SerializeField] [Range(0.0f,1.0f)] private float _fog = 0.2f;
 
+    // KSW
+    private void OnEnable()
+    {
+        IslandManager.OnGenerationComplete += isLoadComplted;
+    }
+
+    private void OnDisable()
+    {
+        IslandManager.OnGenerationComplete -= isLoadComplted;
+    }
 
     // LifeCycle
     private void Awake()
@@ -57,6 +69,8 @@ public class TimeManager : MonoBehaviour
     }
     private void Update()
     {
+        if (!_isloaded) return;
+        
         UpdateTime();
         UpdateEnvironmentVisuals();
 
@@ -65,7 +79,11 @@ public class TimeManager : MonoBehaviour
         NotifyCycleChanged();
     }
 
-
+    // KSW
+    private void isLoadComplted()
+    {
+        _isloaded = true;
+    }
 
     public void Register(ICycleListener listener)
     {
@@ -167,10 +185,10 @@ public class TimeManager : MonoBehaviour
             RenderSettings.fogColor = _nightColor;
             //Debug.Log($"{nightTimeBlend}");
 
-            RenderSettings.fogDensity = Mathf.Lerp(0.0f, 0.03f, nightTimeBlend);
+            RenderSettings.fogDensity = Mathf.Lerp(0.0f, _fog, nightTimeBlend);
         }
 
         else if (_isNight == false)
-            RenderSettings.fogDensity = Mathf.Lerp(0.03f, 0.0f, dayTimeBlend);
+            RenderSettings.fogDensity = Mathf.Lerp(_fog, 0.0f, dayTimeBlend);
     }
 }
