@@ -635,6 +635,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7840925219774901836, guid: c0c5efab403f25b458188259047a430c, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 7849204940509083791, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: m_Layer
       value: 2
@@ -11137,6 +11141,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _postProcessingVolume: {fileID: 1253558512}
+  _fog: 0.2
 --- !u!4 &2024473858
 Transform:
   m_ObjectHideFlags: 0
