@@ -198,7 +198,7 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
         _agent.angularSpeed = 120.0f;
 
         //Debug.Log("Patrol");
-        if (!_agent.pathPending && (_agent.remainingDistance <= 0.5f))
+        if (_agent.isOnNavMesh && !_agent.pathPending && (_agent.remainingDistance <= 0.5f))
             SetNextPatrolPoint();
 
         if (_distanceToPlayer <= _detectionRadius)
@@ -278,7 +278,7 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
         Vector3 dashDir = (_playerPos - transform.position).normalized;
         dashDir.y = 0.3f;
-        rb.AddForce((dashDir) * 15.0f, ForceMode.Impulse);
+        rb.AddForce((dashDir) * 25.0f, ForceMode.Impulse);
 
         yield return new WaitForSeconds(2.5f);
 
@@ -355,6 +355,8 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
         Debug.Log("Creature UnRegister & Back to pool Complete");
     }
+
+    // JSH TODO: Add condition based on player's equipped equipment
     public override void Interact(object context = null)
     {
         if (context is float amount)

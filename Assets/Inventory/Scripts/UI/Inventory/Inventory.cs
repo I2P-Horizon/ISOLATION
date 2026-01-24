@@ -66,8 +66,7 @@ public class Inventory : MonoBehaviour
     {
         if (Input.GetButtonDown("Inventory"))
         {
-            if (!inventoryGo.activeSelf) inventoryGo.GetComponent<UIAnimator>().Show();
-            else inventoryGo.GetComponent<UIAnimator>().Close();
+            inventoryGo.SetActive(!inventoryGo.activeSelf);
         }
     }
 

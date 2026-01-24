@@ -128,21 +128,11 @@ public class PlayerMovement : MonoBehaviour
 
             // 점프 높이와 중력으로 초기 y속도 계산
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2.0f * _gravity);
-            _animator.SetTrigger("Jump");
         }
-
-        #region KSW: 애니메이션 적용
-        /* 이동 중인지 여부에 따라 isMoving 조건 변경 */
-        bool isMovingAir = inputDir.sqrMagnitude != 0f;
-        _animator.SetBool("isMoving", isMovingAir);
-
-        _animator.SetFloat("Horizontal", inputDir.x, 0.05f, Time.deltaTime);
-        _animator.SetFloat("Vertical", inputDir.z, 0.05f, Time.deltaTime);
-        #endregion
 
         ApplyGravity();
 
-        //_animator.SetBool("isMoving", IsMoving); // 애니메이션 상태 업데이트
+        _animator.SetBool("isMoving", IsMoving); // 애니메이션 상태 업데이트
     }
 
     /// <summary>

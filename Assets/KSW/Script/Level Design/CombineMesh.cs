@@ -65,10 +65,6 @@ public class CombineMesh : MonoBehaviour
             GameObject.DestroyImmediate(child.gameObject);
         }
 
-        /* 레이어 이름 설정 */
-        if (combinedObject.name.EndsWith("Grass") || combinedObject.name.EndsWith("Sand"))
-            combinedObject.gameObject.layer = LayerMask.NameToLayer("Ground");
-
         /* Add MeshCollider (Water, bush excluded) */
         /* MeshCollider 적용하지 않을 오브젝트는 아래 조건에 오브젝트의 시작/끝 이름 추가 */
         if (!combinedObject.name.EndsWith("Water") && !combinedObject.name.StartsWith("Bush"))
@@ -81,13 +77,13 @@ public class CombineMesh : MonoBehaviour
         // JSH
         /* Add NavMeshSurface (Creature Pathing.) */
         /* Merge 오브젝트의 끝 이름으로 판별하여 해당 오브젝트에만 경로 설정 */
-        //if (combinedObject.name.EndsWith("_Grass") || combinedObject.name.EndsWith("_Sand"))
-        //{
-        //    NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
-        //    navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-        //    navMeshSurface.collectObjects = CollectObjects.Children;
-        //    navMeshSurface.BuildNavMesh(); // Bake
-        //}
+        if (combinedObject.name.EndsWith("_Grass") || combinedObject.name.EndsWith("_Sand"))
+        {
+            NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
+            navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+            navMeshSurface.collectObjects = CollectObjects.Children;
+            navMeshSurface.BuildNavMesh(); // Bake
+        }
 
         return combinedObject;
     }
