@@ -81,13 +81,13 @@ public class CombineMesh : MonoBehaviour
         // JSH
         /* Add NavMeshSurface (Creature Pathing.) */
         /* Merge 오브젝트의 끝 이름으로 판별하여 해당 오브젝트에만 경로 설정 */
-        //if (combinedObject.name.EndsWith("_Grass") || combinedObject.name.EndsWith("_Sand"))
-        //{
-        //    NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
-        //    navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-        //    navMeshSurface.collectObjects = CollectObjects.Children;
-        //    navMeshSurface.BuildNavMesh(); // Bake
-        //}
+        if (combinedObject.name.EndsWith("_Grass") || combinedObject.name.EndsWith("_Sand"))
+        {
+            NavMeshSurface navMeshSurface = combinedObject.AddComponent<NavMeshSurface>();
+            navMeshSurface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+            navMeshSurface.collectObjects = CollectObjects.Children;
+            navMeshSurface.BuildNavMesh(); // Bake
+        }
 
         return combinedObject;
     }

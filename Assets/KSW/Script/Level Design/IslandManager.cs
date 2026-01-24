@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -127,12 +125,6 @@ public class BlockData
     [HideInInspector]
     public Dictionary<GameObject, Vector3> scaleCache = new Dictionary<GameObject, Vector3>();
 
-    /// <summary>
-    /// 블록 프리팹을 지정한 위치에 생성하고, 부모 오브젝트 및 스케일을 적용.
-    /// </summary>
-    /// <param name="prefab">생성할 블록 프리팹</param>
-    /// <param name="pos">월드 좌표 위치</param>
-    /// <param name="parent">부모 Transform</param>
     public void PlaceBlock(GameObject prefab, Vector3 pos, Transform parent)
     {
         if (prefab == null) return;
@@ -339,11 +331,10 @@ public class ObjectSpawner
     private Temple temple;
     private ObjectData[] objectData;
     private MapObject mapObject;
-    private MineEntranceArea mineEntrance;
 
-    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject, MineEntranceArea mineEntrance)
+    public void Set(Island island, Grid grid, Temple temple, ObjectData[] objectData, MapObject mapObject)
     {
-        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject; this.mineEntrance = mineEntrance;
+        this.island = island; this.grid = grid; this.temple = temple; this.objectData = objectData; this.mapObject = mapObject;
     }
 
     public void SpawnObjects()
@@ -361,10 +352,7 @@ public class ObjectSpawner
 
             foreach (var grassPos in island.TopGrassPositions)
             {
-                bool inTempleArea = temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius;
-                bool inMineArea = mineEntrance.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(mineEntrance.pos.x, 0, mineEntrance.pos.z)) <= mineEntrance.radius;
-
-                if (inTempleArea || inMineArea) continue;
+                if (temple.exists && Vector3.Distance(new Vector3(grassPos.x, 0, grassPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius) continue;
 
                 if (Random.value < obj.spawnChance)
                 {
@@ -468,48 +456,40 @@ public class Jungle : Shape
 
     private void SpawnJungleCluster(Vector3 centerPos, Transform parent)
     {
-        /* 정글 클러스터 */
-        Transform clusterParent = new GameObject("JungleCluster").transform;
+        Transform clusterParent = new GameObject("ForestCluster").transform;
         clusterParent.SetParent(parent);
         clusterParent.position = centerPos;
 
         GameObject selectedTreePrefab = treePrefabs[Random.Range(0, treePrefabs.Length)];
         int treeCount = Random.Range(minTreesPerJungle, maxTreesPerJungle + 1);
 
-        float radiusSquared = radius * radius;
+        float blockSize = 1f;
 
         for (int i = 0; i < treeCount; i++)
         {
-            /* 중심점 기준 랜덤 오프셋 생성 */
             Vector2 offset2D = Random.insideUnitCircle * radius;
-            Vector3 spawnPosXZ = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
+            Vector3 spawnPos = centerPos + new Vector3(offset2D.x, 0, offset2D.y);
 
-            /* TopGrassPositions에서 가장 가까운 위치 찾기 */
-            Vector3? closestGrass = null;
-            float minDist = float.MaxValue;
-            foreach (var grassPos in island.TopGrassPositions)
+            RaycastHit hit;
+            if (Physics.Raycast(spawnPos + Vector3.up * 50f, Vector3.down, out hit, 100f))
             {
-                float dx = grassPos.x - spawnPosXZ.x;
-                float dz = grassPos.z - spawnPosXZ.z;
-                float distSqr = dx * dx + dz * dz;
+                string groundName = hit.collider.gameObject.name.ToLower();
 
-                if (distSqr < minDist)
+                /* 모래 블록, 돌 블록 위에는 생성되지 않도록 함. */
+                if (groundName.Contains("sand") || groundName.Contains("rock")) continue;
+
+                if (hit.point.y > height.seaLevel + 1f)
                 {
-                    minDist = distSqr;
-                    closestGrass = grassPos;
+                    if (temple.exists && Vector3.Distance(new Vector3(hit.point.x, 0, hit.point.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius)
+                        continue;
+
+                    spawnPos.x = Mathf.Round(hit.point.x / blockSize) * blockSize;
+                    spawnPos.z = Mathf.Round(hit.point.z / blockSize) * blockSize;
+                    spawnPos.y = Mathf.Round(hit.point.y / blockSize) * blockSize;
+
+                    GameObject tree = MonoBehaviour.Instantiate(selectedTreePrefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0), clusterParent);
+                    mapObject.RegisterObject(tree);
                 }
-            }
-
-            if (closestGrass.HasValue)
-            {
-                Vector3 finalPos = closestGrass.Value;
-
-                /* 고대 사원 영역 제외 */
-                if (temple.exists && Vector3.Distance(new Vector3(finalPos.x, 0, finalPos.z), new Vector3(temple.pos.x, 0, temple.pos.z)) <= temple.radius) continue;
-
-                /* 나무 생성 */
-                GameObject tree = MonoBehaviour.Instantiate(selectedTreePrefab, finalPos, Quaternion.Euler(0, Random.Range(0f, 360f), 0), clusterParent);
-                mapObject.RegisterObject(tree);
             }
         }
     }
@@ -525,7 +505,6 @@ public class Temple : Shape
 
     [Header("Temple Settings")]
     public GameObject prefab;
-    public float coreRadius = 8f;
     public float scaleY = 5f;
     public float maxDistanceFromCenter = 50f;
 
@@ -595,49 +574,46 @@ public class Island : Shape
     private Temple temple;
     private MapObject mapObject;
     private BlockData blockData;
-    private MineEntranceArea mineEntrance;
 
+    public Transform Root { get; private set; }
     public Transform pos;
     public Transform player;
 
     [SerializeField] private RockArea rockArea;
-
-    public Transform Root;
-    public Transform grassRoot;
-    public Transform dirtRoot;
-    public Transform sandRoot;
-    public Transform waterRoot;
-    public Transform templeRoot;
-    public Transform swampRoot;
-    public Transform rockRoot;
-    public Transform mineRoot;
 
     [HideInInspector] public List<Vector3> rockPositions = new List<Vector3>();
 
     [HideInInspector] public List<Vector3> sandPositions = new List<Vector3>();
     [HideInInspector] public List<Vector3> TopGrassPositions { get; private set; } = new List<Vector3>();
 
-    public void Set(
-    Height height,
-    Grid grid,
-    Noise noise,
-    Temple temple,
-    BlockData blockData,
-    MapObject mapObject,
-    MineEntranceArea mineEntrance
-)
+    public void Set(Height height, Grid grid, Noise noise, Temple temple, BlockData blockData, MapObject mapObject)
     {
-        this.height = height;
-        this.grid = grid;
-        this.noise = noise;
-        this.temple = temple;
-        this.blockData = blockData;
-        this.mapObject = mapObject;
-        this.mineEntrance = mineEntrance;
+        this.height = height; this.grid = grid; this.noise = noise; this.temple = temple; this.blockData = blockData;
+    }
+
+    public void SpawnMineEntrance(GameObject minePrefab)
+    {
+        if (rockPositions.Count == 0 || minePrefab == null) return;
+
+        /* y >= 13.7 필터링 */
+        var validRocks = rockPositions.Where(r => r.y >= 13.7f).ToList();
+        if (validRocks.Count == 0) return;
+
+        Vector3 baseRockPos = validRocks[Random.Range(0, validRocks.Count)];
+
+        /* 같은 x, z 좌표의 돌들 중 최대 y값 찾기 */
+        float maxY = rockPositions
+            .Where(r => Mathf.RoundToInt(r.x) == Mathf.RoundToInt(baseRockPos.x) && Mathf.RoundToInt(r.z) == Mathf.RoundToInt(baseRockPos.z))
+            .Max(r => r.y);
+
+        Vector3 spawnPos = new Vector3(baseRockPos.x, maxY, baseRockPos.z);
+
+        MonoBehaviour.Instantiate(minePrefab, spawnPos, Quaternion.identity, Root);
     }
 
     public IEnumerator Spawn(Transform parent)
     {
+        Root = new GameObject("Island").transform;
         Root.SetParent(parent);
 
         Vector3 targetSize = Vector3.one;
@@ -664,7 +640,6 @@ public class Island : Shape
                 Transform chunkParent = new GameObject($"Chunk_{cx}_{cz}").transform;
                 chunkParent.SetParent(Root);
 
-                /* 청크 단위로 나누기 위해 자식 오브젝트 생성 */
                 Transform grassParent = new GameObject("Grass").transform; grassParent.SetParent(chunkParent);
                 Transform dirtParent = new GameObject("Dirt").transform; dirtParent.SetParent(chunkParent);
                 Transform sandParent = new GameObject("Sand").transform; sandParent.SetParent(chunkParent);
@@ -672,17 +647,6 @@ public class Island : Shape
                 Transform templeParent = new GameObject("Temple").transform; templeParent.SetParent(chunkParent);
                 Transform swampParent = new GameObject("Swamp").transform; swampParent.SetParent(chunkParent);
                 Transform rockParent = new GameObject("Rock").transform; rockParent.SetParent(chunkParent);
-                Transform mineEntranceParent = new GameObject("MineEntrance").transform; mineEntranceParent.SetParent(chunkParent);
-
-                /* 영역마다 부모 오브젝트로 나눔 */
-                grassParent.SetParent(grassRoot);
-                dirtParent.SetParent(dirtRoot);
-                sandParent.SetParent(sandRoot);
-                waterParent.SetParent(waterRoot);
-                templeParent.SetParent(templeRoot);
-                swampParent.SetParent(swampRoot);
-                rockParent.SetParent(rockRoot);
-                mineEntranceParent.SetParent(mineRoot);
 
                 for (int x = 0; x < grid.chunkSize; x++)
                 {
@@ -722,14 +686,6 @@ public class Island : Shape
                         Vector3 posXZ = new Vector3(worldX, 0, worldZ);
                         bool inTempleArea = temple.exists && Vector3.Distance(new Vector3(temple.pos.x, 0, temple.pos.z), posXZ) <= temple.radius;
 
-                        bool inMineArea =
-                            mineEntrance.exists &&
-                            Vector3.Distance(
-                                new Vector3(mineEntrance.pos.x, 0, mineEntrance.pos.z),
-                                posXZ
-                            ) <= mineEntrance.radius;
-
-
                         int landHeight = Mathf.RoundToInt(heightNoise * islandMask * height.maxHeight);
                         float floorY = Mathf.Max(temple.pos.y, temple.scaleY + 2);
 
@@ -737,82 +693,8 @@ public class Island : Shape
                         {
                             if (inTempleArea)
                             {
-                                Vector2 templeCenterXZ = new Vector2(temple.pos.x, temple.pos.z);
-                                Vector2 currentXZ = new Vector2(worldX, worldZ);
-
-                                float distToCenter = Vector2.Distance(currentXZ, templeCenterXZ);
-
-                                /* 고대 사원 코어 높이 */
-                                int coreHeight = Mathf.RoundToInt(temple.pos.y);
-
-                                int finalHeight;
-
-                                if (distToCenter <= temple.coreRadius)
-                                    finalHeight = coreHeight;
-
-                                else
-                                {
-                                    /* 계단 영역 */
-                                    float stairRange = temple.radius - temple.coreRadius;
-                                    float t = (distToCenter - temple.coreRadius) / stairRange;
-                                    t = Mathf.Clamp01(t);
-
-                                    /* 주변 잔디 높이 */
-                                    int grassHeight = landHeight;
-
-                                    /* 중심 높이 -> 잔디 높이로 보간 */
-                                    finalHeight = Mathf.RoundToInt(Mathf.Lerp(coreHeight, grassHeight, t));
-
-                                    /* 계단 형태와 비슷하게 스냅 */
-                                    finalHeight = (int)Mathf.Round(finalHeight);
-                                }
-
-                                /* 고대 사원 바닥 블록 배치 */
-                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, finalHeight, worldZ), templeParent);
-
-                                /* 아래 흙 채우기 */
-                                for (int y = height.seaLevel + 1; y < finalHeight; y++)
-                                {
-                                    blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
-                                }
-
-                                continue;
-                            }
-
-                            if (inMineArea)
-                            {
-                                Vector2 mineCenterXZ = new Vector2(mineEntrance.pos.x, mineEntrance.pos.z);
-                                Vector2 currentXZ = new Vector2(worldX, worldZ);
-
-                                float distToCenter = Vector2.Distance(currentXZ, mineCenterXZ);
-
-                                int coreHeight = Mathf.RoundToInt(mineEntrance.pos.y);
-                                int finalHeight;
-
-                                if (distToCenter <= mineEntrance.coreRadius) finalHeight = coreHeight;
-
-                                else
-                                {
-                                    float stairRange = mineEntrance.radius - mineEntrance.coreRadius;
-                                    float t = (distToCenter - mineEntrance.coreRadius) / stairRange;
-                                    t = Mathf.Clamp01(t);
-
-                                    int naturalHeight = landHeight;
-
-                                    finalHeight = Mathf.RoundToInt(
-                                        Mathf.Lerp(coreHeight, naturalHeight, t)
-                                    );
-
-                                    finalHeight = Mathf.RoundToInt(finalHeight);
-                                }
-
-                                blockData.PlaceBlock(blockData.rockBlock,new Vector3(worldX, finalHeight, worldZ), mineEntranceParent);
-
-                                for (int y = height.seaLevel + 1; y < finalHeight; y++)
-                                {
-                                    blockData.PlaceBlock(blockData.dirtBlock,new Vector3(worldX, y, worldZ), mineEntranceParent);
-                                }
-
+                                blockData.PlaceBlock(blockData.templeFloorBlock, new Vector3(worldX, floorY, worldZ), templeParent);
+                                for (int y = height.seaLevel + 1; y < floorY; y++) blockData.PlaceBlock(blockData.dirtBlock, new Vector3(worldX, y, worldZ), templeParent);
                                 continue;
                             }
 
@@ -888,7 +770,7 @@ public class Island : Shape
 
                                     if (topBlock == blockData.grassBlock)
                                     {
-                                        if (!inMineArea) TopGrassPositions.Add(pos);
+                                        TopGrassPositions.Add(pos);
 
                                         if (inTempleArea == false && Vector3.Distance(new Vector3(temple.pos.x, 0, temple.pos.z), new Vector3(worldX, 0, worldZ)) <= temple.radius + 1f)
                                         {
@@ -918,7 +800,7 @@ public class Island : Shape
                     }
                 }
 
-                CombineMesh combiner = MonoBehaviour.FindFirstObjectByType<CombineMesh>();
+                CombineMesh combiner = MonoBehaviour.FindAnyObjectByType<CombineMesh>();
                 if (combiner != null)
                 {
                     if (grassParent.childCount > 0)
@@ -935,8 +817,6 @@ public class Island : Shape
                         combiner.Combine(swampParent, blockData.swampBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Swamp");
                     if (rockParent.childCount > 0)
                         combiner.Combine(rockParent, blockData.rockBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_Rock");
-                    if (mineEntranceParent.childCount > 0)
-                        combiner.Combine(mineEntranceParent, blockData.rockBlock.GetComponentInChildren<MeshRenderer>().sharedMaterial, $"{chunkParent.name}_MineEntrance");
                 }
 
                 yield return null;
@@ -945,9 +825,6 @@ public class Island : Shape
 
         if (temple.exists && temple.prefab != null)
             MonoBehaviour.Instantiate(temple.prefab, new Vector3(temple.pos.x, Mathf.Max(temple.pos.y, temple.scaleY), temple.pos.z), Quaternion.identity, Root);
-
-        if (mineEntrance.exists && mineEntrance.prefab != null)
-            MonoBehaviour.Instantiate(mineEntrance.prefab, new Vector3(mineEntrance.pos.x, Mathf.Max(mineEntrance.pos.y, mineEntrance.scaleY), mineEntrance.pos.z), Quaternion.identity, Root);
     }
 
     public void SpawnPlayer()
@@ -993,90 +870,12 @@ public class Island : Shape
 }
 #endregion
 
-#region MineEntranceArea : Shape
-[System.Serializable]
-public class MineEntranceArea : Shape
-{
-    private Height height;
-    private Noise noise;
-
-    [Header("Mine Settings")]
-    public GameObject prefab;
-    public float coreRadius = 6f;
-    public float scaleY = 4f;
-
-    [Header("Placement")]
-    public float minX = -160f;
-    public float maxX = -40f;
-    public float minZ = 40f;
-    public float maxZ = 160f;
-
-    [HideInInspector] public Vector3 pos;
-    public bool exists;
-
-    public void Set(Height height, Noise noise)
-    {
-        this.height = height;
-        this.noise = noise;
-    }
-
-    public void Placement(float islandRadius)
-    {
-        exists = false;
-        if (prefab == null) return;
-
-        for (int i = 0; i < 100; i++)
-        {
-            float x = Random.Range(minX, maxX);
-            float z = Random.Range(minZ, maxZ);
-
-            int wx = Mathf.RoundToInt(x);
-            int wz = Mathf.RoundToInt(z);
-
-            float dist = Mathf.Sqrt(wx * wx + wz * wz) / islandRadius;
-            if (dist > 1f) continue;
-
-            float noiseMask = Mathf.PerlinNoise(
-                (wx + noise.seed) / noise.scale,
-                (wz + noise.seed) / noise.scale
-            );
-
-            float islandMask = Mathf.Clamp01(1f - dist * 0.8f + (noiseMask - 0.5f) * 0.45f);
-            islandMask = Mathf.Pow(islandMask, falloffPower);
-
-            float h = 0f, amp = 1f, freq = 1f, maxAmp = 0f;
-            for (int o = 0; o < noise.octaves; o++)
-            {
-                h += Mathf.PerlinNoise(
-                    (wx + noise.seed) / noise.scale * freq,
-                    (wz + noise.seed) / noise.scale * freq
-                ) * amp;
-                maxAmp += amp;
-                amp *= noise.persistence;
-                freq *= noise.lacunarity;
-            }
-
-            h /= maxAmp;
-            int landHeight = Mathf.RoundToInt(h * islandMask * height.maxHeight);
-
-            if (landHeight > height.seaLevel + 1)
-            {
-                pos = new Vector3(wx, landHeight, wz);
-                exists = true;
-                break;
-            }
-        }
-    }
-}
-#endregion
-
 public class IslandManager : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private Island island;
     [SerializeField] private Temple temple;
     [SerializeField] private Jungle jungle;
-    [SerializeField] private MineEntranceArea mineEntrance;
 
     [SerializeField] private Height height;
     [SerializeField] private Shape shape;
@@ -1102,13 +901,7 @@ public class IslandManager : MonoBehaviour
 
     public MapObject mapObj => mapObject;
 
-    private void navMeshBuild(GameObject obj)
-    {
-        NavMeshSurface navMesh = obj.AddComponent<NavMeshSurface>();
-        navMesh.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-        navMesh.collectObjects = CollectObjects.Children;
-        navMesh.BuildNavMesh();
-    }
+    public GameObject mine;
 
     /// <summary>
     /// 섬 생성 코루틴
@@ -1121,7 +914,6 @@ public class IslandManager : MonoBehaviour
 
         /* 사원 위치 생성 */
         temple.Placement();
-        mineEntrance.Placement(island.radius);
 
         /* 섬 생성 */
         yield return StartCoroutine(island.Spawn(island.pos));
@@ -1129,11 +921,8 @@ public class IslandManager : MonoBehaviour
         /* 섬 생성이 완료되면 오브젝트/플레이어 생성 */
         objectSpawner.SpawnObjects();
         jungle.Spawn();
+        island.SpawnMineEntrance(mine);
         island.SpawnPlayer();
-
-        /* 경로 Bake */
-        navMeshBuild(island.grassRoot.gameObject);
-        navMeshBuild(island.sandRoot.gameObject);
 
         /* Game Scene 으로 변경 */
         yield return StartCoroutine(island.SceneChange());
@@ -1144,12 +933,11 @@ public class IslandManager : MonoBehaviour
 
     private void Start()
     {
-        island.Set(height, grid, noise, temple, blockData, mapObject, mineEntrance);
+        island.Set(height, grid, noise, temple, blockData, mapObject);
         jungle.Set(island, height, temple, mapObject);
         temple.Set(height, noise);
-        mineEntrance.Set(height, noise);
         mapObject.Set(grid);
-        objectSpawner.Set(island, grid, temple, objectData, mapObject, mineEntrance);
+        objectSpawner.Set(island, grid, temple, objectData, mapObject);
 
         StartCoroutine(StartGeneration());
     }
