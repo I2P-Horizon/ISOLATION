@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: 8fd8ba9cd3c621d40b76d768a29bd317
+guid: 417356e4661089e4b90e1a13489ce7f4
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - tombStonePrefab: {fileID: 8204963781121095822, guid: ad0cd6cddd98fa0458e0f2c0a66daffd, type: 3}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -12,7 +12,7 @@ public class TombstoneSpawnEvent : MonoBehaviour, IEvent
 
     private void Awake()
     {
-        InitSpawnArea(-80, 80, 50, -60, 60);
+        InitSpawnArea(-300, 300, 50, -300, 300);
     }
 
 

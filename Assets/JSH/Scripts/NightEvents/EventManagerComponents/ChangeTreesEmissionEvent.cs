@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChangeTreesEmission : MonoBehaviour, IEvent
+public class ChangeTreesEmissionEvent : MonoBehaviour, IEvent
 {
     // Shared tree material
     [SerializeField] Material treeMaterial;
