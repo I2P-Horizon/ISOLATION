@@ -7,13 +7,11 @@ using System.Linq;
 public class WorldMapMarker : MonoBehaviour
 {
     [Header("참조")]
-    public Transform player;
-    public RectTransform mapRect;
-    public RectTransform playerIcon;
-    public Camera mapCamera;
+    [SerializeField] private RectTransform mapRect;
+    [SerializeField] private RectTransform playerIcon;
+    [SerializeField] private Camera mapCamera;
 
-    [Header("RenderTexture 설정")]
-    public int textureSize = 512;
+    private int textureSize = 512;
 
     private RenderTexture mapTexture;
     public bool isRendering = false;
@@ -35,9 +33,9 @@ public class WorldMapMarker : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (player == null || mapCamera == null || mapRect == null || playerIcon == null) return;
+        if (Player.Instance == null || mapCamera == null || mapRect == null || playerIcon == null) return;
 
-        Vector3 viewportPos = mapCamera.WorldToViewportPoint(player.position);
+        Vector3 viewportPos = mapCamera.WorldToViewportPoint(Player.Instance.transform.position);
         if (viewportPos.z < 0f) return;
 
         Vector2 uiPos = new Vector2(
@@ -60,7 +58,7 @@ public class WorldMapMarker : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Restore();
+        restore();
 
         isRendering = false;
     }
@@ -84,7 +82,7 @@ public class WorldMapMarker : MonoBehaviour
         foreach (var d in dirts) d.SetActive(false);
     }
 
-    private void Restore()
+    private void restore()
     {
         foreach (var w in waters) if (w != null) w.SetActive(true);
         foreach (var d in dirts) if(d != null) d.SetActive(true);
