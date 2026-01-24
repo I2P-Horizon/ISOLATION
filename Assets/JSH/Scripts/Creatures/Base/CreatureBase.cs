@@ -278,7 +278,7 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
         Vector3 dashDir = (_playerPos - transform.position).normalized;
         dashDir.y = 0.3f;
-        rb.AddForce((dashDir) * 15.0f, ForceMode.Impulse);
+        rb.AddForce((dashDir) * 25.0f, ForceMode.Impulse);
 
         yield return new WaitForSeconds(2.5f);
 
