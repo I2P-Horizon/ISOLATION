@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-#region Selector
 [Serializable]
 public class Selector<T>
 {
@@ -56,32 +55,50 @@ public class Selector<T>
         else displayText.text = GetCurrent().ToString();
     }
 }
-#endregion
 
 public class Settings : MonoBehaviour
 {
-    public GameObject panel;
+    public GameObject[] tabs;
+    public Button[] buttons;
 
     [Header("Screen Settings")]
     [SerializeField] private Selector<Vector2Int> resolution;
-    [SerializeField] private Selector<int> fps;
-    [SerializeField] private Selector<string> ScreenMode;
-
-    [Header("Button")]
     [SerializeField] private Button nextResButton;
     [SerializeField] private Button prevResButton;
 
+    [SerializeField] private Selector<int> fps;
     [SerializeField] private Button nextButton_FPS;
     [SerializeField] private Button prevButton_FPS;
 
+    [SerializeField] private Selector<string> ScreenMode;
     [SerializeField] private Button nextButton_ScreenMode;
     [SerializeField] private Button prevButton_ScreenMode;
 
+    [Header("Graphics Settings")]
+    [SerializeField] private Selector<string> graphics;
+    [SerializeField] private Button nextGraphicsButton;
+    [SerializeField] private Button prevGraphicsButton;
+
+    [SerializeField] private Selector<string> antiAliasing;
+    [SerializeField] private Button nextButton_AntiAliasing;
+    [SerializeField] private Button prevButton_AntiAliasing;
+
+    [SerializeField] private Selector<string> shawdow;
+    [SerializeField] private Button nextButton_Shawdow;
+    [SerializeField] private Button prevButton_Shawdow;
+
+    [Header("Message")]
+    [SerializeField] private GameObject message;
     [SerializeField] private Button saveButton;
+
+    private bool _isSaving = false;
 
     private const string KEY_RES = "settings.resolution";
     private const string KEY_FPS = "settings.fps";
     private const string KEY_SCREENMODE = "settings.screenmode";
+    private const string KEY_GRAPHICS = "settings.graphics";
+    private const string KEY_AA = "settings.aa";
+    private const string KEY_SHADOW = "settings.shadow";
 
     public void Init()
     {
@@ -89,6 +106,9 @@ public class Settings : MonoBehaviour
         resolution.SetIndex(PlayerPrefs.GetInt(KEY_RES, 0));
         fps.SetIndex(PlayerPrefs.GetInt(KEY_FPS, 0));
         ScreenMode.SetIndex(PlayerPrefs.GetInt(KEY_SCREENMODE, 0));
+        graphics.SetIndex(PlayerPrefs.GetInt(KEY_GRAPHICS, 0));
+        antiAliasing.SetIndex(PlayerPrefs.GetInt(KEY_AA, 0));
+        shawdow.SetIndex(PlayerPrefs.GetInt(KEY_SHADOW, 0));
 
         /* ----------------------------- 옵션 적용 ----------------------------- */
         resolution.onApply = (res) => { Screen.SetResolution(res.x, res.y, Screen.fullScreen); };
@@ -110,6 +130,34 @@ public class Settings : MonoBehaviour
             }
         };
 
+        graphics.onApply = (level) =>
+        {
+            int index = Array.IndexOf(graphics.options, level);
+            if (index >= 0) QualitySettings.SetQualityLevel(index);
+        };
+
+        antiAliasing.onApply = (aa) =>
+        {
+            int value = 0;
+            switch (aa)
+            {
+                case "Off": value = 0; break;
+                case "2x": value = 2; break;
+                case "4x": value = 4; break;
+                case "8x": value = 8; break;
+            }
+            QualitySettings.antiAliasing = value;
+        };
+
+        shawdow.onApply = (shawdowLevel) =>
+        {
+            switch (shawdowLevel)
+            {
+                case "ON": QualitySettings.shadows = ShadowQuality.All; break;
+                case "OFF": QualitySettings.shadows = ShadowQuality.Disable; break;
+            }
+        };
+
         /* ----------------------------- 버튼 연결 ----------------------------- */
         nextResButton.onClick.AddListener(() => resolution.Next());
         prevResButton.onClick.AddListener(() => resolution.Prev());
@@ -120,26 +168,66 @@ public class Settings : MonoBehaviour
         nextButton_ScreenMode.onClick.AddListener(() => ScreenMode.Next());
         prevButton_ScreenMode.onClick.AddListener(() => ScreenMode.Prev());
 
-        saveButton.onClick.AddListener(() => save());
+        nextGraphicsButton.onClick.AddListener(() => graphics.Next());
+        prevGraphicsButton.onClick.AddListener(() => graphics.Prev());
+
+        nextButton_AntiAliasing.onClick.AddListener(() => antiAliasing.Next());
+        prevButton_AntiAliasing.onClick.AddListener(() => antiAliasing.Prev());
+
+        nextButton_Shawdow.onClick.AddListener(() => shawdow.Next());
+        prevButton_Shawdow.onClick.AddListener(() => shawdow.Prev());
+
+        saveButton.onClick.AddListener(() => StartCoroutine(Save()));
+
+        /* 탭 버튼 연결 */
+        buttons[0].onClick.AddListener(ScreenTab);
+        buttons[1].onClick.AddListener(GraphicsTab);
+        buttons[2].onClick.AddListener(AudioTab);
     }
 
-    private void save()
+    public void ScreenTab()
     {
-        PlayerPrefs.SetInt(KEY_RES, resolution.GetIndex());
-        PlayerPrefs.SetInt(KEY_FPS, fps.GetIndex());
-        PlayerPrefs.SetInt(KEY_SCREENMODE, ScreenMode.GetIndex());
-        PlayerPrefs.Save();
-
-        panel.GetComponent<UIAnimator>().Close();
+        for (int i = 0; i < tabs.Length; i++)
+            tabs[i].SetActive(i == 0);
+        tabs[0].GetComponent<UIAnimator>()?.Show();
     }
 
-    private void Update()
+    public void GraphicsTab()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) save();
+        for (int i = 0; i < tabs.Length; i++)
+            tabs[i].SetActive(i == 1);
+        tabs[1].GetComponent<UIAnimator>()?.Show();
     }
 
-    private void Start()
+    public void AudioTab()
     {
-        saveButton.onClick.AddListener(() => save());
+        for (int i = 0; i < tabs.Length; i++)
+            tabs[i].SetActive(i == 2);
+        tabs[2].GetComponent<UIAnimator>()?.Show();
+    }
+
+    public IEnumerator Save()
+    {
+        if (!_isSaving)
+        {
+            _isSaving = true;
+
+            /* 현재 인덱스 저장 */
+            PlayerPrefs.SetInt(KEY_RES, resolution.GetIndex());
+            PlayerPrefs.SetInt(KEY_FPS, fps.GetIndex());
+            PlayerPrefs.SetInt(KEY_SCREENMODE, ScreenMode.GetIndex());
+            PlayerPrefs.SetInt(KEY_GRAPHICS, graphics.GetIndex());
+            PlayerPrefs.SetInt(KEY_AA, antiAliasing.GetIndex());
+            PlayerPrefs.SetInt(KEY_SHADOW, shawdow.GetIndex());
+            PlayerPrefs.Save();
+
+            /* 메시지 표시 */
+            message.GetComponent<UIAnimator>().Show();
+            yield return new WaitForSeconds(1.5f);
+            message.GetComponent<UIAnimator>().Close();
+            yield return new WaitForSeconds(0.1f);
+
+            _isSaving = false;
+        }
     }
 }
