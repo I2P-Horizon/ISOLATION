@@ -1,14 +1,9 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/SMJ/Script/PlacementManager.cs.meta
 guid: 908963d4ce57b9949a2280eb77d9ae23
-========
-guid: b14bf829e72a1c0468383757c0dc621f
->>>>>>>> parent of ea39cef2 (Merge branch 'main' into ISOLATION_JSH):Assets/JSH/Scripts/NightEvents/EventManagerComponents/ChangeTreesEmissionEvent.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - treeMaterial: {fileID: 2100000, guid: a470d9c2c259228428e414a8b522b3fc, type: 2}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

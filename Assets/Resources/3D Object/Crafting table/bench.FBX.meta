@@ -1,18 +1,9 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Resources/3D Object/Crafting table/bench.FBX.meta
 guid: 53a6ae6812b874547b2f9c559ceeafbe
-========
-guid: 896387f111933c74b9f7975eba0d31ef
->>>>>>>> parent of ea39cef2 (Merge branch 'main' into ISOLATION_JSH):Assets/Creature/Animation/Animal/Crocodile/crocodile_walk.fbx.meta
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: standardSurface2
-    second: {fileID: 2100000, guid: 664c9de5987a8e8439d28e7e76afead0, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -108,7 +99,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0

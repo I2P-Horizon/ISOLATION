@@ -220,11 +220,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.4
-<<<<<<< HEAD
   m_Center: {x: 0, y: 0.04, z: 0}
-=======
-  m_Center: {x: 0, y: 0, z: 0}
->>>>>>> parent of ea39cef2 (Merge branch 'main' into ISOLATION_JSH)
 --- !u!1001 &1624244934717254044
 PrefabInstance:
   m_ObjectHideFlags: 0
