@@ -87,7 +87,11 @@ public class SceneChange : MonoBehaviour
     private void ChangeSceneCamera(string sceneName)
     {
         /* 모든 카메라 비활성화 */
-        foreach (var cam in Camera.allCameras) cam.gameObject.SetActive(false);
+        foreach (var cam in Camera.allCameras)
+        {
+            if (cam.name == "Mini Map Camera") continue;
+            cam.gameObject.SetActive(false);
+        }
 
         /* 새로운 씬 가져오기 */
         Scene scene = SceneManager.GetSceneByName(sceneName);

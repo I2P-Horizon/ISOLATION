@@ -147,8 +147,8 @@ Rigidbody:
   m_GameObject: {fileID: 8688624321822278009}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 5
-  m_AngularDrag: 5
+  m_Drag: 0
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -164,7 +164,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 2
+  m_CollisionDetection: 0
 --- !u!195 &1912763324784384275
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 2.787705, z: 3.9124522}
-  m_Center: {x: 0, y: 0.8, z: 0.12203574}
+  m_Center: {x: 0, y: 0.8938525, z: 0.12203574}
 --- !u!1001 &1151832364380354907
 PrefabInstance:
   m_ObjectHideFlags: 0
