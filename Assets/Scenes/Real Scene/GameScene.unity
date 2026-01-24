@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
@@ -4034,6 +4034,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd8ba9cd3c621d40b76d768a29bd317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tombstonePrefab: {fileID: 0}
+  spawningTombstoneCount: 0
 --- !u!114 &595531233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10394,6 +10396,14 @@ MonoBehaviour:
     chunkSeparate: 0
   - prefab: {fileID: 4690789056192800245, guid: 489c2ddba930acb4f9110e46c00a6248, type: 3}
     spawnChance: 0.1
+    mergeMeshes: 1
+    chunkSeparate: 1
+  - prefab: {fileID: 580780344532725468, guid: 98b0e66720ebaff4f93a9d54ba1f4c29, type: 3}
+    spawnChance: 0.005
+    mergeMeshes: 1
+    chunkSeparate: 1
+  - prefab: {fileID: 624314905472349343, guid: 2c68bb9d00a4eb54da77b4e97e8801ee, type: 3}
+    spawnChance: 0.005
     mergeMeshes: 1
     chunkSeparate: 1
   - prefab: {fileID: 174509787279092161, guid: b1bca79e37f22f74685d2baaba532b60, type: 3}
