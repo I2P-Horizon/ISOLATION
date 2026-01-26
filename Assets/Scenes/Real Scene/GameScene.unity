@@ -6348,8 +6348,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1459402580}
-  - {fileID: 2044301545}
   - {fileID: 286556097}
+  - {fileID: 2044301545}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6371,6 +6371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hpSlider: {fileID: 1168853776}
   _satietySlider: {fileID: 1503443527}
+  _hydrationSlider: {fileID: 586825686}
 --- !u!1 &921905326
 GameObject:
   m_ObjectHideFlags: 0
@@ -7757,8 +7758,16 @@ PrefabInstance:
     - {fileID: 5027410434758347312, guid: c0c5efab403f25b458188259047a430c, type: 3}
     - {fileID: -594108470839172101, guid: c0c5efab403f25b458188259047a430c, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7840925219774901836, guid: c0c5efab403f25b458188259047a430c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1344258697}
   m_SourcePrefab: {fileID: 100100000, guid: c0c5efab403f25b458188259047a430c, type: 3}
+--- !u!1 &1092240663 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7840925219774901836, guid: c0c5efab403f25b458188259047a430c, type: 3}
+  m_PrefabInstance: {fileID: 1092240662}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1094230830
 GameObject:
   m_ObjectHideFlags: 0
@@ -9754,6 +9763,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
   m_PrefabInstance: {fileID: 1092240662}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1344258697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1092240663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85fdb83e137accd4a92ed0819a22f0b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsConfused: 0
 --- !u!1 &1349162978
 GameObject:
   m_ObjectHideFlags: 0
@@ -10318,7 +10340,7 @@ MonoBehaviour:
   island:
     radius: 190
     falloffPower: 0.15
-    beachWidth: 5
+    beachWidth: 8
     pos: {fileID: 1026859752}
     player: {fileID: 1344258696}
     rockArea:
@@ -14981,7 +15003,7 @@ GameObject:
   - component: {fileID: 2044301548}
   - component: {fileID: 2044301547}
   m_Layer: 5
-  m_Name: Moisture UI
+  m_Name: Hydration UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

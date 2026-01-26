@@ -472,8 +472,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7840925219774901836, guid: c0c5efab403f25b458188259047a430c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 550963280}
   m_SourcePrefab: {fileID: 100100000, guid: c0c5efab403f25b458188259047a430c, type: 3}
+--- !u!1 &71063462 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7840925219774901836, guid: c0c5efab403f25b458188259047a430c, type: 3}
+  m_PrefabInstance: {fileID: 71063461}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &84655939
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3126,14 +3134,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
-  up: 0
-  down: 0
-  left: 0
-  right: 0
-  duration: 0.5
-  moveOffset: 200
-  uiAnimation: 0
+  _fade: 0
+  _scale: 0
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &495559821
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3600,6 +3609,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6303284963645665288, guid: c0c5efab403f25b458188259047a430c, type: 3}
   m_PrefabInstance: {fileID: 71063461}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &550963280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 71063462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85fdb83e137accd4a92ed0819a22f0b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsConfused: 0
 --- !u!1 &560108879
 GameObject:
   m_ObjectHideFlags: 0
@@ -5648,14 +5670,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
-  up: 0
-  down: 0
-  left: 0
-  right: 0
-  duration: 0.5
-  moveOffset: 200
-  uiAnimation: 0
+  _fade: 0
+  _scale: 0
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &921539032
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -8739,14 +8762,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
-  up: 0
-  down: 0
-  left: 0
-  right: 0
-  duration: 0.5
-  moveOffset: 200
-  uiAnimation: 0
+  _fade: 0
+  _scale: 0
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &1229309114
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9668,14 +9692,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
-  up: 0
-  down: 0
-  left: 0
-  right: 0
-  duration: 0.5
-  moveOffset: 200
-  uiAnimation: 0
+  _fade: 0
+  _scale: 0
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &1355196747
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -13335,14 +13360,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d54701c74a96c4d8f396e28ebe9e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: 1
-  up: 0
-  down: 0
-  left: 0
-  right: 0
-  duration: 0.5
-  moveOffset: 200
-  uiAnimation: 0
+  _fade: 0
+  _scale: 0
+  _up: 0
+  _down: 0
+  _left: 0
+  _right: 0
+  _duration: 0.5
+  _moveOffset: 200
+  _startScale: 0
 --- !u!225 &1853398840
 CanvasGroup:
   m_ObjectHideFlags: 0
