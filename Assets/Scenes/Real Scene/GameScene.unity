@@ -1416,7 +1416,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _postProcessingVolume: {fileID: 2140624770}
-  _fog: 0.2
+  _fog: 0.06
 --- !u!4 &214975701
 Transform:
   m_ObjectHideFlags: 0
@@ -10413,7 +10413,7 @@ MonoBehaviour:
     rockBlock: {fileID: 7670950037535107308, guid: 7dcd8ec621ab9ac4d9343099b40ecf64, type: 3}
   objectData:
   - prefab: {fileID: 1555394283831436133, guid: 4211495400ade1e4896d79aa0393f309, type: 3}
-    spawnChance: 0.0015
+    spawnChance: 0.0005
     mergeMeshes: 0
     chunkSeparate: 0
   - prefab: {fileID: 4690789056192800245, guid: 489c2ddba930acb4f9110e46c00a6248, type: 3}
