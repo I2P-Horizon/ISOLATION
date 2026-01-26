@@ -31,8 +31,6 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private float _gatherStrength = 5.0f;
     /// <summary>지속 채집 간격</summary>
     [SerializeField] private float _gatherInterval = 1.0f;
-    /// <summary>채집 시 포만감 감소량</summary>
-    [SerializeField] private float _satietyDecreaseAmount = 0.05f;
 
     [Header("Attack")]
     /// <summary>공격력</summary>
@@ -201,7 +199,6 @@ public class PlayerInteraction : MonoBehaviour
             case InteractionState.Gathering:
                 _animator.SetTrigger("Gathering");
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
-                _player.State.DecreaseSatiety(_satietyDecreaseAmount);
                 break;
             case InteractionState.Attacking:
                 _animator.SetTrigger("Gathering");
