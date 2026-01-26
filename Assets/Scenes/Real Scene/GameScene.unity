@@ -7750,6 +7750,10 @@ PrefabInstance:
       value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 9116909022141252373, guid: c0c5efab403f25b458188259047a430c, type: 3}
+      propertyPath: _moveSpeed
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9116909022141252373, guid: c0c5efab403f25b458188259047a430c, type: 3}
       propertyPath: _jumpHeight
       value: 1
       objectReference: {fileID: 0}
@@ -10368,7 +10372,7 @@ MonoBehaviour:
     pos: {x: 0, y: 0, z: 0}
     exists: 0
   jungle:
-    radius: 100
+    radius: 120
     falloffPower: 0.15
     beachWidth: 3
     count: 20
