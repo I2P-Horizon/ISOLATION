@@ -18,8 +18,6 @@ public class PlayerMovement : MonoBehaviour
     private float _jumpHeight; // 점프 높이
     [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
 
-    [SerializeField] private float _satietyDecreaseAmount = 0.001f; // 이동에 따른 포만감 감소량
-
     private Vector3 _velocity; // 현재 속도
     private bool _isGrounded; // 땅에 닿아 있는지 여부
 
@@ -37,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        _moveSpeed = _player.State.MoveSpeed;
+
         GroundCheck();
         Move();
     }
@@ -74,6 +74,12 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         Vector3 inputDir = GetInputMovement(); // 입력에 따른 방향 벡터 계산
+
+        // 혼란 상태일 때 이동 방향 반전
+        if (_player != null && _player.Condition.IsConfused)
+        {
+            inputDir *= -1;
+        }
 
         IsMoving = inputDir.sqrMagnitude != 0f;
 
@@ -115,10 +121,6 @@ public class PlayerMovement : MonoBehaviour
             // 이동 방향을 바라보도록 회전
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10.0f);
-
-            // 이동에 따른 포만감 감소
-            if (!_player.State.IsSatietyZero)
-                _player.State.DecreaseSatiety(_satietyDecreaseAmount);
         }
 
         // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때

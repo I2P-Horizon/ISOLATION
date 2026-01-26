@@ -2,35 +2,131 @@
     "Meat": [
         {
             "id": 40001,
-            "itemName": "구운 고기",
-            "itemToolTip": "맛있게 구워진 고기.",
-            "itemExplanation": "포만감을 20 회복합니다.",
-            "itemIcon": "CookedMeatIcon",
-            "itemPrice": 20,
+            "itemName": "생고기",
+            "itemToolTip": "가공되지 않은 고기.",
+            "itemExplanation": "포만감은 채워주지만, 그대로 먹기엔 위험하다.",
+            "itemIcon": "RawMeatIcon",
+            "itemPrice": 1,
             "maxAmount": 99,
-            "value": 20.0
+            "value": 10.0,
+            "hydrationValue": 0,
+            "effects": [
+                {
+                    "type": "Indigestion",
+                    "chance": 0.6,
+                    "duration": 300.0,
+                    "isRemoval": false
+                }
+            ]
+        },
+        {
+            "id": 40002,
+            "itemName": "익힌 고기",
+            "itemToolTip": "잘 익힌 고기.",
+            "itemExplanation": "든든하게 포만감을 채워준다.",
+            "itemIcon": "CookedMeatIcon",
+            "itemPrice": 1,
+            "maxAmount": 99,
+            "value": 20.0,
+            "hydrationValue": 0,
+            "effects": [
+                {
+                    "type": "StrengthUp",
+                    "chance": 1.0,
+                    "duration": 150.0,
+                    "isRemoval": false
+                }
+            ]
         }
     ],
     "Fruit": [
         {
-            "id": 45001,
-            "itemName": "파인애플",
-            "itemToolTip": "달콤한 파인애플.",
-            "itemExplanation": "포만감을 10 회복합니다.",
-            "itemIcon": "PineappleIcon",
-            "itemPrice": 10,
+            "id": 40003,
+            "itemName": "망고",
+            "itemToolTip": "달콤한 열대 과일.",
+            "itemExplanation": "가볍게 배를 채우기에 좋다.",
+            "itemIcon": "MangoIcon",
+            "itemPrice": 1,
             "maxAmount": 99,
-            "value": 10.0
+            "value": 10.0,
+            "hydrationValue": 0,
+            "effects": [
+                {
+                    "type": "Dehydration",
+                    "chance": 0.2,
+                    "duration": 30.0,
+                    "isRemoval": false
+                }
+            ]
         },
         {
-            "id": 45002,
-            "itemName": "코코넛",
-            "itemToolTip": "코코넛워터와 과육.",
-            "itemExplanation": "포만감을 5 회복합니다.",
-            "itemIcon": "CoconutIcon",
-            "itemPrice": 5,
+            "id": 40004,
+            "itemName": "바나나",
+            "itemToolTip": "부드럽고 달콤한 바나나.",
+            "itemExplanation": "빠르게 포만감을 충전할 수 있다.",
+            "itemIcon": "BananaIcon",
+            "itemPrice": 1,
             "maxAmount": 99,
-            "value": 5.0
+            "value": 15.0,
+            "hydrationValue": 0,
+            "effects": [
+                {
+                    "type": "Dehydration",
+                    "chance": 0.2,
+                    "duration": 30.0,
+                    "isRemoval": false
+                }
+            ]
+        },
+        {
+            "id": 40005,
+            "itemName": "코코넛",
+            "itemToolTip": "단단한 껍질의 코코넛.",
+            "itemExplanation": "수분을 보충할 수 있다.",
+            "itemIcon": "CoconutIcon",
+            "itemPrice": 1,
+            "maxAmount": 99,
+            "value": 0,
+            "hydrationValue": 10.0,
+            "effects": [
+                {
+                    "type": "Electrolyte",
+                    "chance": 0.4,
+                    "duration": 120.0,
+                    "isRemoval": false
+                }
+            ]
+        },
+        {
+            "id": 40006,
+            "itemName": "파인애플",
+            "itemToolTip": "새콤달콤한 파인애플.",
+            "itemExplanation": "포만감과 수분을 함께 충전할 수 있다.",
+            "itemIcon": "PineappleIcon",
+            "itemPrice": 1,
+            "maxAmount": 99,
+            "value": 5.0,
+            "hydrationValue": 5.0,
+            "effects": [
+                {
+                    "type": "Indigestion",
+                    "chance": 0.5,
+                    "duration": -1,
+                    "isRemoval": true
+                }
+            ]
+        },
+        {
+            "id": 40007,
+            "itemName": "파파야",
+            "itemToolTip": "달콤한 파파야.",
+            "itemExplanation": "포만감과 수분을 함께 충전할 수 있다.",
+            "itemIcon": "PapayaIcon",
+            "itemPrice": 1,
+            "maxAmount": 99,
+            "value": 10.0,
+            "hydrationValue": 10.0,
+            "effects": []
         }
     ]
 }

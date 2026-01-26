@@ -174,4 +174,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canBePickedUp: 1
-  _itemID: 45001
+  _itemID: 40006
