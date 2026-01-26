@@ -40,9 +40,6 @@ public class PlayerState : MonoBehaviour
     public bool IsSatietyZero => _satiety <= 0;
     public bool IsHydrationZero => _hydration <= 0;
 
-    [Header("Hp Decrease Settings")]
-    [SerializeField] private float _hpNaturalDecreaseInterval = 5.0f; // 체력 자연 감소 간격(초)
-
     // 포만감 감소 간격
     private const float SATIETY_IDLE_TIME = 30f;
     private const float SATIETY_MOVE_TIME = 20f;
@@ -54,11 +51,10 @@ public class PlayerState : MonoBehaviour
     private const float HYDRATION_ACTION_TIME = 12f;
 
     [Header("Starvation Penalty")]
-    [SerializeField] private float _starvationDamageInterval = 1.0f;
-    [SerializeField] private float _starvationDamageAmount = 0.1f;
+    [SerializeField] private float _starvationDamageInterval = 5.0f;
+    [SerializeField] private float _starvationDamageAmount = 1.0f;
 
     // 내부 타이머
-    private float _hpNaturalTimer = 0f;
     private float _satietyTimer = 0f;
     private float _hydrationTimer = 0f;
     private float _starvationTimer = 0f;
@@ -77,32 +73,9 @@ public class PlayerState : MonoBehaviour
     {
         if (_die) return;
 
-        handleNaturalHpDecrease();
         handleSatietyDecrease();
         handleHydrationDecrease();
         handleStarvationDamage();
-    }
-
-    /// <summary>
-    /// 체력 자연 감소 처리 메서드 (5초마다 1씩 감소, 최소 1 유지)
-    /// </summary>
-    private void handleNaturalHpDecrease()
-    {
-        if (_hp <= 1.0f)
-        {
-            _hpNaturalTimer = 0f;
-            return;
-        }
-
-        _hpNaturalTimer += Time.deltaTime;
-        if (_hpNaturalTimer >= _hpNaturalDecreaseInterval)
-        {
-            _hpNaturalTimer = 0f;
-            DecreaseHP(1.0f);
-
-            // 자연 감소로는 체력이 1 미만으로 떨어지지 않도록 함
-            if (_hp < 1.0f) _hp = 1.0f;
-        }
     }
 
     /// <summary>
@@ -161,23 +134,27 @@ public class PlayerState : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 포만감이 0일 때 체력 감소 처리 메서드
+    /// 5초마다 1 감소, hp는 1 이하로 떨어지지 않음
+    /// </summary>
     private void handleStarvationDamage()
     {
-        if (_satiety <= 0)
+        if (_satiety <= 0 && _hp > 1.0f)
         {
             _starvationTimer += Time.deltaTime;
-
-            float damage = _player.Movement.IsMoving ? _starvationDamageAmount * 2 : _starvationDamageAmount;
 
             if (_starvationTimer >= _starvationDamageInterval)
             {
                 _starvationTimer = 0f;
-                _hp -= damage;
-
-                if (_hp <= 0)
+                
+                if (_hp - _starvationDamageAmount <= 1.0f)
                 {
-                    _hp = 0;
-                    _die = true;
+                    _hp = 1.0f;
+                }
+                else
+                {
+                    _hp -= _starvationDamageAmount;
                 }
             }
         }
