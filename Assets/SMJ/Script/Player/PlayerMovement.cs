@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController _characterController;
     private Animator _animator;
 
-    private float _moveSpeed; // 이동 속도
+    [SerializeField] private float _moveSpeed; // 이동 속도
     private float _jumpHeight; // 점프 높이
     [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
 
