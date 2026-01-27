@@ -42,13 +42,13 @@ public class PlayerState : MonoBehaviour
 
     // 포만감 감소 간격
     private const float SATIETY_IDLE_TIME = 30f;
-    private const float SATIETY_MOVE_TIME = 20f;
-    private const float SATIETY_ACTION_TIME = 8f;
+    private const float SATIETY_MOVE_TIME = 15f;
+    private const float SATIETY_ACTION_TIME = 6f;
 
     // 수분 감소 간격
-    private const float HYDRATION_IDLE_TIME = 120f;
-    private const float HYDRATION_MOVE_TIME = 60f;
-    private const float HYDRATION_ACTION_TIME = 12f;
+    private const float HYDRATION_IDLE_TIME = 100f;
+    private const float HYDRATION_MOVE_TIME = 50f;
+    private const float HYDRATION_ACTION_TIME = 10f;
 
     [Header("Starvation Penalty")]
     [SerializeField] private float _starvationDamageInterval = 5.0f;
@@ -80,7 +80,7 @@ public class PlayerState : MonoBehaviour
 
     /// <summary>
     /// 포만감 감소 처리 메서드
-    /// 정지: 30초마다 1 감소, 이동: 20초마다 1 감소, 행동(채집, 공격 등): 8초마다 1 감소
+    /// 정지: 30초마다 1 감소, 이동: 15초마다 1 감소, 행동(채집, 공격 등): 6초마다 1 감소
     /// </summary>
     private void handleSatietyDecrease()
     {
@@ -108,7 +108,7 @@ public class PlayerState : MonoBehaviour
 
     /// <summary>
     /// 수분량 감소 처리 메서드
-    /// 정지: 120초마다 1 감소, 이동: 60초마다 1 감소, 행동(채집, 공격 등): 12초마다 1 감소
+    /// 정지: 100초마다 1 감소, 이동: 50초마다 3 감소, 행동(채집, 공격 등): 10초마다 1 감소
     /// </summary>
     private void handleHydrationDecrease()
     {
@@ -117,10 +117,12 @@ public class PlayerState : MonoBehaviour
         _hydrationTimer += Time.deltaTime;
 
         float targetInterval = HYDRATION_IDLE_TIME;
+        float decreaseAmount = 1.0f;
 
         if (_player.Movement.IsMoving)
         {
             targetInterval = HYDRATION_MOVE_TIME;
+            decreaseAmount = 3.0f;
         }
         else if (_player.Interaction.IsInteracting)
         {
@@ -130,7 +132,7 @@ public class PlayerState : MonoBehaviour
         if (_hydrationTimer >= targetInterval)
         {
             _hydrationTimer = 0f;
-            DecreaseHydration(1.0f);
+            DecreaseHydration(decreaseAmount);
         }
     }
 

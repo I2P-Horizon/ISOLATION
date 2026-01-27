@@ -380,6 +380,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8341492309211803748, guid: 571a7e81be646064b8b27e7c6cd47d1e, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8341492309211803748, guid: 571a7e81be646064b8b27e7c6cd47d1e, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9202187946675470742, guid: 571a7e81be646064b8b27e7c6cd47d1e, type: 3}
       propertyPath: m_Name
       value: Coconut (1)
