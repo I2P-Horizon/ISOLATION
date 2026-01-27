@@ -10,6 +10,9 @@ public class PlayerCondition : MonoBehaviour
     // 남은시간이 -1이면 무한 지속 상태
     private Dictionary<ConditionType, float> _activeConditions = new Dictionary<ConditionType, float>();
 
+    // 상태별 틱 타이머 저장 (상태타입, 마지막 발동 후 경과 시간)
+    private Dictionary<ConditionType, float> _tickTimers = new Dictionary<ConditionType, float>();
+
     // 기본 스탯 저장 (버프/디버프 해제 시 복구용)
     private float _baseMoveSpeed;
     private float _baseAttackSpeed;
@@ -38,9 +41,9 @@ public class PlayerCondition : MonoBehaviour
 
         foreach (var type in keys)
         {
-            float remainingTime = _activeConditions[type];
+            handleTickEffect(type);
 
-            applyPeriodicEffect(type);
+            float remainingTime = _activeConditions[type];
 
             if (remainingTime != -1)
             {
@@ -55,24 +58,55 @@ public class PlayerCondition : MonoBehaviour
         }
     }
 
-    private void applyPeriodicEffect(ConditionType type)
+    private void handleTickEffect(ConditionType type)
+    {
+        if (!_tickTimers.ContainsKey(type)) _tickTimers[type] = 0f;
+
+        float interval = getTickInterval(type);
+
+        if (interval > 0)
+        {
+            _tickTimers[type] += Time.deltaTime;
+
+            if (_tickTimers[type] >= interval)
+            {
+                _tickTimers[type] = 0f;
+                applyInstantEffect(type);
+            }
+        }
+    }
+
+    private float getTickInterval(ConditionType type)
+    {
+        switch (type)
+        {
+            case ConditionType.Bleeding: return 2.0f;
+            case ConditionType.Frostbite: return 5.0f;
+            case ConditionType.Heatstroke: return 3.0f;
+            case ConditionType.Indigestion: return 10.0f;
+            case ConditionType.Dehydration: return 5.0f;
+            default: return 0f;
+        }
+    }
+
+    private void applyInstantEffect(ConditionType type)
     {
         switch (type)
         {
             case ConditionType.Bleeding:
-                _player.State.DecreaseHP(0.01f * Time.deltaTime);
+                _player.State.DecreaseHP(3.0f);
                 break;
             case ConditionType.Frostbite:
-                _player.State.DecreaseHP(0.001f * Time.deltaTime);
+                _player.State.DecreaseHP(2.0f);
                 break;
             case ConditionType.Heatstroke:
-                _player.State.DecreaseHP(0.001f * Time.deltaTime);
+                _player.State.DecreaseHP(2.0f);
                 break;
             case ConditionType.Indigestion:
-                _player.State.DecreaseSatiety(0.001f * Time.deltaTime);
+                _player.State.DecreaseHP(1.0f);
                 break;
             case ConditionType.Dehydration:
-                _player.State.DecreaseHydration(0.001f * Time.deltaTime);
+                _player.State.DecreaseHP(3.0f);
                 break;
         }
     }
@@ -109,7 +143,11 @@ public class PlayerCondition : MonoBehaviour
         else
         {
             _activeConditions.Add(type, duration);
-            recalculateStats();
+
+            if (_tickTimers.ContainsKey(type)) _tickTimers.Add(type, 0f);
+            else _tickTimers[type] = 0f;
+
+                recalculateStats();
             Debug.Log($"[PlayerCondition] Added: {type}");
         }
     }
@@ -119,6 +157,9 @@ public class PlayerCondition : MonoBehaviour
         if (_activeConditions.ContainsKey(type))
         {
             _activeConditions.Remove(type);
+
+            if (_tickTimers.ContainsKey(type)) _tickTimers.Remove(type);
+
             recalculateStats();
             Debug.Log($"[PlayerCondition] Removed: {type}");
         }
@@ -137,26 +178,26 @@ public class PlayerCondition : MonoBehaviour
         // 디버프 계산
         if (HasCondition(ConditionType.Frostbite))
         {
-            moveSpeedMultiplier *= 0.5f;
+            moveSpeedMultiplier *= 0.95f;
         }
         if (HasCondition(ConditionType.Indigestion))
         {
-            moveSpeedMultiplier *= 0.8f;
+            moveSpeedMultiplier *= 0.97f;
         }
         if (HasCondition(ConditionType.Dehydration))
         {
-            moveSpeedMultiplier *= 0.9f;
-            attackSpeedMultiplier *= 0.9f;
+            moveSpeedMultiplier *= 0.97f;
+            attackSpeedMultiplier *= 0.97f;
         }
 
         // 버프 계산
         if (HasCondition(ConditionType.StrengthUp))
         {
-            attackSpeedMultiplier *= 1.2f;
+            attackSpeedMultiplier *= 1.02f;
         }
         if (HasCondition(ConditionType.Electrolyte))
         {
-            moveSpeedMultiplier *= 1.1f;
+            moveSpeedMultiplier *= 1.02f;
         }
 
         _player.State.SetMoveSpeed(_baseMoveSpeed * moveSpeedMultiplier);
