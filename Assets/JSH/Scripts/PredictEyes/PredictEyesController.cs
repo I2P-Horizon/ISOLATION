@@ -75,11 +75,12 @@ public class PredictEyesController : MonoBehaviour
     // EventManager에 등록해둔 순서 == EventNum
     // EventNumList
     // 0: ChangeTreesEmission
-    // 1: TombStoneSpawnEvent
-    // 2: StoneSpawnEvent
+    // 1: TombStoneSpawn
+    // 2: StoneSpawn
     // 3: HeavySnow
-    // 4:
-
+    // 4: Heatwave
+    // 5: Fear
+    // 6: HistoricEntrance
     IEnumerator PredictEyesActivation(int cachedEventNum)
     {
         switch(cachedEventNum)
