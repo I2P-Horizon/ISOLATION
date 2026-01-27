@@ -14,9 +14,6 @@ GameObject:
   - component: {fileID: 7460970288567812255}
   - component: {fileID: 463133844854829083}
   - component: {fileID: 51610563386958841}
-  - component: {fileID: 2091952818317131648}
-  - component: {fileID: 3151270363653266165}
-  - component: {fileID: 5800977153553341758}
   m_Layer: 0
   m_Name: EventManager
   m_TagString: Untagged
@@ -105,44 +102,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heavySnowPrefab: {fileID: 1868330292542900075, guid: cde7130f39b75294cbf8becedd3ef60c, type: 3}
---- !u!114 &2091952818317131648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 491286615410155061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f60f1192e93e124c8f693fda3c86283, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  globalVolumeProfile: {fileID: 11400000, guid: 96a14d466e8ce7f4a887e67f6bb6c618, type: 2}
-  ghostPrefab: {fileID: 3265921397637987674, guid: f27badf8c660ddc4e9d055b608857586, type: 3}
-  _spawningGhostCount: 30
---- !u!114 &3151270363653266165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 491286615410155061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58ee9fdd99e81a745999ffafd9b46c79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  globalVolumeProfile: {fileID: 11400000, guid: 96a14d466e8ce7f4a887e67f6bb6c618, type: 2}
---- !u!114 &5800977153553341758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 491286615410155061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c85130bd8c3d6a48a6632793c56c2b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HistoricEntrancePrefab: {fileID: 6062110117021622423, guid: 76abb951855d1354391646a271f22a62, type: 3}

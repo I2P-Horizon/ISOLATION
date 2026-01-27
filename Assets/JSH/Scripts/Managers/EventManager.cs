@@ -29,15 +29,6 @@ public class EventManager : MonoBehaviour, ICycleListener
         _eventNum = UnityEngine.Random.Range(0, _eventList.Count);
     }
 
-    private void Start()
-    {
-        if(!TimeManager.Instance.IsNight)
-        {
-            _eventList[0].ExecuteDayEvent();
-            _eventList[4].ExecuteDayEvent();
-        }
-    }
-
 
 
     public bool IsDirty() { return _dirty; }

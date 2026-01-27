@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 1912763324784384275}
   - component: {fileID: 5915461233577104324}
   - component: {fileID: 3206461319833490494}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Armadillo
   m_TagString: Creature
   m_Icon: {fileID: 0}
@@ -213,7 +213,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0

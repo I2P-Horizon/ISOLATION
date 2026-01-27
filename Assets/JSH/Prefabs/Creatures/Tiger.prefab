@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 1912763324784384275}
   - component: {fileID: 3840417091002732915}
   - component: {fileID: 3210295527379542289}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Tiger
   m_TagString: Creature
   m_Icon: {fileID: 0}
@@ -177,7 +177,7 @@ NavMeshAgent:
   m_Radius: 2.05
   m_Speed: 5
   m_Acceleration: 1
-  avoidancePriority: 10
+  avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
@@ -213,7 +213,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0

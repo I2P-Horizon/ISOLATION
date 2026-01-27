@@ -3,12 +3,7 @@ guid: 0cb975f4f04fe6d46b353c8f4da1dff7
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: armamo
-    second: {fileID: 2100000, guid: f1c10f957e590184980bff449a5b03ef, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
