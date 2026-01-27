@@ -178,26 +178,26 @@ public class PlayerCondition : MonoBehaviour
         // 디버프 계산
         if (HasCondition(ConditionType.Frostbite))
         {
-            moveSpeedMultiplier *= 0.95f;
+            moveSpeedMultiplier *= 0.7f;
         }
         if (HasCondition(ConditionType.Indigestion))
         {
-            moveSpeedMultiplier *= 0.97f;
+            moveSpeedMultiplier *= 0.8f;
         }
         if (HasCondition(ConditionType.Dehydration))
         {
-            moveSpeedMultiplier *= 0.97f;
-            attackSpeedMultiplier *= 0.97f;
+            moveSpeedMultiplier *= 0.7f;
+            attackSpeedMultiplier *= 0.7f;
         }
 
         // 버프 계산
         if (HasCondition(ConditionType.StrengthUp))
         {
-            attackSpeedMultiplier *= 1.02f;
+            attackSpeedMultiplier *= 1.2f;
         }
         if (HasCondition(ConditionType.Electrolyte))
         {
-            moveSpeedMultiplier *= 1.02f;
+            moveSpeedMultiplier *= 1.2f;
         }
 
         _player.State.SetMoveSpeed(_baseMoveSpeed * moveSpeedMultiplier);
