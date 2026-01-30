@@ -11,7 +11,7 @@ public class PlayerStatusUI : MonoBehaviour
 
     private void Update()
     {
-        if (Loading.Instance.isLoading) return;
+        //if (Loading.Instance.isLoading) return;
 
         _hpSlider.fillAmount = Player.Instance.State.GetCurrentHp() / 100;
         _satietySlider.fillAmount = Player.Instance.State.GetCurrentSatiety() / 100;
