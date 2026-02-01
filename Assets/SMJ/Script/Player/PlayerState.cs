@@ -5,41 +5,60 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 플레이어의 스탯(체력, 포만감 등)을 관리하는 스크립트
+/// 플레이어의 스탯(체력, 포만감, 수분량 등)을 관리하는 스크립트
 /// </summary>
 public class PlayerState : MonoBehaviour
 {
+    #region ** 변수 **
     private Player _player;
 
     // 플레이어 스탯
-    [Header("State")]
+    [Header("Base State")]
     [SerializeField] private float _maxHp = 100.0f;
     [SerializeField] private float _maxSatiety = 100.0f;
+    [SerializeField] private float _maxHydration = 100.0f;
     [SerializeField] private float _moveSpeed = 5.0f;
     [SerializeField] private float _attackSpeed = 1.0f;
     [SerializeField] private float _jumpHeight = 2.0f;
 
     public float MaxHp => _maxHp;
     public float MaxSatiety => _maxSatiety;
+    public float MaxHydration => _maxHydration;
     public float MoveSpeed => _moveSpeed;
     public float AttackSpeed => _attackSpeed;
     public float JumpHeight => _jumpHeight;
 
+    [Header("Current State")]
     [SerializeField] private float _hp;
     [SerializeField] private float _satiety;
+    [SerializeField] private float _hydration;
 
     // 내부 사용 변수
     private bool _die = false;
-
     public bool Die => _die;
 
-    private float _timeSinceZeroSatiety = 0; // 굶주림 지속 시간
-
     public bool IsSatietyZero => _satiety <= 0;
+    public bool IsHydrationZero => _hydration <= 0;
 
-    [Header("Hunger Penalty Settings")]
-    [SerializeField] private float _hpDecreaseInterval = 1.0f;
-    [SerializeField] private float _hpDecreaseAmount = 0.1f;
+    // 포만감 감소 간격
+    private const float SATIETY_IDLE_TIME = 30f;
+    private const float SATIETY_MOVE_TIME = 15f;
+    private const float SATIETY_ACTION_TIME = 6f;
+
+    // 수분 감소 간격
+    private const float HYDRATION_IDLE_TIME = 100f;
+    private const float HYDRATION_MOVE_TIME = 50f;
+    private const float HYDRATION_ACTION_TIME = 10f;
+
+    [Header("Starvation Penalty")]
+    [SerializeField] private float _starvationDamageInterval = 5.0f;
+    [SerializeField] private float _starvationDamageAmount = 1.0f;
+
+    // 내부 타이머
+    private float _satietyTimer = 0f;
+    private float _hydrationTimer = 0f;
+    private float _starvationTimer = 0f;
+    #endregion
 
     private void Awake()
     {
@@ -47,66 +66,145 @@ public class PlayerState : MonoBehaviour
 
         _hp = MaxHp;
         _satiety = MaxSatiety;
+        _hydration = MaxHydration;
     }
 
     private void Update()
     {
-        if (_satiety <= 0 && !_die)
+        if (_die) return;
+
+        handleSatietyDecrease();
+        handleHydrationDecrease();
+        handleStarvationDamage();
+    }
+
+    /// <summary>
+    /// 포만감 감소 처리 메서드
+    /// 정지: 30초마다 1 감소, 이동: 15초마다 1 감소, 행동(채집, 공격 등): 6초마다 1 감소
+    /// </summary>
+    private void handleSatietyDecrease()
+    {
+        if (_satiety <= 0) return;
+
+        _satietyTimer += Time.deltaTime;
+
+        float targetInterval = SATIETY_IDLE_TIME;
+
+        if (_player.Interaction.IsInteracting)
         {
-            _timeSinceZeroSatiety += Time.deltaTime;
+            targetInterval = SATIETY_ACTION_TIME;
+        }
+        else if (_player.Movement.IsMoving)
+        {
+            targetInterval = SATIETY_MOVE_TIME;
+        }
 
-            float hpLose = _player.Movement.IsMoving ? _hpDecreaseAmount * 2f : _hpDecreaseAmount;
+        if (_satietyTimer >= targetInterval)
+        {
+            _satietyTimer = 0f;
+            DecreaseSatiety(1.0f);
+        }
+    }
 
-            if (_timeSinceZeroSatiety >= _hpDecreaseInterval)
+    /// <summary>
+    /// 수분량 감소 처리 메서드
+    /// 정지: 100초마다 1 감소, 이동: 50초마다 3 감소, 행동(채집, 공격 등): 10초마다 1 감소
+    /// </summary>
+    private void handleHydrationDecrease()
+    {
+        if (_hydration <= 0) return;
+
+        _hydrationTimer += Time.deltaTime;
+
+        float targetInterval = HYDRATION_IDLE_TIME;
+        float decreaseAmount = 1.0f;
+
+        if (_player.Movement.IsMoving)
+        {
+            targetInterval = HYDRATION_MOVE_TIME;
+            decreaseAmount = 3.0f;
+        }
+        else if (_player.Interaction.IsInteracting)
+        {
+            targetInterval = HYDRATION_ACTION_TIME;
+        }
+
+        if (_hydrationTimer >= targetInterval)
+        {
+            _hydrationTimer = 0f;
+            DecreaseHydration(decreaseAmount);
+        }
+    }
+
+    /// <summary>
+    /// 포만감이 0일 때 체력 감소 처리 메서드
+    /// 5초마다 1 감소, hp는 1 이하로 떨어지지 않음
+    /// </summary>
+    private void handleStarvationDamage()
+    {
+        if (_satiety <= 0 && _hp > 1.0f)
+        {
+            _starvationTimer += Time.deltaTime;
+
+            if (_starvationTimer >= _starvationDamageInterval)
             {
-                _timeSinceZeroSatiety = 0;
-                _hp -= hpLose;
-
-                if (_hp <= 0)
+                _starvationTimer = 0f;
+                
+                if (_hp - _starvationDamageAmount <= 1.0f)
                 {
-                    _hp = 0;
-                    _die = true;
-                    StartCoroutine(GameManager.Instance.GameOver());
-                    Debug.Log("Die......!");
+                    _hp = 1.0f;
+                }
+                else
+                {
+                    _hp -= _starvationDamageAmount;
                 }
             }
         }
         else
         {
-            _timeSinceZeroSatiety = 0;
+            _starvationTimer = 0f;
         }
     }
 
-    // Getter
-    public float GetCurrentHp() { return _hp; }
-
-    public float GetCurrentSatiety() { return _satiety; }
-
-    // Setter
-    public void RestoreFullHp() { _hp = _maxHp; }
-
-    public void RestoreFullSatiety() { _satiety -= _maxSatiety; }
-
-    /// <returns>이미 포만감이 가득 차 있으면 false</returns>
-    public bool IncreaseSatiety(float amount)
+    public float GetCurrentHp()
     {
-        if (_satiety >= _maxSatiety)
-            return false;
+        return _hp;
+    }
 
-        _satiety = Mathf.Min(_maxSatiety, _satiety + amount);
+    public float GetCurrentSatiety()
+    {
+        return _satiety;
+    }
 
+    public bool IncreaseHp(float amount)
+    {
+        if (_hp >= _maxHp) return false;
+        _hp = Mathf.Min(_hp + amount, _maxHp);
         return true;
     }
 
-    /// <returns>이미 hp가 가득 차 있으면 false</returns>
-    public bool IncreaseHp(float amount)
+    public bool IncreaseSatiety(float amount)
     {
-        if (_hp >= _maxHp)
-            return false;
-
-        _hp = Mathf.Min(_maxHp, _hp + amount);
-
+        if (_satiety >= _maxSatiety) return false;
+        _satiety = Mathf.Min(_satiety + amount, _maxSatiety);
         return true;
+    }
+
+    public bool IncreaseHydration(float amount)
+    {
+        if (_hydration >= _maxHydration) return false;
+        _hydration = Mathf.Min(_hydration + amount, _maxHydration);
+        return true;
+    }
+
+    public void DecreaseHP(float amount)
+    {
+        _hp = Mathf.Max(0, _hp - amount);
+        if (_hp <= 0)
+        {
+            _hp = 0;
+            _die = true;
+        }
     }
 
     public void DecreaseSatiety(float amount)
@@ -114,9 +212,14 @@ public class PlayerState : MonoBehaviour
         _satiety = Mathf.Max(0, _satiety - amount);
     }
 
-    public void DecreaseHP(float amount)
+    public void DecreaseHydration(float amount)
     {
-        _hp = Mathf.Max(0, _hp - amount);
+        _hydration = Mathf.Max(0, _hydration - amount);
+    }
+
+    public float GetCurrentHydration()
+    {
+        return _hydration;
     }
 
     public void SetMoveSpeed(float speed)

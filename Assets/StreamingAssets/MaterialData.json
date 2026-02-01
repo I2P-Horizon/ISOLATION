@@ -31,5 +31,16 @@
       "itemPrice": 1,
       "maxAmount": 99
     }
+  ],
+  "Leather": [
+    {
+      "id": 50004,
+      "itemName": "호랑이 가죽",
+      "itemToolTip": "호랑이에게서 얻은 질긴 가죽",
+      "itemExplanation": "질겨서 여러 곳에 쓰입니다.",
+      "itemIcon": "TigerLeatherIcon",
+      "itemPrice": 1,
+      "maxAmount": 99
+    }
   ]
 }

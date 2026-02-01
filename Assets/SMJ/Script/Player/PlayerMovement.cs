@@ -14,11 +14,9 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController _characterController;
     private Animator _animator;
 
-    private float _moveSpeed; // 이동 속도
+    [SerializeField] private float _moveSpeed; // 이동 속도
     private float _jumpHeight; // 점프 높이
     [SerializeField] private float _gravity = -9.81f; // 중력가속도(음수)
-
-    [SerializeField] private float _satietyDecreaseAmount = 0.001f; // 이동에 따른 포만감 감소량
 
     private Vector3 _velocity; // 현재 속도
     private bool _isGrounded; // 땅에 닿아 있는지 여부
@@ -37,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        _moveSpeed = _player.State.MoveSpeed;
+
         GroundCheck();
         Move();
     }
@@ -75,6 +75,12 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 inputDir = GetInputMovement(); // 입력에 따른 방향 벡터 계산
 
+        // 혼란 상태일 때 이동 방향 반전
+        if (_player != null && _player.Condition.IsConfused)
+        {
+            inputDir *= -1;
+        }
+
         IsMoving = inputDir.sqrMagnitude != 0f;
 
         _velocity.x = 0f; // x축 속도 초기화
@@ -86,16 +92,35 @@ public class PlayerMovement : MonoBehaviour
 
             _moveSpeed = _player.State.IsSatietyZero ? _player.State.MoveSpeed * 0.5f : _player.State.MoveSpeed;
 
+            #region KSW: 카메라 방향 기준 이동 처리
+
+            /* 카메라 기준 방향 벡터 가져오기 */
+            Vector3 camForward = Camera.main.transform.forward;
+            Vector3 camRight = Camera.main.transform.right;
+
+            /* 수평 이동만 사용하기 위해 y값 제거 */
+            camForward.y = 0f;
+            camRight.y = 0f;
+
+            /* y값 제거로 벡터 길이가 달라지므로 정규화 (이동 속도 일정하게 유지) */
+            camForward.Normalize();
+            camRight.Normalize();
+
+            /*
+             * 입력 방향을 카메라 기준으로 변환.
+             * inputDir.z -> camForward 방향(앞/뒤)
+             * inputDir.x -> camRight 방향(좌/우)
+             * 두 방향을 더해 최종 이동 방향(moveDir)을 계산한다.
+            */
+            Vector3 moveDir = (camForward * inputDir.z) + (camRight * inputDir.x);
+            #endregion
+
             // 이동 처리
-            _characterController.Move(inputDir * _moveSpeed * Time.deltaTime);
+            _characterController.Move(moveDir * _moveSpeed * Time.deltaTime);
 
             // 이동 방향을 바라보도록 회전
-            Quaternion targetRotation = Quaternion.LookRotation(inputDir);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10.0f);
-
-            // 이동에 따른 포만감 감소
-            if (!_player.State.IsSatietyZero)
-                _player.State.DecreaseSatiety(_satietyDecreaseAmount);
         }
 
         // 스페이스 입력 && 플레이어가 땅에 닿은 상태일 때
@@ -105,11 +130,21 @@ public class PlayerMovement : MonoBehaviour
 
             // 점프 높이와 중력으로 초기 y속도 계산
             _velocity.y = Mathf.Sqrt(_jumpHeight * -2.0f * _gravity);
+            _animator.SetTrigger("Jump");
         }
+
+        #region KSW: 애니메이션 적용
+        /* 이동 중인지 여부에 따라 isMoving 조건 변경 */
+        bool isMovingAir = inputDir.sqrMagnitude != 0f;
+        _animator.SetBool("isMoving", isMovingAir);
+
+        _animator.SetFloat("Horizontal", inputDir.x, 0.05f, Time.deltaTime);
+        _animator.SetFloat("Vertical", inputDir.z, 0.05f, Time.deltaTime);
+        #endregion
 
         ApplyGravity();
 
-        _animator.SetBool("isMoving", IsMoving); // 애니메이션 상태 업데이트
+        //_animator.SetBool("isMoving", IsMoving); // 애니메이션 상태 업데이트
     }
 
     /// <summary>

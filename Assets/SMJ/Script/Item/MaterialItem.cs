@@ -11,7 +11,7 @@ public class MaterialItem : CountableItem, IUsableItem
 
     public bool Use()
     {
-        Amount--;
+        //Amount--;
 
         return true;
     }

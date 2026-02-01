@@ -5,13 +5,28 @@
             "itemName": "돌검",
             "itemToolTip": "가볍고 사용하기 쉬운 검.",
             "itemExplanation": "공격력 5 상승",
-            "itemIcon": "StoneSwordIcon",
-            "itemPrefeb": "StoneSwordPrefeb",
+            "itemIcon": "SwordIcon",
+            "itemPrefeb": "SwordPrefeb",
             "itemPrice": 50,
             "damage": 5,
             "rate": 1.0,
             "type": "Weapon",
             "subType": "Sword"
+        }
+    ],
+    "Torch": [
+        {
+            "id": 30002,
+            "itemName": "횃불",
+            "itemToolTip": "주변을 밝혀주는 횃불.",
+            "itemExplanation": "공격력 1 상승",
+            "itemIcon": "TorchIcon",
+            "itemPrefeb": "TorchPrefab",
+            "itemPrice": 10,
+            "damage": 1,
+            "rate": 2.0,
+            "type": "Weapon",
+            "subType": "Torch"
         }
     ]
 }

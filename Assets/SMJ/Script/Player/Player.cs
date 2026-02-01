@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public PlayerState State {  get; private set; }
     public PlayerMovement Movement { get; private set; }
     public PlayerInteraction Interaction { get; private set; }
+    public PlayerCondition Condition { get; private set; }
 
     private void Awake()
     {
@@ -23,5 +24,6 @@ public class Player : MonoBehaviour
         State = GetComponent<PlayerState>();
         Movement = GetComponent<PlayerMovement>();
         Interaction = GetComponent<PlayerInteraction>();
+        Condition = GetComponent<PlayerCondition>();
     }
 }

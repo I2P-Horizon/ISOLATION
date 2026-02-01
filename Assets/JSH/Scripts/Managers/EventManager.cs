@@ -1,25 +1,50 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 
 public class EventManager : MonoBehaviour, ICycleListener
 {
+    public static EventManager Instance { get; private set; }
     public int EventNum => _eventNum;
     private int _eventNum;
 
     private List<IEvent> _eventList;
 
+    private bool _dirty = false;
 
+    public static event Action OnNextEventNumberSet;
 
     private void Awake()
     {
+        if (Instance == null) Instance = this;
+
         if (!TimeManager.Instance) return;
         TimeManager.Instance.Register(this);
 
         _eventList = new List<IEvent>();
         InitEventList();
 
-        _eventNum = Random.Range(0, _eventList.Count);
+        _eventNum = UnityEngine.Random.Range(0, _eventList.Count);
+    }
+
+    private void Start()
+    {
+        if(!TimeManager.Instance.IsNight)
+        {
+            _eventList[0].ExecuteDayEvent();
+            _eventList[4].ExecuteDayEvent();
+        }
+    }
+
+
+
+    public bool IsDirty() { return _dirty; }
+
+    public void SetDirty(bool dirty = false)
+    {
+        _dirty = dirty;
     }
 
 
@@ -53,7 +78,10 @@ public class EventManager : MonoBehaviour, ICycleListener
 
     private void SetNextNightEventNum()
     {
-        _eventNum = Random.Range(0, _eventList.Count);
+        _eventNum = UnityEngine.Random.Range(0, _eventList.Count);
         Debug.Log($"Set RandEventNum{_eventNum}");
+
+        OnNextEventNumberSet?.Invoke();
+        SetDirty(true);
     }
 }

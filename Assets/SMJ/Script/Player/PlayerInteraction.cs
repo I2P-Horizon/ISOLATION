@@ -31,8 +31,6 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private float _gatherStrength = 5.0f;
     /// <summary>지속 채집 간격</summary>
     [SerializeField] private float _gatherInterval = 1.0f;
-    /// <summary>채집 시 포만감 감소량</summary>
-    [SerializeField] private float _satietyDecreaseAmount = 0.05f;
 
     [Header("Attack")]
     /// <summary>공격력</summary>
@@ -40,17 +38,26 @@ public class PlayerInteraction : MonoBehaviour
     /// <summary>공격 속도</summary>
     [SerializeField] private float _attackInterval = 0.8f;
 
+    [Header("CraftingTable Interaction")]
+    /// <summary>제작대 감지 반경</summary>
+    [SerializeField] private float _ctDetectRadius = 1.0f;
+    /// <summary>제작대 레이어</summary>
+    [SerializeField] private LayerMask _ctLayerMask;
+
     private List<PickupItem> _ItemsInScope; // 플레이어 주변에 감지된 아이템 목록
 
     private InteractionState _currentState = InteractionState.None; // 현재 상태
     private MonoBehaviour _currentTarget = null; // 현재 상호작용 중인 대상
     private float _lastInteractionTime = 0; // 마지막으로 상호작용한 시간
 
+    private Animator _animator;
+
     public bool IsInteracting => _currentState != InteractionState.None;
 
     private void Awake()
     {
         _player = GetComponent<Player>();
+        _animator = GetComponent<Animator>();
         _ItemsInScope = new List<PickupItem>();
     }
 
@@ -73,6 +80,8 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
+            if (TryInteractionWithCraftingTable()) return;
+
             TryPickupItem();
         }
     }
@@ -145,11 +154,15 @@ public class PlayerInteraction : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, mask, QueryTriggerInteraction.Ignore))
         {
             Debug.Log($"Camera : {mouseHit.collider.name}");
-            Vector3 dir = (mouseHit.point - transform.position);
+            Debug.DrawRay(ray.origin, ray.direction * 100.0f, Color.green, 1f);
+            Vector3 dir = (mouseHit.collider.bounds.center - transform.position).normalized;
+            //Debug.Log($"mouseHit.transform.position : {mouseHit.transform.position}");
+            //Debug.Log($"mouseHit.transform.localPosition : {mouseHit.transform.localPosition}");
+            //Debug.Log($"transform.position : {transform.position}");
 
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, mask, QueryTriggerInteraction.Ignore))
             {
-                Debug.Log($"Player {hit.collider.name}");
+                Debug.Log($"Player : {hit.collider.name}");
                 Debug.DrawRay(transform.position, dir * _interactionDistance, Color.green, 1f);
                 if (hit.collider.TryGetComponent(out DestructibleObject destructible))
                 {
@@ -184,10 +197,11 @@ public class PlayerInteraction : MonoBehaviour
         switch (_currentState)
         {
             case InteractionState.Gathering:
+                _animator.SetTrigger("Gathering");
                 (_currentTarget as GatherableObject)?.Interact(_gatherStrength);
-                _player.State.DecreaseSatiety(_satietyDecreaseAmount);
                 break;
             case InteractionState.Attacking:
+                _animator.SetTrigger("Gathering");
                 (_currentTarget as CreatureBase)?.Interact(_attackPower);
                 break;
         }
@@ -288,6 +302,35 @@ public class PlayerInteraction : MonoBehaviour
         {
             Debug.DrawRay(transform.position, dir * dist, Color.red, 1f);
             return hit.collider.gameObject == item.gameObject;
+        }
+
+        return false;
+    }
+
+    private bool TryInteractionWithCraftingTable()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _ctDetectRadius, _ctLayerMask);
+
+        CraftingTable nearestCT = null;
+        float nearestDist = float.MaxValue;
+
+        foreach (Collider col in colliders)
+        {
+            if (col.TryGetComponent(out CraftingTable ct))
+            {
+                float dist = Vector3.Distance(transform.position, ct.transform.position);
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearestCT = ct;
+                }
+            }
+        }
+
+        if (nearestCT != null)
+        {
+            nearestCT.Interact();
+            return true;
         }
 
         return false;
