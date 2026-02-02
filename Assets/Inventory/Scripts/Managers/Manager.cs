@@ -5,7 +5,7 @@ using UnityEngine;
 public class Manager : Singleton<Manager>
 {
     //[SerializeField] public PlayerController player;
-    [SerializeField] public GameObject profileUI;
+    //[SerializeField] public GameObject profileUI;
 
     protected override void Awake()
     {
@@ -15,10 +15,11 @@ public class Manager : Singleton<Manager>
   
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            profileUI.SetActive(!profileUI.activeSelf);
-        }
+        //if (Input.GetKeyDown(KeyCode.P))
+        //{
+        //    profileUI.SetActive(!profileUI.activeSelf);
+        //}
+
         //else if (Input.GetKeyDown(KeyCode.CapsLock))
         //{
         //    DataManager.Instance.SavePlayerData();
