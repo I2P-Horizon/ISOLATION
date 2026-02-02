@@ -4,26 +4,22 @@ using UnityEngine;
 
 public class CraftingTable : MonoBehaviour, IInteractable
 {
-    [SerializeField] private CraftingUI _craftingUI;
+    [SerializeField] private GameObject _craftingUIGo;
 
     private void OnEnable()
     {
-        if (_craftingUI == null)
+        if (_craftingUIGo == null)
         {
-            GameObject craftingGo = GameObject.FindWithTag("CraftingUI");
-            if (craftingGo != null)
-            {
-                _craftingUI = craftingGo.GetComponentInChildren<CraftingUI>(true);
-            }
+            _craftingUIGo = GameObject.FindWithTag("CraftingUI");
         }
     }
 
     public void Interact(object context = null)
     {
         // 제작 UI 열기
-        if (_craftingUI != null)
+        if (_craftingUIGo != null)
         {
-            _craftingUI.OpenUI();
+            _craftingUIGo.GetComponent<UIAnimator>().Show();
         }
     }
 }

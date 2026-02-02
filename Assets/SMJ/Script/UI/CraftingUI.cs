@@ -40,13 +40,21 @@ public class CraftingUI : MonoBehaviour
         craftButton.onClick.AddListener(tryCraftItem);
     }
 
+    private void OnEnable()
+    {
+        ShowRecipeList("All");
+        clearIngredients();
+        currentRecipe = null;
+        craftButton.interactable = false;
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (backgroundPanel.activeSelf)
             {
-                CloseUI();
+                this.gameObject.GetComponent<UIAnimator>().Close();
             }
         }
     }

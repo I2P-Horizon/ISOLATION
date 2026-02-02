@@ -31,6 +31,9 @@ public class PlayerCondition : MonoBehaviour
     {
         if (_player.State.Die) return;
 
+        _baseMoveSpeed = _player.State.MoveSpeed;
+        _baseAttackSpeed = _player.State.AttackSpeed;
+
         updateTimersAndEffects();
         checkDehydrationAuto();
     }

@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public PlayerMovement Movement { get; private set; }
     public PlayerInteraction Interaction { get; private set; }
     public PlayerCondition Condition { get; private set; }
+    public PlayerEquipment Equipment { get; private set; }
 
     private void Awake()
     {
@@ -25,5 +26,6 @@ public class Player : MonoBehaviour
         Movement = GetComponent<PlayerMovement>();
         Interaction = GetComponent<PlayerInteraction>();
         Condition = GetComponent<PlayerCondition>();
+        Equipment = GetComponent<PlayerEquipment>();
     }
 }

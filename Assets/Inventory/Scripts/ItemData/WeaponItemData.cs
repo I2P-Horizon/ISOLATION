@@ -21,6 +21,7 @@ public class WeaponItemData : EquipmentItemData
     public float Rate => rate;
     public string Type => type;
     public string SubType => subType;
+
     public WeaponItemData(WeaponItemDTO dto)
     {
         this.id = dto.id;
@@ -34,6 +35,18 @@ public class WeaponItemData : EquipmentItemData
         this.rate = dto.rate;
         this.type = dto.type;
         this.subType = dto.subType;
+        this.TargetSlot = determineSlot(dto.subType);
+        this.maxDurability = dto.maxDurability;
+    }
+
+    private EquipmentType determineSlot(string subType)
+    {
+        switch (subType)
+        {
+            case "Weapon": return EquipmentType.RightHand;
+            case "Tool": return EquipmentType.LeftHand;
+            default: return EquipmentType.None;
+        }
     }
 
     public override Item CreateItem()

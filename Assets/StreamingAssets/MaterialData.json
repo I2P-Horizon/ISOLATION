@@ -4,26 +4,44 @@
       "id": 50001,
       "itemName": "나뭇가지",
       "itemToolTip": "가공되지 않은 나뭇가지.",
-      "itemExplanation": "다양한 도구의 재료로 사용됩니다.",
+      "itemExplanation": "여러 장비 제작에 쓰인다.",
       "itemIcon": "TimberIcon",
-      "itemPrice": 2,
+      "itemPrice": 1,
       "maxAmount": 99
     }
   ],
   "Stone": [
     {
       "id": 50002,
-      "itemName": "조약돌",
-      "itemToolTip": "강가에서 주운 흔한 돌.",
-      "itemExplanation": "단단해서 여러 곳에 쓰입니다.",
+      "itemName": "돌 조각",
+      "itemToolTip": "작은 돌 조각.",
+      "itemExplanation": "초기 제작에 자주 쓰인다.",
       "itemIcon": "CobbleStoneIcon",
+      "itemPrice": 1,
+      "maxAmount": 99
+    },
+    {
+      "id": 50003,
+      "itemName": "금 조각",
+      "itemToolTip": "가공되지 않은 금 조각.",
+      "itemExplanation": "가공하면 더 유용하게 쓸 수 있다.",
+      "itemIcon": "PieceOfGoldIcon",
+      "itemPrice": 1,
+      "maxAmount": 99
+    },
+    {
+      "id": 50004,
+      "itemName": "다이아 조각",
+      "itemToolTip": "가공되지 않은 다이아 조각.",
+      "itemExplanation": "가공을 거치면 고급 제작에 쓰인다.",
+      "itemIcon": "PieceOfDiaIcon",
       "itemPrice": 1,
       "maxAmount": 99
     }
   ],
   "Plant": [
     {
-      "id": 50003,
+      "id": 50005,
       "itemName": "잡초",
       "itemToolTip": "덤불에서 뜯어낸 잡초",
       "itemExplanation": "불쏘시개로 사용할 수 있습니다.",
@@ -34,13 +52,42 @@
   ],
   "Leather": [
     {
-      "id": 50004,
+      "id": 50006,
       "itemName": "호랑이 가죽",
       "itemToolTip": "호랑이에게서 얻은 질긴 가죽",
-      "itemExplanation": "질겨서 여러 곳에 쓰입니다.",
+      "itemExplanation": "여러 생존 도구에 쓰일 수 있다.",
       "itemIcon": "TigerLeatherIcon",
       "itemPrice": 1,
       "maxAmount": 99
+    }
+  ],
+  "General": [
+    {
+      "id": 50007,
+      "itemName": "소금",
+      "itemToolTip": "조금 특별한 성질을 가진 소금.",
+      "itemExplanation": "몸의 균형을 유지하는 데 쓰인다.",
+      "itemIcon": "SaltIcon",
+      "itemPrice": 1,
+      "maxAmount": 99
+    },
+    {
+      "id": 50008,
+      "itemName": "민트 잎",
+      "itemToolTip": "상쾌한 향이 나는 민트 잎.",
+      "itemExplanation": "소화를 돕는 성질로 알려져 있다.",
+      "itemIcon": "MintLeavesIcon",
+      "itemPrice": 1,
+      "maxAmount": 99
+    },
+    {
+      "id": 50009,
+      "itemName": "물이 담긴 양동이",
+      "itemToolTip": "물이 담긴 양동이.",
+      "itemExplanation": "마시거나 다른 음료를 만드는 데 사용할 수 있다.",
+      "itemIcon": "BucketOfWaterIcon",
+      "itemPrice": 1,
+      "maxAmount": 1
     }
   ]
 }

@@ -32,7 +32,7 @@ public class PlaceableItem : CountableItem, IUsableItem
             int index = inv.GetItemIndexByID(Data.ID);
             if (index >= 0)
             {
-                inv.Remove(index);
+                inv.ConsumeItem(Data.ID, 1);
             }
         }
     }

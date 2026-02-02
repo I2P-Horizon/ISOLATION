@@ -12,9 +12,13 @@ using UnityEngine.UI;
 public class ItemSlotUI : MonoBehaviour
 {
     #region ** Serialized Fields **
+    [SerializeField] private Item item; 
     [SerializeField] private Image iconImage;           // 아이템 아이콘 이미지
     [SerializeField] private Text amountText;           // 아이템 수량
     [SerializeField] private Image highlightImage;      // 하이라이트 이미지
+    [SerializeField] private Slider durabilitySlider;   // 내구도 슬라이더
+    [SerializeField] private Image durabilityFillImage; // 내구도 슬라이더 Fill 이미지
+    [SerializeField] private Gradient durabilityGradient;
     #endregion
 
     #region ** Fields **
@@ -107,6 +111,11 @@ public class ItemSlotUI : MonoBehaviour
         HideIcon();
         // 하이라이트 효과 꺼놓기
         highlightGo.SetActive(false);
+
+        if (durabilitySlider != null)
+        {
+            durabilitySlider.gameObject.SetActive(false);
+        }
     }
 
     // 아이템 아이콘 활성화
@@ -121,9 +130,55 @@ public class ItemSlotUI : MonoBehaviour
     // 수량 텍스트 비활성화
     private void HideText() => textGo.SetActive(false);
 
+    private void updateDurabilitySlider(Item item)
+    {
+        if (durabilitySlider == null) return;
+
+        if (item is EquipmentItem equipItem && equipItem.EquipmentData.MaxDurability > 0)
+        {
+            durabilitySlider.gameObject.SetActive(true);
+
+            float percent = equipItem.CurrentDurability / equipItem.EquipmentData.MaxDurability;
+            durabilitySlider.value = percent;
+
+            if (durabilityGradient != null && durabilityFillImage != null)
+            {
+                durabilityFillImage.color = durabilityGradient.Evaluate(percent);
+            }
+        }
+        else
+        {
+             durabilitySlider.gameObject.SetActive(false);
+        }
+    }
+
     #endregion
 
     #region ** Public Methods **
+    public void SetItem(Item item)
+    {
+        if (item == null)
+        {
+            RemoveItemIcon();
+            return;
+        }
+
+        this.item = item;
+
+        SetItemIcon(item.Data.ItemIcon);
+
+        if (item is CountableItem countableItem)
+        {
+            SetItemAmount(countableItem.Amount);
+        }
+        else
+        {
+            SetItemAmount(-1);
+        }
+
+        updateDurabilitySlider(item);
+    }
+
     // 슬롯 인덱스 설정
     public void SetSlotIndex(int index) => Index = index;
     
@@ -144,6 +199,8 @@ public class ItemSlotUI : MonoBehaviour
             slotImage.color = InAccessibleSlotColor;
             HideIcon();
             HideText();
+
+            if (durabilitySlider) durabilitySlider.gameObject.SetActive(false);
         }
 
         isAccessibleSlot = value;
@@ -192,7 +249,7 @@ public class ItemSlotUI : MonoBehaviour
         {
             iconImage.sprite = Resources.Load<Sprite>($"Icon/{itemSprite}");
 
-            if (amount > 1)
+            if (amount != -1)
                 ShowText();
             else
                 HideText();
@@ -221,13 +278,18 @@ public class ItemSlotUI : MonoBehaviour
         iconImage.sprite = null;
         HideIcon();
         HideText();
+
+        if (durabilitySlider != null)
+        {
+            durabilitySlider.gameObject.SetActive(false);
+        }
     }
 
     // 슬롯에 아이템 갯수 텍스트 설정
     public void SetItemAmount(int amount)
     {
-        // 갯수가 2개이상일때만 표시
-        if (HasItem && amount > 1)
+        
+        if (HasItem && amount != -1)
         {
             ShowText();
         }
@@ -249,11 +311,11 @@ public class ItemSlotUI : MonoBehaviour
         if (!this.IsAccessible || !otherSlot.IsAccessible) return;
 
         // 1. 다른 슬롯에 아이템이 있을 때 -> 내 아이콘은 다른 슬롯의 아이콘으로 변경
-        if (otherSlot.HasItem) SetItemIcon(otherSlot.iconName);
+        if (otherSlot.HasItem) SetItem(otherSlot.item);
         // 2. 다른 슬롯에 아이템이 없을 때 -> 내 아이콘만 지우기
         else RemoveItemIcon();
 
-        otherSlot.SetItemIcon(iconName);
+        otherSlot.SetItem(item);
     }
 
     // 슬롯 하이라이트 표시 및 해제

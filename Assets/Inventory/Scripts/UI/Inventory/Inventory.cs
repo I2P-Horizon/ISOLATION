@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using Unity.VisualScripting;
 
 /*
                         Inventory
@@ -31,16 +32,19 @@ public class Inventory : MonoBehaviour
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private GameObject inventoryGo;
     [SerializeField] private Item[] items;
-    //[SerializeField] private EquipmentUI equipmentUI;
+    [SerializeField] private GameObject profileGo;
     [SerializeField] private PlayerItemGroupUI playerItemGruopUI;
+
+    [SerializeField] private int quickSlotCount = 6;
     #endregion
 
     #region ** Fields **
     public ItemData[] itemDataArray;
     public int Capacity { get; private set; }   // 인벤토리 수용한도
+    public int QuickSlotCount => quickSlotCount;
 
-    private int initCapacity = 36;              // 초기 인벤토리 수용한도
-    private int maxCapacity = 36;               // 최대 인벤토리 수용한도
+    private int initCapacity = 42;              // 초기 인벤토리 수용한도
+    private int maxCapacity = 42;               // 최대 인벤토리 수용한도
 
     #endregion
 
@@ -51,7 +55,6 @@ public class Inventory : MonoBehaviour
         items = new Item[maxCapacity];                  
         itemDataArray = new ItemData[maxCapacity];
 
-        // 초기 수용량 : 24(임시)
         Capacity = initCapacity;
         inventoryUI.SetInventoryRef(this);
     }
@@ -60,6 +63,7 @@ public class Inventory : MonoBehaviour
     {
         LoadInventoryData();
         UpdateAccessibleSlots();
+        playerItemGruopUI.UpdateSlots();
     }
 
     private void Update()
@@ -68,6 +72,12 @@ public class Inventory : MonoBehaviour
         {
             if (!inventoryGo.activeSelf) inventoryGo.GetComponent<UIAnimator>().Show();
             else inventoryGo.GetComponent<UIAnimator>().Close();
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (!profileGo.activeSelf) profileGo.GetComponent<UIAnimator>().Show();
+            else profileGo.GetComponent<UIAnimator>().Close();
         }
     }
 
@@ -221,10 +231,10 @@ public class Inventory : MonoBehaviour
     }
 
     // 인벤토리 앞쪽부터 비어있는 슬롯 인덱스 탐색(성공시 빈슬롯 인덱스 반환, 실패시 -1 반환)
-    private int FindEmptySlotIndex(int startIndex = 0)
+    private int FindEmptySlotIndex(int startIndex, int endIndex)
     {
         // 전체 슬롯 탐색
-        for(int i = startIndex; i < Capacity; i++)
+        for(int i = startIndex; i < endIndex; i++)
         {
             // 빈 슬롯이 있다면 그 슬롯의 인덱스 반환
             if (items[i] == null)
@@ -236,9 +246,9 @@ public class Inventory : MonoBehaviour
     }
 
     // 인벤토리 앞쪽부터 갯수 여유가 있는 Countable Item 슬롯 인덱스 탐색
-    private int FindCountableItemSlotIndex(CountableItemData target, int startIndex = 0)
+    private int FindCountableItemSlotIndex(CountableItemData target, int startIndex, int endIndex)
     {
-        for(int i = startIndex; i<Capacity;i++)
+        for(int i = startIndex; i<endIndex;i++)
         {
             var current = items[i];             // 탐색중인 아이템 기억
 
@@ -275,7 +285,7 @@ public class Inventory : MonoBehaviour
             if(item is CountableItem ci)
             {
                 inventoryUI.SetItemIconAndAmountText(index, item.Data.ItemIcon, ci.Amount);
-                playerItemGruopUI.UpdateSlots();
+                
             }
             // 2. 장비 아이템
             else if(item is EquipmentItem ei)
@@ -293,16 +303,22 @@ public class Inventory : MonoBehaviour
         else
         {
             Remove(index);
-            playerItemGruopUI.UpdateSlots();
             //RemoveIcon();
         }
 
-        // 아이콘 제거 함수
-        //void RemoveIcon()
-        //{
-        //    inventoryUI.RemoveItem(index);
-        //    inventoryUI.HideItemAmountText(index);
-        //}
+        if (index < quickSlotCount)
+        {
+            if (item != null)
+            {
+                playerItemGruopUI.SetItemIconAndAmountText(index, item);
+            }
+            else
+            {
+                playerItemGruopUI.RemoveItemAt(index);
+            }
+        }
+        
+        playerItemGruopUI.UpdateSlots();
 
         // 인벤토리 데이터 저장
         SaveInventoryData();
@@ -336,6 +352,13 @@ public class Inventory : MonoBehaviour
     private bool IsCountableItem(int index)
     {
         return HasItem(index) && items[index] is CountableItem;
+    }
+
+    public Item GetItem(int index)
+    {
+        if (!IsValidIndex(index)) return null;
+        if (items[index] == null) return null;
+        return items[index];
     }
 
     // 해당 인덱스의 슬롯 아이템 정보 가져오기
@@ -406,57 +429,92 @@ public class Inventory : MonoBehaviour
         // 1. ItemData가 CountableItem일 경우 => 갯수 1개~99개까지 가능
         if(itemData is CountableItemData ciData)
         {
-            bool findNextCi = true;
-            index = -1;
+            //bool findNextCi = true;
+            //index = -1;
 
-            // 남은 아이템 수량이 없을때까지 반복
-            while(amount > 0)
+            //// 남은 아이템 수량이 없을때까지 반복
+            //while(amount > 0)
+            //{
+            //    // 추가할 아이템이 인벤토리에 존재
+            //    if(findNextCi)
+            //    {
+            //        // 개수 여유가 있는 슬롯 탐색
+            //        index = FindCountableItemSlotIndex(ciData, index + 1);
+
+            //        // 없다면
+            //        if(index == -1)
+            //        {
+            //            findNextCi = false;
+            //        }
+            //        // 있다면 합치기
+            //        else
+            //        {
+            //            CountableItem ci = items[index] as CountableItem;
+            //            // 기존에 있던 아이템 갯수에 추가 및 초과량 반환
+            //            amount = ci.AddAmountAndGetExcess(amount);
+
+            //            UpdateSlot(index);
+            //        }
+            //    }
+            //    // 추가할 아이템이 인벤토리에 존재하지 않을 때
+            //    else
+            //    {
+            //        index = FindEmptySlotIndex(index + 1);  // 빈슬롯 찾기
+
+            //        // 빈슬롯이 없을 때
+            //        if(index == -1)
+            //        {
+            //            break;
+            //        }
+            //        else
+            //        {
+            //            // 새로운 아이템 생성
+            //            CountableItem ci = ciData.CreateItem() as CountableItem;
+            //            ci.SetAmount(amount);
+
+            //            // 슬롯에 아이템 추가
+            //            items[index] = ci;
+
+            //            // 남은 갯수 계산
+            //            amount = (amount > ciData.MaxAmount) ? (amount - ciData.MaxAmount) : 0;
+
+            //            UpdateSlot(index);
+            //        }
+            //    }
+            //}
+
+            while (amount > 0)
             {
-                // 추가할 아이템이 인벤토리에 존재
-                if(findNextCi)
+                index = FindCountableItemSlotIndex(ciData, 0, quickSlotCount);
+
+                if (index == -1)
                 {
-                    // 개수 여유가 있는 슬롯 탐색
-                    index = FindCountableItemSlotIndex(ciData, index + 1);
-
-                    // 없다면
-                    if(index == -1)
-                    {
-                        findNextCi = false;
-                    }
-                    // 있다면 합치기
-                    else
-                    {
-                        CountableItem ci = items[index] as CountableItem;
-                        // 기존에 있던 아이템 갯수에 추가 및 초과량 반환
-                        amount = ci.AddAmountAndGetExcess(amount);
-
-                        UpdateSlot(index);
-                    }
+                    index = FindCountableItemSlotIndex(ciData, quickSlotCount, Capacity);
                 }
-                // 추가할 아이템이 인벤토리에 존재하지 않을 때
+
+                if (index != -1)
+                {
+                    CountableItem ci = items[index] as CountableItem;
+                    amount = ci.AddAmountAndGetExcess(amount);
+                    UpdateSlot(index);
+                }
                 else
                 {
-                    index = FindEmptySlotIndex(index + 1);  // 빈슬롯 찾기
+                    index = FindEmptySlotIndex(0, quickSlotCount);
 
-                    // 빈슬롯이 없을 때
-                    if(index == -1)
+                    if (index == -1)
                     {
-                        break;
+                        index = FindEmptySlotIndex(quickSlotCount, Capacity);
                     }
-                    else
-                    {
-                        // 새로운 아이템 생성
-                        CountableItem ci = ciData.CreateItem() as CountableItem;
-                        ci.SetAmount(amount);
 
-                        // 슬롯에 아이템 추가
-                        items[index] = ci;
+                    if (index == -1) break;
 
-                        // 남은 갯수 계산
-                        amount = (amount > ciData.MaxAmount) ? (amount - ciData.MaxAmount) : 0;
+                    CountableItem ci = ciData.CreateItem() as CountableItem;
+                    ci.SetAmount(amount);
+                    items[index] = ci;
 
-                        UpdateSlot(index);
-                    }
+                    amount = (amount > ciData.MaxAmount) ? (amount - ciData.MaxAmount) : 0;
+                    UpdateSlot(index);
                 }
             }
         }
@@ -465,17 +523,19 @@ public class Inventory : MonoBehaviour
         {
             if (amount == 1)
             {
-                // 빈 슬롯을 찾아서 아이템 생성 후 슬롯에 추가
-                index = FindEmptySlotIndex();
+                index = FindEmptySlotIndex(0, quickSlotCount);
 
-                // 빈 슬롯이 있다면
+                if (index == -1)
+                {
+                    index = FindEmptySlotIndex(quickSlotCount, Capacity);
+                }
+
                 if (index != -1)
                 {
-                    items[index] = itemData.CreateItem();
-                    amount = 0;
-
-                    // 슬롯 갱신
+                    Item item = itemData.CreateItem();
+                    items[index] = item;
                     UpdateSlot(index);
+                    amount = 0;
                 }
             }
         }
@@ -501,7 +561,7 @@ public class Inventory : MonoBehaviour
     public void AddItemAtPlayerItemSlot(int index, PlayerItemSlotUI slot)
     {
         if (items[index] is CountableItem ci)
-            playerItemGruopUI.SetItemIconAndAmountText(slot.index, ci);
+            playerItemGruopUI.SetItemIconAndAmountText(slot.Index, ci);
     }
 
     // 해당 인덱스 슬롯의 아이템 제거
@@ -509,13 +569,20 @@ public class Inventory : MonoBehaviour
     {
         if (!IsValidIndex(index)) return;
 
-        playerItemGruopUI.RemoveItem((CountableItem)items[index]);
+        Item item = items[index];
 
         // 인덱스의 아이템 제거
         items[index] = null;
 
         // 아이콘 및 텍스트 제거
-        inventoryUI.RemoveItem(index);
+        if (index < quickSlotCount)
+        {
+            playerItemGruopUI.RemoveItemAt(index);
+        }
+        else
+        {
+            inventoryUI.RemoveItem(index);
+        }
     }
 
     // 두 슬롯 아이템 스왑
@@ -589,7 +656,9 @@ public class Inventory : MonoBehaviour
         // 2. 장비 아이템일 때
         else if (items[index] is IEquipableItem)
         {
-            Remove(index);
+            bool result = Player.Instance.Equipment.Equip(items[index] as EquipmentItem);
+            
+            if (result) Remove(index);
         }
 
         UpdateSlot(index); 

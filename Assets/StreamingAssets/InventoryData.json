@@ -1,3 +1,256 @@
 {
-  "itemList": []
+  "itemList": [
+    {
+            "slotIndex": 0,
+            "itemId": 60002,
+            "amount": 1,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 1,
+            "itemId": 60001,
+            "amount": 1,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 2,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 3,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 4,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 5,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 6,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 7,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 8,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 9,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 10,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 11,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 12,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 13,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 14,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 15,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 16,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 17,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 18,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 19,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 20,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 21,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 22,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 23,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 24,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 25,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 26,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 27,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 28,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 29,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 30,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 31,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 32,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 33,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 34,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 35,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 36,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 37,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 38,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 39,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 40,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        },
+        {
+            "slotIndex": 41,
+            "itemId": 0,
+            "amount": 0,
+            "isAccessibleSlot": false
+        }
+  ]
 }

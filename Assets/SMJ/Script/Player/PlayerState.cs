@@ -20,12 +20,16 @@ public class PlayerState : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5.0f;
     [SerializeField] private float _attackSpeed = 1.0f;
     [SerializeField] private float _jumpHeight = 2.0f;
+    [SerializeField] private float _attackPower = 10.0f;
+    [SerializeField] private float _defensivePower = 1.0f;
 
     public float MaxHp => _maxHp;
     public float MaxSatiety => _maxSatiety;
     public float MaxHydration => _maxHydration;
-    public float MoveSpeed => _moveSpeed;
-    public float AttackSpeed => _attackSpeed;
+    public float MoveSpeed;
+    public float AttackSpeed;
+    public float AttackPower;
+    public float DefensivePower;
     public float JumpHeight => _jumpHeight;
 
     [Header("Current State")]
@@ -67,6 +71,11 @@ public class PlayerState : MonoBehaviour
         _hp = MaxHp;
         _satiety = MaxSatiety;
         _hydration = MaxHydration;
+
+        MoveSpeed = _moveSpeed;
+        AttackSpeed = _attackSpeed;
+        AttackPower = _attackPower;
+        DefensivePower = _defensivePower;
     }
 
     private void Update()
@@ -176,6 +185,11 @@ public class PlayerState : MonoBehaviour
         return _satiety;
     }
 
+    public float GetCurrentHydration()
+    {
+        return _hydration;
+    }
+
     public bool IncreaseHp(float amount)
     {
         if (_hp >= _maxHp) return false;
@@ -217,16 +231,11 @@ public class PlayerState : MonoBehaviour
         _hydration = Mathf.Max(0, _hydration - amount);
     }
 
-    public float GetCurrentHydration()
-    {
-        return _hydration;
-    }
-
     public void SetMoveSpeed(float speed)
     {
         if (speed > 0)
         {
-            _moveSpeed = speed;
+            MoveSpeed = speed;
         }
     }
 

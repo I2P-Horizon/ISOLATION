@@ -31,6 +31,18 @@ public class ArmorItemData : EquipmentItemData
         this.defense = dto.defense;
         this.type = dto.type;
         this.subType = dto.subType;
+        this.TargetSlot = determineSlot(dto.subType);
+        this.maxDurability = dto.maxDurability;
+    }
+
+    private EquipmentType determineSlot(string subType)
+    {
+        switch (subType)
+        {
+            case "Helmet": return EquipmentType.Face;
+            case "Chest": return EquipmentType.Back;
+            default: return EquipmentType.None;
+        }
     }
 
     public override Item CreateItem()

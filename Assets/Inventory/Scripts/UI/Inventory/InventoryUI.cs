@@ -23,6 +23,7 @@ public class InventoryUI : MonoBehaviour
     #endregion
 
     #region ** 인벤토리 옵션 **
+    [SerializeField] private int startSlotIndex = 0;
     private int horizontalSlotCount = 6;                    // 슬롯 가로갯수
     private int verticalSlotCount = 6;                      // 슬롯 세로갯수
     private float slotMargin = 9f;                          // 슬롯 여백
@@ -113,7 +114,7 @@ public class InventoryUI : MonoBehaviour
         {
             for (int i = 0; i < horizontalSlotCount; i++)
             {
-                int slotIndex = (horizontalSlotCount * j) + i;       // 슬롯 인덱스
+                int slotIndex = startSlotIndex + (horizontalSlotCount * j) + i;       // 슬롯 인덱스
 
                 // 슬롯하나 복제
                 var slotRT = CloneSlot();
@@ -166,6 +167,11 @@ public class InventoryUI : MonoBehaviour
         inventory.Swap(begin.Index, end.Index);
     }
 
+    private void TrySwapWithHUD(ItemSlotUI begin, PlayerItemSlotUI end)
+    {
+        inventory.Swap(begin.Index, end.Index);
+    }
+
     // 아이템 버리기 요청
     private void TryRemoveItem(int index)
     {
@@ -197,6 +203,21 @@ public class InventoryUI : MonoBehaviour
         itemTooltipUI.SetUIPosition(slot.SlotRect);
     }
 
+    private void tryEquipItem(int index, EquipmentSlotUI equipSlot)
+    {
+        Item item = inventory.GetItem(index);
+
+        if (item is EquipmentItem equipItem)
+        {
+            bool success = equipSlot.TryEquip(equipItem);
+            Debug.Log($"Equip Item Result: {success}");
+
+            if (success)
+            {
+                inventory.Remove(index);
+            }
+        }
+    }
     #endregion
 
     #region ** 마우스 이벤트 함수들 **
@@ -351,11 +372,20 @@ public class InventoryUI : MonoBehaviour
     {
         ItemSlotUI endDragSlot = rc.RaycastAndgetFirstComponent<ItemSlotUI>();
         PlayerItemSlotUI playerSlot = rc.RaycastAndgetFirstComponent<PlayerItemSlotUI>();
+        EquipmentSlotUI equipmentSlot = rc.RaycastAndgetFirstComponent<EquipmentSlotUI>();
+
+        if (equipmentSlot != null)
+        {
+            tryEquipItem(beginDragSlot.Index, equipmentSlot);
+
+            return;
+        }
 
         // 플레이어 아이템창에 아이템 등록
         if (playerSlot != null)
         {
-            TryRegisterItem(beginDragSlot.Index, playerSlot);
+            //TryRegisterItem(beginDragSlot.Index, playerSlot);
+            TrySwapWithHUD(beginDragSlot, playerSlot);
         }
 
         // 아이템 이동 및 교환
@@ -396,19 +426,31 @@ public class InventoryUI : MonoBehaviour
     // 해당 인덱스 슬롯의 아이템 아이콘 등록 및 수량 표시
     public void SetItemIconAndAmountText(int index, string icon, int amount = 1)
     {
-        slotUIList[index].SetItemIconAndAmount(icon, amount);
+        int listIndex = index - startSlotIndex;
+        if (listIndex >= 0 && listIndex < slotUIList.Count)
+        {
+            slotUIList[listIndex].SetItem(inventory.GetItem(index));
+        }
     }
 
     // 해당 인덱스 슬롯의 아이템 갯수 텍스트 제거
     public void HideItemAmountText(int index)
     {
-        slotUIList[index].SetItemAmount(1);
+        int listIndex = index - startSlotIndex;
+        if (listIndex >= 0 && listIndex < slotUIList.Count)
+        {
+            slotUIList[listIndex].SetItemAmount(-1);
+        }
     }
 
     // 해당 인덱스 슬롯의 아이템 제거(아이콘 및 텍스트 제거)
     public void RemoveItem(int index)
     {
-        slotUIList[index].RemoveItemIcon();
+        int listIndex = index - startSlotIndex;
+        if (listIndex >= 0 && listIndex < slotUIList.Count)
+        {
+            slotUIList[listIndex].RemoveItemIcon();
+        }
     }
 
     #endregion

@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canBePickedUp: 1
-  _itemID: 50003
+  _itemID: 50005
 --- !u!65 &3989310196764336715
 BoxCollider:
   m_ObjectHideFlags: 0

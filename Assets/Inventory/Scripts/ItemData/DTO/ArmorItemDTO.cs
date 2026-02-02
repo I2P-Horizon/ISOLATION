@@ -17,4 +17,5 @@ public class ArmorItemDTO
     public int defense;                 // 방어력
     public string type;                 // 장비타입
     public string subType;              // 장비세부타입
+    public float maxDurability;        // 최대 내구도
 }

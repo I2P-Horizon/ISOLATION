@@ -1,15 +1,30 @@
 {
-  "Top": [
+  "Face": [
     {
       "id": 20001,
-      "itemName": "가죽 조끼",
-      "itemToolTip": "질긴 가죽으로 만든 조끼.",
-      "itemExplanation": "방어력을 3 올려줍니다.",
-      "itemIcon": "LeatherVestIcon",
-      "itemPrice": 40,
-      "defense": 3,
+      "itemName": "선글라스",
+      "itemToolTip": "햇빛을 가려주는 선글라스.",
+      "itemExplanation": "강한 햇빛으로 인한 불편함을 줄여준다.",
+      "itemIcon": "SunglassesIcon",
+      "itemPrice": 1,
+      "defense": 0,
       "type": "Armor",
-      "subType": "Top"
+      "subType": "Face",
+      "maxDurability": 0
+    }
+  ],
+  "Back": [
+    {
+      "id": 20002,
+      "itemName": "가방",
+      "itemToolTip": "물건을 담을 수 있는 가방",
+      "itemExplanation": "방어력이 5 증가한다.",
+      "itemIcon": "BackpackIcon",
+      "itemPrice": 1,
+      "defense": 5,
+      "type": "Armor",
+      "subType": "Back",
+      "maxDurability": 0
     }
   ]
 }

@@ -580,6 +580,11 @@ namespace InventorySystem
         public void SetInventoryReference(Inventory inventory)
         {
             _inventory = inventory;
+
+            for (int i = 0; i < _slotUIList.Count; i++)
+            {
+                _slotUIList[i].SetSlotIndex(i + _inventory.QuickSlotCount);
+            }
         }
 
         /// <summary> 마우스 클릭 좌우 반전시키기 (true : 반전) </summary>
@@ -657,7 +662,7 @@ namespace InventorySystem
         /// <summary> 모든 슬롯 필터 상태 업데이트 </summary>
         public void UpdateAllSlotFilters()
         {
-            int capacity = _inventory.Capacity;
+            int capacity = _inventory.Capacity - _inventory.QuickSlotCount;
 
             for (int i = 0; i < capacity; i++)
             {

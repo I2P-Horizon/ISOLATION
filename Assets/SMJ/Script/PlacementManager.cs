@@ -8,6 +8,7 @@ public class PlacementManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private GameObject _inventoryGo;
+    [SerializeField] private Inventory _inventory;
 
     [Header("Settings")]
     ///<summary>배치 가능 거리</summary>
@@ -66,7 +67,12 @@ public class PlacementManager : MonoBehaviour
 
         _currentItem = item;
         _isPlacementMode = true;
-        _inventoryGo.GetComponent<UIAnimator>().Close();
+        
+        if (_inventory.GetItemIndexByID(item.Data.ID) >= _inventory.QuickSlotCount)
+        {
+            _inventoryGo.GetComponent<UIAnimator>().Close();
+        }
+
 
         if (_currentGhostObj != null) Destroy(_currentGhostObj);
         _currentGhostObj = Instantiate(prefab);
@@ -190,9 +196,13 @@ public class PlacementManager : MonoBehaviour
 
         _isPlacementMode = false;
         if (_currentGhostObj != null) Destroy(_currentGhostObj);
-        _currentItem = null;
 
-        _inventoryGo.GetComponent<UIAnimator>().Show();
+        if (_inventory.GetItemIndexByID(_currentItem.Data.ID) >= _inventory.QuickSlotCount)
+        {
+            _inventoryGo.GetComponent<UIAnimator>().Show();
+        }
+
+        _currentItem = null;
     }
 
     private void OnDrawGizmos()

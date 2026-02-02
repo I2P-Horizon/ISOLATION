@@ -20,5 +20,5 @@ public class WeaponItemDTO
     public float rate;                  // 공격속도
     public string type;                 // 장비 타입
     public string subType;              // 장비 세부 타입
-
+    public float maxDurability;        // 최대 내구도
 }
