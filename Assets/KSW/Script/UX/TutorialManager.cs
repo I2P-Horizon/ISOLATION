@@ -120,6 +120,7 @@ public class T5 : TutorialState
         {
             isCompleted = true;
             manager.StartCoroutine(manager.EndTutorial("¿Ï·á!"));
+            //manager.StartCoroutine(manager.NextState(new T6(manager), "¿Ï·á!"));
         }
     }
 
@@ -127,7 +128,27 @@ public class T5 : TutorialState
 }
 #endregion
 
-#region T6: ³ª¹« °î±ªÀÌ Á¦ÀÛ
+#region T6: ÀÛ¾÷´ë ¹èÄ¡
+public class T6 : TutorialState
+{
+    public T6(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("ÀÛ¾÷´ë ¹èÄ¡");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        //if () manager.StartCoroutine(manager.NextState(new T7(manager), "¿Ï·á!"));
+    }
+
+    public override void Exit() { }
+}
+#endregion
+
+#region T7: ³ª¹« °î±ªÀÌ Á¦ÀÛ
 public class T7 : TutorialState
 {
     public T7(TutorialManager manager) : base(manager) { }
@@ -147,10 +168,30 @@ public class T7 : TutorialState
 }
 #endregion
 
-#region T7: µ¹ Á¶°¢ 4°³ È¹µæ
+#region T8: ³ª¹« °î±ªÀÌ Âø¿ë
 public class T8 : TutorialState
 {
     public T8(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("³ª¹« °î±ªÀÌ Âø¿ë");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        // ³ª¹« °î±ªÀÌ Âø¿ë
+    }
+
+    public override void Exit() { }
+}
+#endregion
+
+#region T9: µ¹ Á¶°¢ 4°³ È¹µæ
+public class T9 : TutorialState
+{
+    public T9(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
     {
@@ -167,10 +208,10 @@ public class T8 : TutorialState
 }
 #endregion
 
-#region T8: ¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ
-public class T9 : TutorialState
+#region T10: ¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ
+public class T10 : TutorialState
 {
-    public T9(TutorialManager manager) : base(manager) { }
+    public T10(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
     {
@@ -181,6 +222,26 @@ public class T9 : TutorialState
     public override void Update()
     {
         // ¿¹ÁöÀÇ ´« Á¶°¢ 1°³ È¹µæ
+    }
+
+    public override void Exit() { }
+}
+#endregion
+
+#region T11: °í´ë »ç¿ø Á¶°¢ ¸ÂÃß±â
+public class T11 : TutorialState
+{
+    public T11(TutorialManager manager) : base(manager) { }
+
+    public override void Enter()
+    {
+        manager.Message("°í´ë »ç¿ø Á¶°¢ ¸ÂÃß±â");
+        isCompleted = false;
+    }
+
+    public override void Update()
+    {
+        // °í´ë »ç¿ø Á¶°¢ 1°³ ¸ÂÃß±â
     }
 
     public override void Exit() { }
