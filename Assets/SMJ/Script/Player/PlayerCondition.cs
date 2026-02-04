@@ -23,16 +23,15 @@ public class PlayerCondition : MonoBehaviour
     {
         _player = GetComponent<Player>();
 
-        _baseMoveSpeed = _player.State.MoveSpeed;
-        _baseAttackSpeed = _player.State.AttackSpeed;
+        _baseMoveSpeed = _player.State.BaseMoveSpeed;
+        _baseAttackSpeed = _player.State.BaseAttackSpeed;
+
+        _player.Equipment.OnStateChanged += recalculateStats;
     }
 
     private void Update()
     {
         if (_player.State.Die) return;
-
-        _baseMoveSpeed = _player.State.MoveSpeed;
-        _baseAttackSpeed = _player.State.AttackSpeed;
 
         updateTimersAndEffects();
         checkDehydrationAuto();
@@ -147,10 +146,15 @@ public class PlayerCondition : MonoBehaviour
         {
             _activeConditions.Add(type, duration);
 
+            if (type == ConditionType.Dehydration)
+            {
+                _player.State.DecreaseHydration();
+            }
+
             if (_tickTimers.ContainsKey(type)) _tickTimers.Add(type, 0f);
             else _tickTimers[type] = 0f;
 
-                recalculateStats();
+            recalculateStats();
             Debug.Log($"[PlayerCondition] Added: {type}");
         }
     }
@@ -177,6 +181,9 @@ public class PlayerCondition : MonoBehaviour
     {
         float moveSpeedMultiplier = 1.0f;
         float attackSpeedMultiplier = 1.0f;
+
+        _baseMoveSpeed = _player.State.BaseMoveSpeed;
+        _baseAttackSpeed = _player.State.BaseAttackSpeed;
 
         // 디버프 계산
         if (HasCondition(ConditionType.Frostbite))

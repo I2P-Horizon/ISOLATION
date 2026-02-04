@@ -69,12 +69,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2fb42ff8b6bfd4fa4f5df3046d2685, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hp: 50
+  _hp: 40
   _dropItem: {fileID: 8992916093723219132, guid: a50527626768f684f95883fa223c0d48, type: 3}
   _dropAmount: 3
   _hpUI: {fileID: 3946709337947435123}
   _UIHideTime: 3
   _fruit: {fileID: 8072118586955727064}
+  _minDropForce: 2
+  _maxDropForce: 5
+  _upwardModifier: 1
 --- !u!1001 &1074017913915788401
 PrefabInstance:
   m_ObjectHideFlags: 0

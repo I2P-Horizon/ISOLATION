@@ -17,11 +17,16 @@ public class PlayerEquipment : MonoBehaviour
     [SerializeField] private Transform _rightHandMount;
     [SerializeField] private Transform _leftHandMount;
     [SerializeField] private Transform _bucketMount;
+    [SerializeField] private GameObject _bagGo;
+    [SerializeField] private GameObject _sunglassesGo;
 
     private GameObject _currentWeaponItem;
     private GameObject _currentToolItem;
+    private GameObject _currentFaceItem;
+    private GameObject _currentBackItem;
 
-    public event Action OnEquipmentChanged;
+    public event Action OnArmorChanged;
+    public event Action OnStateChanged;
 
     private void Awake()
     {
@@ -43,11 +48,14 @@ public class PlayerEquipment : MonoBehaviour
 
         applyStats(newItem, true);
 
-        OnEquipmentChanged?.Invoke();
-
         if (newItem is WeaponItem weapon)
         {
             updateWeaponModel(weapon);
+        }
+        else if (newItem is ArmorItem armor)
+        {
+            updateArmorModel(armor);
+            OnArmorChanged?.Invoke();
         }
 
         return true;
@@ -63,11 +71,14 @@ public class PlayerEquipment : MonoBehaviour
 
             _equippedItems.Remove(type);
 
-            OnEquipmentChanged?.Invoke();
-
             if (type == EquipmentType.RightHand || type == EquipmentType.LeftHand)
             {
                 removeWeaponModel(type);
+            }
+            else if (type == EquipmentType.Face || type == EquipmentType.Back)
+            {
+                removeArmorModel(type);
+                OnArmorChanged?.Invoke();
             }
         }
     }
@@ -78,7 +89,6 @@ public class PlayerEquipment : MonoBehaviour
         {
             applyStats(bucket, false);
             _equippedItems.Remove(EquipmentType.RightHand);
-            OnEquipmentChanged?.Invoke();
             removeWeaponModel(EquipmentType.RightHand);
         }
     }
@@ -154,6 +164,36 @@ public class PlayerEquipment : MonoBehaviour
         }
     }
 
+    private void updateArmorModel(ArmorItem armor)
+    {
+        removeArmorModel(armor.EquipmentData.TargetSlot);
+
+        if (armor.EquipmentData.TargetSlot == EquipmentType.Face)
+        {
+            _sunglassesGo.SetActive(true);
+            _currentFaceItem = _sunglassesGo;
+        }
+        else if (armor.EquipmentData.TargetSlot == EquipmentType.Back)
+        {
+            _bagGo.SetActive(true);
+            _currentBackItem = _bagGo;
+        }
+    }
+
+    private void removeArmorModel(EquipmentType type)
+    {
+        if (type == EquipmentType.Face && _currentFaceItem != null)
+        {
+            _sunglassesGo.SetActive(false);
+            _currentFaceItem = null;
+        }
+        else if (type == EquipmentType.Back && _currentBackItem != null)
+        {
+            _bagGo.SetActive(false);
+            _currentBackItem = null;
+        }
+    }
+
     private void applyStats(EquipmentItem item, bool isEquipping)
     {
         float multiplier = isEquipping ? 1f : -1f;
@@ -161,13 +201,15 @@ public class PlayerEquipment : MonoBehaviour
 
         if (data is WeaponItemData weaponData)
         {
-            _player.State.AttackSpeed += weaponData.Rate * multiplier;
-            _player.State.AttackPower += weaponData.Damage * multiplier;
+            _player.State.BaseAttackSpeed += weaponData.Rate * multiplier;
+            _player.State.BaseAttackPower += weaponData.Damage * multiplier;
         }
         else if (data is ArmorItemData armorData)
         {
             _player.State.DefensivePower += armorData.Defense * multiplier;
         }
+
+        OnStateChanged?.Invoke();
     }
 
     public EquipmentItem GetEquippedItem(EquipmentType type)

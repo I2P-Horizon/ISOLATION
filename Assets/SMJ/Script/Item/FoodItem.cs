@@ -8,7 +8,7 @@ public class FoodItem : CountableItem, IUsableItem
 
     private FoodItemData data => CountableData as FoodItemData;
 
-    public bool Use()
+    public bool Use(int index = -1)
     {
         Player player = Player.Instance;
 

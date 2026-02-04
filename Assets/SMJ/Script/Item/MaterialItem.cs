@@ -9,7 +9,7 @@ public class MaterialItem : CountableItem, IUsableItem
 {
     public MaterialItem(MaterialItemData data, int amount = 1) : base(data, amount) { }
 
-    public bool Use()
+    public bool Use(int index = -1)
     {
         //Amount--;
 

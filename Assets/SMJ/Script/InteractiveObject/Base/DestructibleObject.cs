@@ -22,6 +22,8 @@ public abstract class DestructibleObject : MonoBehaviour, IInteractable
     /// </summary>
     [SerializeField] protected int _dropAmount;
 
+    private bool _isDestroyed = false;
+
     /// <summary>
     /// 플레이어와 상호작용할 때 호출되는 함수.
     /// 기본적으로 amount만큼 체력을 감소시키고, 체력이 0 이하가 되면 파괴시킴.
@@ -49,6 +51,10 @@ public abstract class DestructibleObject : MonoBehaviour, IInteractable
     /// </summary>
     protected virtual void DestroyObject()
     {
+        if (_isDestroyed) return;
+
+        _isDestroyed = true;
+
         DropItems();
         Destroy(gameObject);
 

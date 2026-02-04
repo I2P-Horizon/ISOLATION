@@ -32,6 +32,10 @@ public class PlayerState : MonoBehaviour
     public float DefensivePower;
     public float JumpHeight => _jumpHeight;
 
+    public float BaseAttackSpeed;
+    public float BaseAttackPower;
+    public float BaseMoveSpeed;
+
     [Header("Current State")]
     [SerializeField] private float _hp;
     [SerializeField] private float _satiety;
@@ -76,6 +80,10 @@ public class PlayerState : MonoBehaviour
         AttackSpeed = _attackSpeed;
         AttackPower = _attackPower;
         DefensivePower = _defensivePower;
+
+        BaseAttackPower = _attackPower;
+        BaseAttackSpeed = _attackSpeed;
+        BaseMoveSpeed = _moveSpeed;
     }
 
     private void Update()
@@ -231,6 +239,11 @@ public class PlayerState : MonoBehaviour
         _hydration = Mathf.Max(0, _hydration - amount);
     }
 
+    public void DecreaseHydration()
+    {
+        _hydration = 29.99f;
+    }
+
     public void SetMoveSpeed(float speed)
     {
         if (speed > 0)
@@ -243,7 +256,7 @@ public class PlayerState : MonoBehaviour
     {
         if (speed > 0)
         {
-            _attackSpeed = speed;
+            AttackSpeed = speed;
         }
     }
 }

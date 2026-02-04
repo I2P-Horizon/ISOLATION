@@ -143,6 +143,8 @@ public class PlayerItemSlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragH
     {
         if (slotItem == null) return;
 
+        InventoryUI.IsDraggingItem = true;
+
         originalParent = itemContent.parent;
         originalPosition = itemContent.position;
 
@@ -172,6 +174,8 @@ public class PlayerItemSlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragH
         icon.raycastTarget = true;
 
         processDrop();
+
+        InventoryUI.IsDraggingItem = false;
     }
 
     private void processDrop()

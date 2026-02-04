@@ -19,7 +19,7 @@ public class PortionItem : CountableItem, IUsableItem
     }
 
     // 포션 사용
-    public bool Use()
+    public bool Use(int index = -1)
     {
         Amount--;
 

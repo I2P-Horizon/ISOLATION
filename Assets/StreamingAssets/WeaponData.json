@@ -12,7 +12,7 @@
             "rate": 1.0,
             "type": "Pickax",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 80
         },
         {
             "id": 30002,
@@ -22,11 +22,11 @@
             "itemIcon": "WoodAxeIcon",
             "itemPrefab": "WoodAxe",
             "itemPrice": 1,
-            "damage": 3,
+            "damage": 5,
             "rate": 1.0,
             "type": "Axe",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 80
         },
         {
             "id": 30003,
@@ -40,7 +40,7 @@
             "rate": 1.0,
             "type": "Sword",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 80
         },
         {
             "id": 30004,
@@ -51,10 +51,10 @@
             "itemPrefab": "StonePickax",
             "itemPrice": 1,
             "damage": 10,
-            "rate": 2.0,
+            "rate": 1.2,
             "type": "Pickax",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 120
         },
         {
             "id": 30005,
@@ -64,11 +64,11 @@
             "itemIcon": "StoneAxeIcon",
             "itemPrefab": "StoneAxe",
             "itemPrice": 1,
-            "damage": 15,
-            "rate": 2.0,
+            "damage": 8,
+            "rate": 1.2,
             "type": "Axe",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 120
         },
         {
             "id": 30006,
@@ -79,10 +79,10 @@
             "itemPrefab": "StoneSword",
             "itemPrice": 1,
             "damage": 20,
-            "rate": 2.0,
+            "rate": 1.2,
             "type": "Sword",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 120
         },
         {
             "id": 30007,
@@ -93,10 +93,10 @@
             "itemPrefab": "GoldPickax",
             "itemPrice": 1,
             "damage": 20,
-            "rate": 3.0,
+            "rate": 1.3,
             "type": "Pickax",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 100
         },
         {
             "id": 30008,
@@ -106,11 +106,11 @@
             "itemIcon": "GoldAxeIcon",
             "itemPrefab": "GoldAxe",
             "itemPrice": 1,
-            "damage": 25,
-            "rate": 3.0,
+            "damage": 14,
+            "rate": 1.3,
             "type": "Axe",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 100
         },
         {
             "id": 30009,
@@ -121,10 +121,10 @@
             "itemPrefab": "GoldSword",
             "itemPrice": 1,
             "damage": 30,
-            "rate": 3.0,
+            "rate": 1.3,
             "type": "Sword",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 100
         },
         {
             "id": 30010,
@@ -135,10 +135,10 @@
             "itemPrefab": "DiamondsPickax",
             "itemPrice": 1,
             "damage": 30,
-            "rate": 5.0,
+            "rate": 1.5,
             "type": "Pickax",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 160
         },
         {
             "id": 30011,
@@ -148,11 +148,11 @@
             "itemIcon": "DiamondsAxeIcon",
             "itemPrefab": "DiamondsAxe",
             "itemPrice": 1,
-            "damage": 35,
-            "rate": 5.0,
+            "damage": 20,
+            "rate": 1.5,
             "type": "Axe",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 160
         },
         {
             "id": 30012,
@@ -163,10 +163,10 @@
             "itemPrefab": "DiamondsSword",
             "itemPrice": 1,
             "damage": 40,
-            "rate": 5.0,
+            "rate": 1.5,
             "type": "Sword",
             "subType": "Weapon",
-            "maxDurability": 40
+            "maxDurability": 160
         }
     ],
     "Tool": [

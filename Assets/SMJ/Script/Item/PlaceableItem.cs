@@ -9,11 +9,11 @@ public class PlaceableItem : CountableItem, IUsableItem
 {
     public PlaceableItem(PlaceableItemData data, int amount = 1) : base(data, amount) { }
 
-    public bool Use()
+    public bool Use(int index)
     {
         if (PlacementManager.Instance != null)
         {
-            PlacementManager.Instance.BeginPlacement(this);
+            PlacementManager.Instance.BeginPlacement(this, index);
             return true;
         }
 
@@ -23,16 +23,15 @@ public class PlaceableItem : CountableItem, IUsableItem
     /// <summary>
     /// 배치 확정 시 외부에서 호출되는 함수
     /// </summary>
-    public void OnPlaced()
+    public void OnPlaced(int index)
     {
         GameObject inventory = GameObject.FindWithTag("Inventory");
         if (inventory != null)
         {
             Inventory inv = inventory.GetComponent<Inventory>();
-            int index = inv.GetItemIndexByID(Data.ID);
             if (index >= 0)
             {
-                inv.ConsumeItem(Data.ID, 1);
+                inv.Remove(index);
             }
         }
     }

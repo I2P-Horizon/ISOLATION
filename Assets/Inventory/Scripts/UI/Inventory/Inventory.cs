@@ -636,7 +636,7 @@ public class Inventory : MonoBehaviour
         if(items[index] is IUsableItem usable)
         {
             // 사용에 성공했을 때
-            if(usable.Use())
+            if(usable.Use(index))
             {
                 // 수량이 있는 아이템의 경우
                 if(items[index] is CountableItem ci)

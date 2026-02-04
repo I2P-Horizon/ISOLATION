@@ -24,6 +24,7 @@ public class PlacementManager : MonoBehaviour
 
     private GameObject _currentGhostObj;
     private PlaceableItem _currentItem;
+    private int _currentItemIndex;
     private bool _isPlacementMode = false;
 
     private Vector3 _debugCenter;
@@ -54,7 +55,7 @@ public class PlacementManager : MonoBehaviour
         updateGhostPosition();
     }
 
-    public void BeginPlacement(PlaceableItem item)
+    public void BeginPlacement(PlaceableItem item, int index)
     {
         string path = _prefabPath + (item.Data as PlaceableItemData).PrefabName;
         GameObject prefab = Resources.Load<GameObject>(path);
@@ -66,9 +67,10 @@ public class PlacementManager : MonoBehaviour
         }
 
         _currentItem = item;
+        _currentItemIndex = index;
         _isPlacementMode = true;
         
-        if (_inventory.GetItemIndexByID(item.Data.ID) >= _inventory.QuickSlotCount)
+        if (index >= _inventory.QuickSlotCount)
         {
             _inventoryGo.GetComponent<UIAnimator>().Close();
         }
@@ -192,17 +194,18 @@ public class PlacementManager : MonoBehaviour
 
     private void endPlacement()
     {
-        _currentItem.OnPlaced();
+        _currentItem.OnPlaced(_currentItemIndex);
 
         _isPlacementMode = false;
         if (_currentGhostObj != null) Destroy(_currentGhostObj);
 
-        if (_inventory.GetItemIndexByID(_currentItem.Data.ID) >= _inventory.QuickSlotCount)
+        if (_currentItemIndex >= _inventory.QuickSlotCount)
         {
             _inventoryGo.GetComponent<UIAnimator>().Show();
         }
 
         _currentItem = null;
+        _currentItemIndex = -1;
     }
 
     private void OnDrawGizmos()

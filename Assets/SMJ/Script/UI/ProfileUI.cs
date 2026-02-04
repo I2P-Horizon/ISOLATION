@@ -17,8 +17,27 @@ public class ProfileUI : MonoBehaviour
     [SerializeField] private Text _defPText;
     [SerializeField] private Text _moveSpeedText;
 
+    [Header("Player Images")]
+    [SerializeField] private Image _playerImage;
+    [SerializeField] private List<Sprite> _playerSprites;
+    private Dictionary<string, Sprite> _spriteDict = new Dictionary<string, Sprite>();
+
     private Player _player;
     private PlayerEquipment _playerEquipment;
+
+    private void Awake()
+    {
+        foreach (var sprite in _playerSprites)
+        {
+            if (sprite != null)
+            {
+                if (!_spriteDict.ContainsKey(sprite.name))
+                {
+                    _spriteDict.Add(sprite.name, sprite);
+                }
+            }
+        }
+    }
 
     private void Start()
     {
@@ -30,8 +49,6 @@ public class ProfileUI : MonoBehaviour
             slot.Init(_playerEquipment);
         }
 
-        _playerEquipment.OnEquipmentChanged += RefreshUI;
-
         RefreshUI();
 
         this.gameObject.SetActive(false);
@@ -42,7 +59,13 @@ public class ProfileUI : MonoBehaviour
         if (_playerEquipment != null)
         {
             RefreshUI();
+            _playerEquipment.OnArmorChanged += UpdatePlayerImage;
         }
+    }
+
+    private void OnDisable()
+    {
+        _playerEquipment.OnArmorChanged -= UpdatePlayerImage;
     }
 
     private void Update()
@@ -65,6 +88,46 @@ public class ProfileUI : MonoBehaviour
             _atkPText.text = $"{_player.State.AttackPower:F1}";
             _defPText.text = $"{_player.State.DefensivePower:F1}";
             _moveSpeedText.text = $"{_player.State.MoveSpeed:F1}";
+        }
+    }
+
+    private Sprite getSpriteByName(string name)
+    {
+        if (_spriteDict.ContainsKey(name)) return _spriteDict[name];
+
+        return null;
+    }
+
+    public void UpdatePlayerImage()
+    {
+        bool isPlayerWearSunglasses = false;
+        bool isPlayerWearBag = false;
+
+        if (_player.Equipment.GetEquippedItem(EquipmentType.Face) != null)
+        {
+            isPlayerWearSunglasses = true;
+        }
+
+        if (_player.Equipment.GetEquippedItem(EquipmentType.Back) != null)
+        {
+            isPlayerWearBag = true;
+        }
+
+        if (isPlayerWearBag && isPlayerWearSunglasses)
+        {
+            _playerImage.sprite = getSpriteByName("PlayerSunglassesBag");
+        }
+        else if (isPlayerWearBag && !isPlayerWearSunglasses)
+        {
+            _playerImage.sprite = getSpriteByName("PlayerBag");
+        }
+        else if (!isPlayerWearBag && isPlayerWearSunglasses)
+        {
+            _playerImage.sprite = getSpriteByName("PlayerSunglasses");
+        }
+        else
+        {
+            _playerImage.sprite = getSpriteByName("PlayerNoItem");
         }
     }
 }

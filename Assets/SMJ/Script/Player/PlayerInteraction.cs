@@ -56,7 +56,8 @@ public class PlayerInteraction : MonoBehaviour
     private void Update()
     {
         // UI 위에서의 입력 무시
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()
+            || InventoryUI.IsDraggingItem)
         {
             return;
         }
@@ -251,6 +252,17 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
+    public void OnAnimationWatering()
+    {
+        ItemData data = DataManager.Instance.GetItemDataByID(50009);
+        bool result = _inventory.AddItem(data) == 0;
+
+        if (result)
+        {
+            _player.Equipment.UnEquipBucket();
+        }
+    }
+
     /// <summary>
     /// 현재 상태에 따른 상호작용 간격 반환
     /// </summary>
@@ -409,12 +421,6 @@ public class PlayerInteraction : MonoBehaviour
 
     private void tryBucketFill()
     {
-        ItemData data = DataManager.Instance.GetItemDataByID(50009);
-        bool result = _inventory.AddItem(data) == 0;
-
-        if (result)
-        {
-            _player.Equipment.UnEquipBucket();
-        }
+        _animator.SetTrigger("Watering");
     }
 }

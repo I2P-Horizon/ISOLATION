@@ -39,8 +39,8 @@ public class ArmorItemData : EquipmentItemData
     {
         switch (subType)
         {
-            case "Helmet": return EquipmentType.Face;
-            case "Chest": return EquipmentType.Back;
+            case "Face": return EquipmentType.Face;
+            case "Back": return EquipmentType.Back;
             default: return EquipmentType.None;
         }
     }

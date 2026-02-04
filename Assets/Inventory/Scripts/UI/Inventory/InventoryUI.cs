@@ -50,6 +50,8 @@ public class InventoryUI : MonoBehaviour
     private Vector3 beginDragIconPoint;                     // 마우스 드래그를 시작한 아이콘 위치
     private Vector3 beginDragCursorPoint;                   // 마우스 드래그를 시작한 커서 위치
     private int beginDragSlotSiblingIndex;                  // 마우스 드래그를 시작한 슬롯의 SiblingIdx
+
+    public static bool IsDraggingItem = false;
     #endregion
 
     #region ** 유니티 이벤트 함수 **
@@ -299,6 +301,8 @@ public class InventoryUI : MonoBehaviour
             // 슬롯에 아이템이 있을 때
             if (beginDragSlot != null && beginDragSlot.HasItem && beginDragSlot.IsAccessible)
             {
+                InventoryUI.IsDraggingItem = true;
+
                 // 드래그 위치,참조 
                 beginDragIconTransform = beginDragSlot.IconRect.transform;
                 beginDragIconPoint = beginDragIconTransform.position;
@@ -359,6 +363,8 @@ public class InventoryUI : MonoBehaviour
 
                 // 하이라이트 이미지를 아이콘보다 앞에
                 beginDragSlot.SetHighlightOnTop(true);
+
+                InventoryUI.IsDraggingItem = false;
 
                 // 참조 제거
                 beginDragSlot = null;
