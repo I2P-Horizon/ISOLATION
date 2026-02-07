@@ -2926,7 +2926,7 @@ MonoBehaviour:
   _down: 0
   _left: 0
   _right: 0
-  _duration: 0.5
+  _duration: 0.3
   _moveOffset: 200
   _startScale: 0
 --- !u!225 &991689314

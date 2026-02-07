@@ -96,7 +96,10 @@ public class T4 : TutorialState
     {
         // 나무 조각 4개 획득
         if (inventory.GetTotalAmountOfItem(50001) == 4)
+        {
+            isCompleted = true;
             manager.StartCoroutine(manager.NextState(new T5(manager), "완료!"));
+        }
     }
 
     public override void Exit() { }
@@ -119,8 +122,8 @@ public class T5 : TutorialState
         if (!isCompleted && Input.GetKeyDown(KeyCode.Tab))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.EndTutorial("완료!"));
-            //manager.StartCoroutine(manager.NextState(new T6(manager), "완료!"));
+            //manager.StartCoroutine(manager.EndTutorial("완료!"));
+            manager.StartCoroutine(manager.NextState(new T6(manager), "완료!"));
         }
     }
 
@@ -141,7 +144,12 @@ public class T6 : TutorialState
 
     public override void Update()
     {
-        //if () manager.StartCoroutine(manager.NextState(new T7(manager), "완료!"));
+        CraftingTable[] tables = MonoBehaviour.FindObjectsOfType<CraftingTable>();
+        if (tables.Length > 0 && Input.GetMouseButtonDown(1))
+        {
+            isCompleted = true;
+            manager.StartCoroutine(manager.NextState(new T7(manager), "완료!"));
+        }
     }
 
     public override void Exit() { }
@@ -161,7 +169,17 @@ public class T7 : TutorialState
 
     public override void Update()
     {
-        // 나무 곡괭이 제작
+        /* Inventory에서 나무 곡괭이 아이템이 있는지 확인 */
+        Inventory playerInventory = MonoBehaviour.FindObjectOfType<Inventory>();
+        if (playerInventory != null)
+        {
+            int count = playerInventory.GetTotalAmountOfItem(30001);
+            if (count > 0)
+            {
+                isCompleted = true;
+                manager.StartCoroutine(manager.NextState(new T8(manager), "완료!"));
+            }
+        }
     }
 
     public override void Exit() { }
@@ -173,15 +191,42 @@ public class T8 : TutorialState
 {
     public T8(TutorialManager manager) : base(manager) { }
 
+    private PlayerEquipment _equipment;
+
     public override void Enter()
     {
         manager.Message("나무 곡괭이 착용");
         isCompleted = false;
+
+        Player player = Player.Instance;
+        if (player != null)
+        {
+            _equipment = player.Equipment;
+            checkWeapon();
+        }
     }
 
     public override void Update()
     {
-        // 나무 곡괭이 착용
+        if (_equipment == null) return;
+
+        checkWeapon();
+    }
+
+    private void checkWeapon()
+    {
+        EquipmentItem weaponItem = _equipment.GetEquippedItem(EquipmentType.RightHand);
+        if (weaponItem != null)
+        {
+            if (weaponItem is WeaponItem weapon)
+            {
+                if ((weapon.WeaponData as WeaponItemData).ItemPrefab == "WoodPickax")
+                {
+                    isCompleted = true;
+                    manager.StartCoroutine(manager.NextState(new T9(manager), "완료!"));
+                }
+            }
+        }
     }
 
     public override void Exit() { }
@@ -201,7 +246,11 @@ public class T9 : TutorialState
 
     public override void Update()
     {
-        // 돌 조각 4개 획득
+        if (inventory.GetTotalAmountOfItem(50002) == 4)
+        {
+            isCompleted = true;
+            manager.StartCoroutine(manager.NextState(new T10(manager), "완료!"));
+        }
     }
 
     public override void Exit() { }
