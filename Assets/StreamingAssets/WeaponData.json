@@ -9,7 +9,7 @@
             "itemPrefab": "WoodPickax",
             "itemPrice": 1,
             "damage": 2,
-            "rate": 1.0,
+            "rate": 0.5,
             "type": "Pickax",
             "subType": "Weapon",
             "maxDurability": 80
@@ -23,7 +23,7 @@
             "itemPrefab": "WoodAxe",
             "itemPrice": 1,
             "damage": 5,
-            "rate": 1.0,
+            "rate": 0.5,
             "type": "Axe",
             "subType": "Weapon",
             "maxDurability": 80
@@ -37,7 +37,7 @@
             "itemPrefab": "WoodSword",
             "itemPrice": 1,
             "damage": 5,
-            "rate": 1.0,
+            "rate": 0.5,
             "type": "Sword",
             "subType": "Weapon",
             "maxDurability": 80
@@ -51,7 +51,7 @@
             "itemPrefab": "StonePickax",
             "itemPrice": 1,
             "damage": 10,
-            "rate": 1.2,
+            "rate": 0.8,
             "type": "Pickax",
             "subType": "Weapon",
             "maxDurability": 120
@@ -65,7 +65,7 @@
             "itemPrefab": "StoneAxe",
             "itemPrice": 1,
             "damage": 8,
-            "rate": 1.2,
+            "rate": 0.8,
             "type": "Axe",
             "subType": "Weapon",
             "maxDurability": 120
@@ -79,7 +79,7 @@
             "itemPrefab": "StoneSword",
             "itemPrice": 1,
             "damage": 20,
-            "rate": 1.2,
+            "rate": 0.8,
             "type": "Sword",
             "subType": "Weapon",
             "maxDurability": 120

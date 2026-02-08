@@ -23,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsMoving = false;
 
+    public bool CanMove = true;
+
     void Start()
     {
         _player = GetComponent<Player>();
@@ -35,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (CanMove == false || _player.State.Die) return;
+
         _moveSpeed = _player.State.MoveSpeed;
 
         GroundCheck();

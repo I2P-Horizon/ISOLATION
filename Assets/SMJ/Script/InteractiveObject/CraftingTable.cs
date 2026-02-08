@@ -19,7 +19,7 @@ public class CraftingTable : MonoBehaviour, IInteractable
         // 제작 UI 열기
         if (_craftingUIGo != null)
         {
-            _craftingUIGo.GetComponent<UIAnimator>().Show();
+            _craftingUIGo.GetComponentInChildren<UIAnimator>(true).Show();
         }
     }
 }

@@ -7,7 +7,7 @@
             "itemExplanation": "사용 시 제작대를 설치합니다.",
             "itemIcon": "CraftingTableIcon",
             "itemPrice": 40,
-            "maxAmount": 99,
+            "maxAmount": 1,
             "prefabName": "CraftingTable"
         }
     ],

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public abstract class GatherableObject : DestructibleObject
 {
+    [Header("UI Settings")]
     /// <summary>
     /// 내구도 표시 UI
     /// </summary>
@@ -19,17 +20,34 @@ public abstract class GatherableObject : DestructibleObject
     [SerializeField] private float _UIHideTime = 3.0f;
     private Coroutine _hideUICoroutine;
 
-    private void Awake()
+    [Header("Respawn Settings")]
+    [SerializeField] private bool _isRespawnable = true;
+    [SerializeField] private float _respawnTime = 180f;
+    [SerializeField] private GameObject _destroyEffect;
+    [SerializeField] private GameObject _modelObject;
+
+    private Collider _collider;
+
+    protected override void Awake()
     {
+        base.Awake();
+
+        _collider = GetComponent<Collider>();
+
         if (_hpUI != null)
         {
             _hpCanvas = _hpUI.GetComponentInChildren<Canvas>();
             _hpSlider = _hpUI.GetComponentInChildren<Slider>();
 
-            _hpSlider.maxValue = _hp;
+            _hpSlider.maxValue = _maxhp;
             _hpSlider.value = _hp;
 
             _hpSlider.gameObject.SetActive(false);
+        }
+
+        if (_isRespawnable && _modelObject == null)
+        {
+            Debug.LogWarning($"{name}: 리스폰 가능한 오브젝트에 model이 할당되지 않았음.");
         }
     }
 
@@ -84,4 +102,47 @@ public abstract class GatherableObject : DestructibleObject
             _hpSlider.gameObject.SetActive(false);
         }
     }
+
+    protected override void DestroyObject()
+    {
+        if (_isDestroyed) return;
+        
+        _isDestroyed = true;
+
+        DropItems();
+
+        if (_destroyEffect != null)
+        {
+            Instantiate(_destroyEffect, transform.position, Quaternion.identity);
+        }
+
+        if (_isRespawnable)
+        {
+            if (_hpUI != null) _hpSlider.gameObject.SetActive(false);
+            StartCoroutine(respawnProcess());
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private IEnumerator respawnProcess()
+    {
+        if (_collider != null) _collider.enabled = false;
+        if (_modelObject != null) _modelObject.SetActive(false);
+
+        yield return new WaitForSeconds(_respawnTime);
+
+        _hp = _maxhp;
+        _isDestroyed = false;
+
+        if (_collider != null) _collider.enabled = true;
+        if (_modelObject != null) _modelObject.SetActive(true);
+        if (_hpSlider != null) _hpSlider.value = _hp;
+
+        OnRespawn();
+    }
+
+    protected virtual void OnRespawn() { }
 }

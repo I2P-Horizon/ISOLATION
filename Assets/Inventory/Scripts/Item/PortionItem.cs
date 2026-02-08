@@ -21,10 +21,36 @@ public class PortionItem : CountableItem, IUsableItem
     // 포션 사용
     public bool Use(int index = -1)
     {
-        Amount--;
+        Player player = Player.Instance;
 
-        DataManager.Instance.GetPlayerData().UsePortion(PortionData.Value, PortionData.PortionType);
+        if (player == null || player.State.Die) return false;
+
+        player.State.IncreaseHp(PortionData.HpValue);
+
+        applyEffects(player);
 
         return true;
+    }
+
+    private void applyEffects(Player player)
+    {
+        foreach (var effect in PortionData.Effects)
+        {
+            float randomValue = Random.value;
+
+            if (randomValue <= effect.chance)
+            {
+                if (effect.isRemoval)
+                {
+                    player.Condition.RemoveCondition(effect.type);
+                    Debug.Log($"[PortionItem] Remove condition: {effect.type}");
+                }
+                else
+                {
+                    player.Condition.AddCondition(effect.type, effect.duration);
+                    Debug.Log($"[PortionItem] Applied condition: {effect.type}");
+                }
+            }
+        }
     }
 }

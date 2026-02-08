@@ -17,7 +17,6 @@ public class PortionItemDTO
     public string itemIcon;             // 아이템 아이콘 이름
     public int itemPrice;               // 아이템 가격
     public int maxAmount;               // 최대 소지량
-    public string portionType;          // 포션 종류
-    public float value;                 // 회복량
-    
+    public float value;                 // 체력 회복량
+    public List<ItemEffect> effects;    // 버프 효과 리스트
 }

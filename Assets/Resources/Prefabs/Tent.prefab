@@ -198,6 +198,10 @@ MonoBehaviour:
   _dropAmount: 1
   _hpUI: {fileID: 8268737865501795101}
   _UIHideTime: 3
+  _isRespawnable: 0
+  _respawnTime: 180
+  _destroyEffect: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
+  _modelObject: {fileID: 0}
 --- !u!1 &7051158269373825737 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5902731810872531322, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}

@@ -12,11 +12,9 @@ using UnityEngine;
 
 public class PortionItemData : CountableItemData
 {
-    [SerializeField] private float value;              // 회복량
-    [SerializeField] private string portionType;       // 포션 종류
+    public float HpValue { get; private set; }
+    public List<ItemEffect> Effects { get; private set; }
 
-    public float Value => value;
-    public string PortionType => portionType;
 
     public PortionItemData(PortionItemDTO dto)
     {
@@ -27,8 +25,8 @@ public class PortionItemData : CountableItemData
         this.itemIcon = dto.itemIcon;
         this.itemPrice = dto.itemPrice;
         this.maxAmount = dto.maxAmount;
-        this.value = dto.value;
-        this.portionType = dto.portionType;
+        this.HpValue = dto.value;
+        this.Effects = dto.effects ?? new List<ItemEffect>();
     }
 
     public override Item CreateItem()
