@@ -74,7 +74,12 @@ MonoBehaviour:
   _dropAmount: 3
   _hpUI: {fileID: 3946709337947435123}
   _UIHideTime: 3
-  _fruit: {fileID: 8072118586955727064}
+  _isRespawnable: 1
+  _respawnTime: 180
+  _destroyEffect: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
+  _modelObject: {fileID: 8023160768456271757}
+  _initialFruit: {fileID: 8072118586955727064}
+  _fruitPrefab: {fileID: 1529354629667181729, guid: 571a7e81be646064b8b27e7c6cd47d1e, type: 3}
   _minDropForce: 2
   _maxDropForce: 5
   _upwardModifier: 1
@@ -269,6 +274,11 @@ PrefabInstance:
 --- !u!4 &7213691938898181431 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 81f075adbb6760c40a527ce225979e7e, type: 3}
+  m_PrefabInstance: {fileID: 7176090062837422812}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8023160768456271757 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 81f075adbb6760c40a527ce225979e7e, type: 3}
   m_PrefabInstance: {fileID: 7176090062837422812}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7294906675062527097

@@ -202,7 +202,7 @@ public class PlayerEquipment : MonoBehaviour
         if (data is WeaponItemData weaponData)
         {
             _player.State.BaseAttackSpeed += weaponData.Rate * multiplier;
-            _player.State.BaseAttackPower += weaponData.Damage * multiplier;
+            _player.State.AttackPower += weaponData.Damage * multiplier;
         }
         else if (data is ArmorItemData armorData)
         {

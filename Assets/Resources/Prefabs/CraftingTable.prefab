@@ -156,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c979cb9666e0f44b831ad35bd5566c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _craftingUI: {fileID: 0}
+  _craftingUIGo: {fileID: 0}
 --- !u!114 &5715270840570294096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174,6 +174,10 @@ MonoBehaviour:
   _dropAmount: 1
   _hpUI: {fileID: 3348898959263306259}
   _UIHideTime: 3
+  _isRespawnable: 0
+  _respawnTime: 180
+  _destroyEffect: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
+  _modelObject: {fileID: 0}
 --- !u!1001 &1611030264783908369
 PrefabInstance:
   m_ObjectHideFlags: 0

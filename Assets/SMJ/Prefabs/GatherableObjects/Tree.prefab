@@ -73,6 +73,10 @@ MonoBehaviour:
   _dropAmount: 5
   _hpUI: {fileID: 3015017333849045551}
   _UIHideTime: 3
+  _isRespawnable: 1
+  _respawnTime: 180
+  _destroyEffect: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
+  _modelObject: {fileID: 5205410144604308829}
 --- !u!1001 &1294033837289768493
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -272,5 +276,10 @@ PrefabInstance:
 --- !u!4 &4861218390979289063 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 63b13e6b47cb38746a9594f13334c88e, type: 3}
+  m_PrefabInstance: {fileID: 4970915311782459404}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5205410144604308829 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 63b13e6b47cb38746a9594f13334c88e, type: 3}
   m_PrefabInstance: {fileID: 4970915311782459404}
   m_PrefabAsset: {fileID: 0}

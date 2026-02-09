@@ -43,8 +43,8 @@
     {
       "id": 50005,
       "itemName": "잡초",
-      "itemToolTip": "덤불에서 뜯어낸 잡초",
-      "itemExplanation": "불쏘시개로 사용할 수 있습니다.",
+      "itemToolTip": "어디서나 자라는 흔한 잡초",
+      "itemExplanation": "불을 피우는 데 쓰일 수 있다.",
       "itemIcon": "WeedIcon",
       "itemPrice": 1,
       "maxAmount": 99
@@ -54,7 +54,7 @@
     {
       "id": 50006,
       "itemName": "호랑이 가죽",
-      "itemToolTip": "호랑이에게서 얻은 질긴 가죽",
+      "itemToolTip": "호랑이에게서 얻은 질긴 가죽.",
       "itemExplanation": "여러 생존 도구에 쓰일 수 있다.",
       "itemIcon": "TigerLeatherIcon",
       "itemPrice": 1,

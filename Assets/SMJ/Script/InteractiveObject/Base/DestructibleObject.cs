@@ -13,16 +13,22 @@ public abstract class DestructibleObject : MonoBehaviour, IInteractable
     /// 오브젝트의 체력 (0 이하가 되면 파괴됨)
     /// </summary>
     [SerializeField] protected float _hp;
+    protected float _maxhp;
     /// <summary>
     /// 파괴 시 드랍될 아이템 프리팹
     /// </summary>
     [SerializeField] protected GameObject _dropItem;
     /// <summary>
-    /// 드랍할 아이템의 수량
+    /// 드랍할 아이템의 수량(최대)
     /// </summary>
     [SerializeField] protected int _dropAmount;
 
-    private bool _isDestroyed = false;
+    protected bool _isDestroyed = false;
+
+    protected virtual void Awake()
+    {
+        _maxhp = _hp;
+    }
 
     /// <summary>
     /// 플레이어와 상호작용할 때 호출되는 함수.
@@ -57,8 +63,6 @@ public abstract class DestructibleObject : MonoBehaviour, IInteractable
 
         DropItems();
         Destroy(gameObject);
-
-        Debug.Log($"{_dropAmount}개의 아이템이 드랍됨"); // 디버그용 로그. 추후 삭제 
     }
 
     /// <summary>
@@ -74,7 +78,7 @@ public abstract class DestructibleObject : MonoBehaviour, IInteractable
         for (int i = 0; i < _dropAmount; i++)
         {
             Vector3 dropPosition = transform.position + Random.insideUnitSphere * 2f;
-            dropPosition.y = transform.position.y;
+            dropPosition.y = transform.position.y + 1;
 
             Quaternion dropRotation = _dropItem.transform.rotation;
 
