@@ -3,7 +3,16 @@ guid: f905b2b196c262b498e95e39f8c0b747
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - predictEyesRadius: {instanceID: 0}
+  - treeMaterial: {fileID: 2100000, guid: 4a4191c6be3d1f34cb57c28c1969d402, type: 2}
+  - dummyTombstonePrefab: {instanceID: 0}
+  - dummyStonePrefab: {instanceID: 0}
+  - heavySnowPrefab: {instanceID: 0}
+  - globalVolumeProfile: {instanceID: 0}
+  - ghostPrefab: {instanceID: 0}
+  - historicEntrancePrefab: {instanceID: 0}
+  - playerTranfsorm: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
