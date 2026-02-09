@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class PredictEyesController : MonoBehaviour
 {
@@ -12,6 +14,12 @@ public class PredictEyesController : MonoBehaviour
     [SerializeField] private GameObject dummyStonePrefab;
     [SerializeField] private int spawningStoneCount;
     [SerializeField] private GameObject heavySnowPrefab;
+
+    [SerializeField] private VolumeProfile globalVolumeProfile;
+    [SerializeField] private GameObject ghostPrefab;
+    [SerializeField] private int spawningGhostCount;
+    [SerializeField] private GameObject historicEntrancePrefab;
+    [SerializeField] private Transform playerTranfsorm;
     private int _minX, _maxX, _y, _minZ, _maxZ;
 
     private int cachedEventNum;
@@ -78,15 +86,17 @@ public class PredictEyesController : MonoBehaviour
     // 1: TombStoneSpawn
     // 2: StoneSpawn
     // 3: HeavySnow
-    // 4: Heatwave
-    // 5: Fear
+    // 4: Fear
+    // 5: Heatwave
     // 6: HistoricEntrance
+
     IEnumerator PredictEyesActivation(int cachedEventNum)
     {
         switch(cachedEventNum)
         {
             case 0:
                 Debug.Log("Phenomenon of dream: ChangeTreesEmission");
+                ChangeTreesEmissionPhenomenon();
                 break;
             case 1:
                 Debug.Log("Phenomenon of dream: SpawnTombstone");
@@ -100,9 +110,49 @@ public class PredictEyesController : MonoBehaviour
                 Debug.Log("Phenomenon of dream: HeavySnow");
                 HeavySnowPhenomenon();
                 break;
+            case 4:
+                Debug.Log("Phenomenon of dream: Fear");
+                FearPhenomenon();
+                break;
+            case 5:
+                Debug.Log("Phenomenon of dream: Heatwave");
+                HeatWavePhenomenon();
+                break;
+            case 6:
+                Debug.Log("Phenomenon of dream: HistoricEntrance");
+                HistoricEntrancePhenomenon();
+                break;
         }
 
         yield return new WaitForSecondsRealtime(durationTime);
+        switch (cachedEventNum)
+        {
+            case 0:
+                Debug.Log("End Phenomenon of dream: ChangeTreesEmission");
+                EndChangeTreesEmissionPhenomenon();
+                break;
+            case 1:
+                Debug.Log("End Phenomenon of dream: SpawnTombstone");
+                break;
+            case 2:
+                Debug.Log("End Phenomenon of dream: SpawnStone");
+                break;
+            case 3:
+                Debug.Log("End Phenomenon of dream: HeavySnow");
+                break;
+            case 4:
+                Debug.Log("End Phenomenon of dream: Fear");
+                EndFearPhenomenon();
+                break;
+            case 5:
+                Debug.Log("End Phenomenon of dream: Heatwave");
+                EndHeatWavePhenomenon();
+                break;
+            case 6:
+                Debug.Log("End Phenomenon of dream: HistoricEntrance");
+                break;
+        }
+
         StopCoroutine(PredictEyesActivation(cachedEventNum));
     }
 
@@ -132,10 +182,14 @@ public class PredictEyesController : MonoBehaviour
         StopCoroutine(DecreaseRadius());
         StopCoroutine(PredictEyesActivation(cachedEventNum));
     }
-
     private void ChangeTreesEmissionPhenomenon()
     {
-        // JSH TODO: Implementation
+        treeMaterial.EnableKeyword("_EMISSION");
+    }
+
+    private void EndChangeTreesEmissionPhenomenon()
+    {
+        treeMaterial.DisableKeyword("_EMISSION");
     }
 
     private void SpawnStonePhenomenon()
@@ -147,6 +201,7 @@ public class PredictEyesController : MonoBehaviour
             Destroy(instance.gameObject, durationTime);
         }
     }
+
     private void SpawnTombstonePhenomenon()
     {
         for (int i = 0; i < spawningTombstoneCount; i++)
@@ -161,6 +216,55 @@ public class PredictEyesController : MonoBehaviour
     {
         GameObject instance = Instantiate(heavySnowPrefab);
         instance.transform.position = new Vector3(Random.Range(-30.0f, 30.0f), _y, Random.Range(-30.0f, 30.0f));
+        Destroy(instance.gameObject, durationTime);
+    }
+
+    private void HeatWavePhenomenon()
+    {
+        globalVolumeProfile.TryGet<ColorAdjustments>(out var color);
+        color.postExposure.value = 3.0f;
+        color.contrast.value = -50.0f;
+        color.hueShift.value = -30.0f;
+        color.saturation.value = -20.0f;
+    }
+    private void EndHeatWavePhenomenon()
+    {
+        globalVolumeProfile.TryGet<ColorAdjustments>(out var color);
+        color.postExposure.value = 0.0f;
+        color.contrast.value = 0.0f;
+        color.hueShift.value = 0.0f;
+        color.saturation.value = 0.0f;
+    }
+
+    private void FearPhenomenon()
+    {
+        for (int i = 0; i < spawningGhostCount; i++)
+        {
+            GameObject instance = Instantiate(ghostPrefab);
+            instance.transform.position = new Vector3(Random.Range(_minX, _maxX), _y, Random.Range(_minZ, _maxZ));
+            Destroy(instance.gameObject, durationTime);
+        }
+
+        globalVolumeProfile.TryGet<ColorAdjustments>(out var color);
+        color.postExposure.value = 3.0f;
+        color.contrast.value = 40.0f;
+        color.hueShift.value = 10.0f;
+        color.saturation.value = -50.0f;
+    }
+
+    private void EndFearPhenomenon()
+    {
+        globalVolumeProfile.TryGet<ColorAdjustments>(out var color);
+        color.postExposure.value = 0.0f;
+        color.contrast.value = 0.0f;
+        color.hueShift.value = 0.0f;
+        color.saturation.value = 0.0f;
+    }
+
+    private void HistoricEntrancePhenomenon()
+    {
+        GameObject instance = Instantiate(historicEntrancePrefab);
+        instance.transform.position = playerTranfsorm.transform.position + new Vector3(30.0f, 0.0f, 0.0f);
         Destroy(instance.gameObject, durationTime);
     }
 }
