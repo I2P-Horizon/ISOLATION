@@ -13729,7 +13729,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   island:
-    radius: 190
+    radius: 100
     falloffPower: 0.15
     beachWidth: 8
     pos: {fileID: 1026859752}

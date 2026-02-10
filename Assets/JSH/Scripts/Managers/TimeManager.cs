@@ -127,7 +127,7 @@ public class TimeManager : MonoBehaviour
         _realTimePerDaySec = _realTimePerDay * _minToSec;
 
         // Game start time setting AM 9:00 | 3/8
-        _currentTime = (((int)_realTimePerDaySec * 3) / 8);
+        _currentTime = (((int)_realTimePerDaySec * 3) / 8 + 30);
 
         // AM 9:00 | 3/8
         _dayStartTime = (((int)_realTimePerDaySec * 3) / 8);

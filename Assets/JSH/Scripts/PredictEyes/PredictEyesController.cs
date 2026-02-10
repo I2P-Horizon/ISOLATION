@@ -8,7 +8,9 @@ public class PredictEyesController : MonoBehaviour
 {
     [SerializeField] private GameObject predictEyesRadius;
     [SerializeField] private float durationTime;
-    [SerializeField] Material treeMaterial;
+    [SerializeField] Material tree1Material;
+    [SerializeField] Material tree2Material;
+    [SerializeField] Material tree3Material;
     [SerializeField] private GameObject dummyTombstonePrefab;
     [SerializeField] private int spawningTombstoneCount;
     [SerializeField] private GameObject dummyStonePrefab;
@@ -184,12 +186,16 @@ public class PredictEyesController : MonoBehaviour
     }
     private void ChangeTreesEmissionPhenomenon()
     {
-        treeMaterial.EnableKeyword("_EMISSION");
+        tree1Material.DisableKeyword("_EMISSION");
+        tree2Material.DisableKeyword("_EMISSION");
+        tree3Material.DisableKeyword("_EMISSION");
     }
 
     private void EndChangeTreesEmissionPhenomenon()
     {
-        treeMaterial.DisableKeyword("_EMISSION");
+        tree1Material.EnableKeyword("_EMISSION");
+        tree2Material.EnableKeyword("_EMISSION");
+        tree3Material.EnableKeyword("_EMISSION");
     }
 
     private void SpawnStonePhenomenon()

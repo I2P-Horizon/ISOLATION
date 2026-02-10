@@ -14,7 +14,7 @@ public class SpawnManager : MonoBehaviour, ICycleListener
     {
         timer += Time.deltaTime;
 
-        // JSH TODO: Update()가 아닌, InitSpawn()으로 변경 -> IslandManager.cs 과의 연동 필요 - (김선욱 팀장님)
+        // COMPLETED_JSH TODO: Update()가 아닌, InitSpawn()으로 변경 -> IslandManager.cs 과의 연동 필요 - (김선욱 팀장님) -> 섬 사이즈 고정
     }
 
     private void OnEnable()
@@ -37,16 +37,13 @@ public class SpawnManager : MonoBehaviour, ICycleListener
 
             TimeManager.Instance.Register(this);
             
-            InitSpawnArea(-5000, 5000, 5000, -5000, 5000); // Tmp
+            InitSpawnArea(-100, 100, 300, -100, 100);
 
             // Spawn creatures when game starts
+            Debug.Log("Creature Spawned, when game starts");
             for (int creatureID = 0; creatureID < CreaturePoolsManager.Instance.GetCreaturePoolListCount(); creatureID++)
             {
-                for (int i = 0; i < CreaturePoolsManager.Instance.GetCreaturePoolInitSize(creatureID); i++)
-                {
-                    Debug.Log(creatureID + ": Creature Spawned | Count: " + i);
-                    SpawnCreature(creatureID);
-                }
+                StartCoroutine(SpawnCreatureCoroutine(creatureID));
             }
         }
     }
@@ -56,35 +53,38 @@ public class SpawnManager : MonoBehaviour, ICycleListener
         // Night -> Day
         if (!TimeManager.Instance.IsNight)
         {
+            Debug.Log("Creature Spawned, when day begins");
             for (int creatureID = 0; creatureID < CreaturePoolsManager.Instance.GetCreaturePoolListCount(); creatureID++)
             {
-                for(int currentActiveCreatureCount = CreaturePoolsManager.Instance.GetActiveCreatureCount(creatureID); currentActiveCreatureCount < _OnChangeToDayCreatureSpawnThreshold; currentActiveCreatureCount++)
-                {
-                    Debug.Log(creatureID + ": Creature Spawned, when day begins | Count: " + currentActiveCreatureCount);
-                    SpawnCreature(creatureID);
-                }
+                StartCoroutine(SpawnCreatureCoroutine(creatureID));
             }
         }
 
         // Day -> Night
         if (TimeManager.Instance.IsNight)
         {
+            Debug.Log("Creature Spawned, when night begins");
             for (int creatureID = 0; creatureID < CreaturePoolsManager.Instance.GetCreaturePoolListCount(); creatureID++)
             {
-                for (int currentActiveCreatureCount = CreaturePoolsManager.Instance.GetActiveCreatureCount(creatureID); currentActiveCreatureCount < _OnChangeToNightCreatureSpawnThreshold; currentActiveCreatureCount++)
-                {
-                    Debug.Log(creatureID + ": Creature Spawned, when night begins | Count: " + currentActiveCreatureCount);
-                    SpawnCreature(creatureID);
-                }
+                StartCoroutine(SpawnCreatureCoroutine(creatureID));
             }
         }
     }
 
     private void SpawnCreature(int creatureID)
     {
-        // JSH TODO: 섬 크기에 따른 스폰 범위 설정 -> IslandManager.cs 과의 연동 필요 - (김선욱 팀장님)
+        // COMPLETED_JSH TODO: 섬 크기에 따른 스폰 범위 설정 -> IslandManager.cs 과의 연동 필요 - (김선욱 팀장님) -> 섬 사이즈 고정
         Vector3 spawnPos = new Vector3(Random.Range(_minX, _maxX), _y, Random.Range(_minZ, _maxZ));
         CreaturePoolsManager.Instance.SpawnCreature(creatureID, spawnPos);
+    }
+
+    private IEnumerator SpawnCreatureCoroutine(int creatureID)
+    {
+        for (int currentActiveCreatureCount = CreaturePoolsManager.Instance.GetActiveCreatureCount(creatureID); currentActiveCreatureCount < _OnChangeToNightCreatureSpawnThreshold; currentActiveCreatureCount++)
+        {
+            SpawnCreature(creatureID);
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
 

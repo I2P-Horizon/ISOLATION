@@ -20,7 +20,7 @@ public class FearEvent : MonoBehaviour, IEvent
     }
     private void Start()
     {
-        InitSpawnArea(-200, 200, 3, 20, -200, 200);
+        InitSpawnArea(-100, 100, 3, 20, -100, 100);
     }
 
     // Interface implementation functions //

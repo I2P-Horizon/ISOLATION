@@ -3,7 +3,15 @@ guid: 2eeffb9cf20982c408170596929a3da0
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - _dropItem: {instanceID: 0}
+  - _animalShape: {instanceID: 0}
+  - _monsterShape: {instanceID: 0}
+  - _animalStateDropItem: {instanceID: 0}
+  - _monsterStateDropItem: {instanceID: 0}
+  - _hitEffect: {instanceID: 0}
+  - _destroyEffect: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
+  - _hpUI: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
