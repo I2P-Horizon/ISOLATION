@@ -7,7 +7,7 @@ public class PredictEyesRadiusController : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.layer == 8)
+        if(other.gameObject.layer == 10)
         {
             foreach (Renderer renderer in other.gameObject.GetComponents<Renderer>())
                 renderer.enabled = true;
@@ -18,7 +18,7 @@ public class PredictEyesRadiusController : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 8)
+        if (other.gameObject.layer == 10)
         {
             foreach (Renderer renderer in other.gameObject.GetComponents<Renderer>())
                 renderer.enabled = false;
