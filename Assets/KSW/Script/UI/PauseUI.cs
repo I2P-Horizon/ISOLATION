@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class PauseUI : Overlay
 {
     [SerializeField] private GameObject _pauseUI;
+    [SerializeField] private GameObject _craftingUI;
 
     [SerializeField] private Button _continueButton;
     [SerializeField] private Button _settingButton;
@@ -30,7 +31,7 @@ public class PauseUI : Overlay
 
     protected override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !_craftingUI.activeSelf)
         {
             if (!_pauseUI.activeSelf) Show();
             else Close();

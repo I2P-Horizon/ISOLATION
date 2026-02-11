@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour, ICycleListener
 {
     // Day -> Night 전환 시, 크리처 추가 스폰 조건 | 기존에 활성화돼 있는 크리처의 수 기준
-    private const int _OnChangeToNightCreatureSpawnThreshold = 10;
+    private const int _OnChangeToNightCreatureSpawnThreshold = 15;
     // Night -> Day
     private const int _OnChangeToDayCreatureSpawnThreshold = 5;
 
@@ -37,7 +37,7 @@ public class SpawnManager : MonoBehaviour, ICycleListener
 
             TimeManager.Instance.Register(this);
             
-            InitSpawnArea(-100, 100, 300, -100, 100);
+            InitSpawnArea(-100, 200, 300, -100, 200);
 
             // Spawn creatures when game starts
             Debug.Log("Creature Spawned, when game starts");

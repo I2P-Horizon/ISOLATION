@@ -987,6 +987,7 @@ public class Island : Shape
         {
             Loading.Instance.loadingPanel.SetActive(false);
             Loading.Instance.isLoading = false;
+            SceneManager.UnloadSceneAsync("LoadingScene");
             yield return new WaitForSeconds(0.5f);
         }
     }
