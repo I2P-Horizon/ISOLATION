@@ -49,6 +49,9 @@ public class DialogManager : MonoBehaviour
         if (startIndex < 0 || startIndex >= dialog.Length) return;
         if (endIndex < startIndex) return;
 
+        /* 이동 불가 */
+        Player.Instance.Movement.CanMove = false;
+
         this.currentIndex = startIndex;
         this.endIndex = Mathf.Min(endIndex, dialog.Length - 1);
 
@@ -106,6 +109,9 @@ public class DialogManager : MonoBehaviour
 
         image.GetComponent<UIAnimator>().Close();
         StartCoroutine(CloseDelay(dialogUI, 0.1f));
+
+        /* 이동 가능 */
+        Player.Instance.Movement.CanMove = true;
     }
 
     /// <summary>

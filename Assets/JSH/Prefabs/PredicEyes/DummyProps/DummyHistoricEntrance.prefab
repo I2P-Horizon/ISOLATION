@@ -14,11 +14,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6062110117021622423, guid: 76abb951855d1354391646a271f22a62, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7207178633681353375, guid: 76abb951855d1354391646a271f22a62, type: 3}
       propertyPath: m_Layer
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7674802254204698416, guid: 76abb951855d1354391646a271f22a62, type: 3}
       propertyPath: m_LocalPosition.x

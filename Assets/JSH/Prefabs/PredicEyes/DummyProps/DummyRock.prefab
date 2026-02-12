@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6325462707339101527}
   - component: {fileID: 7267487720857162031}
   - component: {fileID: 2124644308707912889}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 1810944041307450519}
   - component: {fileID: 8312531222711034704}
   - component: {fileID: 2917094390713504937}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: HpUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -186,7 +186,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6305757442532246928}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 7757687571940515615}
   - component: {fileID: 5924196754336281435}
   - component: {fileID: 1829024222502886595}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,7 +300,7 @@ GameObject:
   - component: {fileID: 916137627697122023}
   - component: {fileID: 1018394698446301901}
   - component: {fileID: 9143931307396963085}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: DummyRock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,6 +362,11 @@ MonoBehaviour:
   _dropAmount: 0
   _hpUI: {fileID: 465746393847060118}
   _UIHideTime: 3
+  _isRespawnable: 1
+  _respawnTime: 180
+  _destroyEffect: {fileID: 0}
+  _modelObject: {fileID: 0}
+  dropMinAmount: 1
 --- !u!54 &9143931307396963085
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -399,7 +404,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6770429297943482713}
   - component: {fileID: 5476629221598031769}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: HpSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -549,6 +554,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ff598dfff0979e741b6d2309de36e6f7, type: 3}
       propertyPath: m_Name
       value: rock
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ff598dfff0979e741b6d2309de36e6f7, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

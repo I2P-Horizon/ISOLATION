@@ -45,18 +45,22 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
     [SerializeField] private bool _isChasing;
     [SerializeField] private bool _isAttacking;
 
-    // Hit effect
+    // Effect
     [SerializeField] private HitEffect _hitEffect;
+    [SerializeField] private GameObject _destroyEffect;
 
     // Animator
     private Animator[] _animators;
 
-    private void Awake()
+
+
+    protected virtual void Awake()
     {
         InitAIConfig();
         InitHpUI();
 
         _playerTransform = GameObject.FindWithTag("Player").transform;
+
         rb = GetComponent<Rigidbody>();
         MeshCollider collider = GetComponentInChildren<MeshCollider>();
 
@@ -79,6 +83,11 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
 
         if (!_playerTransform) 
             _playerTransform = GameObject.FindWithTag("Player").transform;
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+            collision.gameObject.GetComponent<PlayerState>().DecreaseHP(10.0f);
     }
 
     private void Update()
@@ -356,7 +365,7 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
         Debug.Log("Creature UnRegister & Back to pool Complete");
     }
 
-    // JSH TODO: Add condition based on player's equipped equipment
+    // COMPLETED_JSH TODO: Add condition based on player's equipped equipment -> Appolied damage differences by tool
     public override void Interact(object context = null)
     {
         if (context is float amount)
@@ -384,6 +393,13 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
             }
             else
             {
+                DropItems();
+
+                if (_destroyEffect != null)
+                {
+                    Instantiate(_destroyEffect, transform.position, Quaternion.identity);
+                }
+
                 DestroyObject();
             }
         }
@@ -395,11 +411,5 @@ public abstract class CreatureBase : DestructibleObject, ICycleListener
         {
             _hpSlider.gameObject.SetActive(false);
         }
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.CompareTag("Player"))
-            collision.gameObject.GetComponent<PlayerState>().DecreaseHP(10.0f);
     }
 }

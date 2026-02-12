@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4826608258778271328}
   - component: {fileID: 458363382405521260}
   - component: {fileID: 4955028398538542053}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: DummyTombStone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,6 +100,10 @@ MonoBehaviour:
   _dropAmount: 0
   _hpUI: {fileID: 0}
   _UIHideTime: 0
+  _isRespawnable: 1
+  _respawnTime: 180
+  _destroyEffect: {fileID: 0}
+  _modelObject: {fileID: 0}
   golemPrefab: {fileID: 0}
 --- !u!1001 &3476416361475010335
 PrefabInstance:
@@ -172,6 +176,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 07b70bee087a69b4593fc45e6f32c694, type: 3}
       propertyPath: m_Name
       value: tombstone_low
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 07b70bee087a69b4593fc45e6f32c694, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

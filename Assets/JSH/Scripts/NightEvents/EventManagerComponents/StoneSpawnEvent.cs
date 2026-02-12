@@ -12,7 +12,7 @@ public class StoneSpawnEvent : MonoBehaviour, IEvent
 
     private void Awake()
     {
-        InitSpawnArea(-300, 300, 50, -300, 300);
+        InitSpawnArea(-100, 100, 50, -100, 100);
     }
 
 
