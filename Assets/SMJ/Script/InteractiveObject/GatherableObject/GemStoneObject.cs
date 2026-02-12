@@ -16,7 +16,7 @@ public class GemStoneObject : RockObject
 
     protected override void DropItems()
     {
-        if (_dropItem == null || dropGems.Length == 0) return;
+        if (dropGems.Length == 0) return;
 
         if (Random.value > dropRate) return;
 

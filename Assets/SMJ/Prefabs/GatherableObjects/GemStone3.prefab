@@ -78,7 +78,12 @@ MonoBehaviour:
   _destroyEffect: {fileID: 104829970813648393, guid: d3015b7eea383f64d8b81f965cc466e7, type: 3}
   _modelObject: {fileID: 4403899963092106506}
   dropMinAmount: 1
-  dropGems: []
+  dropGems:
+  - {fileID: 1575774613509144779, guid: 8d40fe3450208e144b55860472ff695a, type: 3}
+  - {fileID: 1575774613509144779, guid: e9a5cd641ed1f5b43abaa8d6a7126701, type: 3}
+  - {fileID: 1575774613509144779, guid: 04e6b9ee21f302a4eb955eb0d9d032e8, type: 3}
+  - {fileID: 1575774613509144779, guid: 9a9e85c9d5db9724eb5b6b04f591a1ca, type: 3}
+  - {fileID: 1575774613509144779, guid: 2e8334e1bee4a2d4380961d0db29f048, type: 3}
   dropRate: 0.5
 --- !u!1 &4403899963092106506
 GameObject:
