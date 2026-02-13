@@ -121,11 +121,9 @@ public class CaveManager : MonoBehaviour
                     if (Random.Range(0f, 1f) < caveObj.spawnChance)
                     {
                         Vector3 extraScale = GetScaleToFit(caveObj.objectPrefab, new Vector3(blockSize, blockSize, blockSize));
-                        Vector3 pos = startPos + new Vector3(x * blockSize + blockSize / 2f, blockSize + blockSize / 2f, z * blockSize + blockSize / 2f);
-
+                        Vector3 pos = startPos + new Vector3(x * blockSize + blockSize / 2f, 1.9f, z * blockSize + blockSize / 2f);
                         GameObject extraObj = Instantiate(caveObj.objectPrefab, pos, Quaternion.identity, transform);
                         extraObj.transform.localScale = extraScale;
-                        extraObj.transform.position += Vector3.down * 0.6f;
                     }
                 }
             }
