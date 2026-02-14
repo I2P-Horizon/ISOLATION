@@ -16,6 +16,7 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _obstacleLayer;
     [SerializeField] private LayerMask _CraftingTableLayer;
+    [SerializeField] private LayerMask _CampfireLayer;
     [SerializeField] private string _prefabPath = "Prefabs/";
 
     [Header("Materials")]
@@ -177,7 +178,7 @@ public class PlacementManager : MonoBehaviour
         _debugCenter = checkPos;
         _debugSize = halfExtents * 2;
 
-        LayerMask combinedLayer = _obstacleLayer | _CraftingTableLayer;
+        LayerMask combinedLayer = _obstacleLayer | _CraftingTableLayer | _CampfireLayer;
 
         Collider[] hits = Physics.OverlapBox(checkPos, halfExtents, Quaternion.identity, combinedLayer);
         return hits.Length == 0;

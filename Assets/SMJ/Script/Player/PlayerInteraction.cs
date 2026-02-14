@@ -38,6 +38,10 @@ public class PlayerInteraction : MonoBehaviour
     /// <summary>제작대 레이어</summary>
     [SerializeField] private LayerMask _ctLayerMask;
 
+    [Header("Campfire Interaction")]
+    [SerializeField] private float _campfireDetectRadius = 1.0f;
+    [SerializeField] private LayerMask _campfireLayerMask;
+
     private List<PickupItem> _ItemsInScope; // 플레이어 주변에 감지된 아이템 목록
 
     private InteractionState _currentState = InteractionState.None; // 현재 상태
@@ -80,6 +84,7 @@ public class PlayerInteraction : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             if (TryInteractionWithCraftingTable()) return;
+            if (TryInteractionWithCampfire()) return;
 
             TryPickupItem();
         }
@@ -422,5 +427,35 @@ public class PlayerInteraction : MonoBehaviour
     private void tryBucketFill()
     {
         _animator.SetTrigger("Watering");
+    }
+
+    private bool TryInteractionWithCampfire()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _campfireDetectRadius, _campfireLayerMask);
+
+        Campfire nearestCampfire = null;
+        float nearestDist = float.MaxValue;
+
+        foreach (Collider col in colliders)
+        {
+            if (col.TryGetComponent(out Campfire campfire))
+            {
+                float dist = Vector3.Distance(transform.position, campfire.transform.position);
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearestCampfire = campfire;
+                }
+            }
+        }
+
+        if (nearestCampfire != null)
+        {
+            nearestCampfire.TryCook(_inventory);
+
+            return true;
+        }
+
+        return false;
     }
 }

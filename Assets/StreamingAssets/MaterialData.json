@@ -88,11 +88,20 @@
       "itemIcon": "BucketOfWaterIcon",
       "itemPrice": 1,
       "maxAmount": 1
+    },
+    {
+      "id": 50010,
+      "itemName": "악어 꼬리",
+      "itemToolTip": "잘려진 악어의 꼬리.",
+      "itemExplanation": "먹을 순 없을 것 같다.",
+      "itemIcon": "CrocodileTailIcon",
+      "itemPrice": 1,
+      "maxAmount": 99
     }
   ],
   "Foresight Eyes": [
     {
-      "id": 50010,
+      "id": 50011,
       "itemName": "예지의 눈 조각 A",
       "itemToolTip": "빛나는 빨간색 조각.",
       "itemExplanation": "고대 사원에서 사용할 수 있다.",
@@ -101,7 +110,7 @@
       "maxAmount": 1
     },
     {
-      "id": 50011,
+      "id": 50012,
       "itemName": "예지의 눈 조각 B",
       "itemToolTip": "빛나는 초록색 조각.",
       "itemExplanation": "고대 사원에서 사용할 수 있다.",
@@ -110,7 +119,7 @@
       "maxAmount": 1
     },
     {
-      "id": 50012,
+      "id": 50013,
       "itemName": "예지의 눈 조각 C",
       "itemToolTip": "빛나는 보라색 조각.",
       "itemExplanation": "고대 사원에서 사용할 수 있다.",
@@ -119,7 +128,7 @@
       "maxAmount": 1
     },
     {
-      "id": 50013,
+      "id": 50014,
       "itemName": "예지의 눈 조각 D",
       "itemToolTip": "빛나는 청록색 조각.",
       "itemExplanation": "고대 사원에서 사용할 수 있다.",
@@ -128,7 +137,7 @@
       "maxAmount": 1
     },
     {
-      "id": 50014,
+      "id": 50015,
       "itemName": "예지의 눈 조각 E",
       "itemToolTip": "빛나는 파란색 조각.",
       "itemExplanation": "고대 사원에서 사용할 수 있다.",

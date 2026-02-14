@@ -251,6 +251,10 @@ MonoBehaviour:
   _ctLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  _campfireDetectRadius: 1
+  _campfireLayerMask:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!1 &4996451277726477634
 GameObject:
   m_ObjectHideFlags: 0

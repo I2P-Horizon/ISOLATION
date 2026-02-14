@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canBePickedUp: 1
-  _itemID: 50013
+  _itemID: 50014
 --- !u!1001 &7539656549652631897
 PrefabInstance:
   m_ObjectHideFlags: 0
