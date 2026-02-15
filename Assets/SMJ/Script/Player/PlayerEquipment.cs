@@ -28,11 +28,23 @@ public class PlayerEquipment : MonoBehaviour
     public event Action OnArmorChanged;
     public event Action OnStateChanged;
 
+    private const float TORCH_DECAY_INTERVAL = 9.0f;
+    private const float TORCH_DECAY_AMOUNT = 5.0f;
+    private float _torchDecayTimer = 0f;
+
+    [Header("Torch Settings")]
+    [SerializeField] private int _torchID = 30013;
+
     private void Awake()
     {
         _player = GetComponent<Player>();
     }
-    
+
+    private void Update()
+    {
+        handleTorchDecay();
+    }
+
     public bool Equip(EquipmentItem newItem)
     {
         if (newItem == null) return false;
@@ -65,7 +77,10 @@ public class PlayerEquipment : MonoBehaviour
     {
         if (_equippedItems.TryGetValue(type, out EquipmentItem oldItem))
         {
-            _inventory.AddItem(oldItem.EquipmentData);
+            if (oldItem.CurrentDurability > 0)
+            {
+                _inventory.AddItemInstance(oldItem);
+            }
 
             applyStats(oldItem, false);
 
@@ -220,5 +235,36 @@ public class PlayerEquipment : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void handleTorchDecay()
+    {
+        if (_equippedItems.TryGetValue(EquipmentType.LeftHand, out EquipmentItem item))
+        {
+            if (item.EquipmentData.ID == _torchID)
+            {
+                _torchDecayTimer += Time.deltaTime;
+
+                if (_torchDecayTimer >= TORCH_DECAY_INTERVAL)
+                {
+                    _torchDecayTimer = 0f;
+
+                    bool isBroken = item.DecreaseDurability(TORCH_DECAY_AMOUNT);
+
+                    if (isBroken)
+                    {
+                        UnEquip(EquipmentType.LeftHand);
+                    }
+                }
+            }
+            else
+            {
+                _torchDecayTimer = 0f;
+            }
+        }
+        else
+        {
+            _torchDecayTimer = 0f;
+        }
     }
 }

@@ -429,60 +429,7 @@ public class Inventory : MonoBehaviour
         // 1. ItemData가 CountableItem일 경우 => 갯수 1개~99개까지 가능
         if(itemData is CountableItemData ciData)
         {
-            //bool findNextCi = true;
-            //index = -1;
-
-            //// 남은 아이템 수량이 없을때까지 반복
-            //while(amount > 0)
-            //{
-            //    // 추가할 아이템이 인벤토리에 존재
-            //    if(findNextCi)
-            //    {
-            //        // 개수 여유가 있는 슬롯 탐색
-            //        index = FindCountableItemSlotIndex(ciData, index + 1);
-
-            //        // 없다면
-            //        if(index == -1)
-            //        {
-            //            findNextCi = false;
-            //        }
-            //        // 있다면 합치기
-            //        else
-            //        {
-            //            CountableItem ci = items[index] as CountableItem;
-            //            // 기존에 있던 아이템 갯수에 추가 및 초과량 반환
-            //            amount = ci.AddAmountAndGetExcess(amount);
-
-            //            UpdateSlot(index);
-            //        }
-            //    }
-            //    // 추가할 아이템이 인벤토리에 존재하지 않을 때
-            //    else
-            //    {
-            //        index = FindEmptySlotIndex(index + 1);  // 빈슬롯 찾기
-
-            //        // 빈슬롯이 없을 때
-            //        if(index == -1)
-            //        {
-            //            break;
-            //        }
-            //        else
-            //        {
-            //            // 새로운 아이템 생성
-            //            CountableItem ci = ciData.CreateItem() as CountableItem;
-            //            ci.SetAmount(amount);
-
-            //            // 슬롯에 아이템 추가
-            //            items[index] = ci;
-
-            //            // 남은 갯수 계산
-            //            amount = (amount > ciData.MaxAmount) ? (amount - ciData.MaxAmount) : 0;
-
-            //            UpdateSlot(index);
-            //        }
-            //    }
-            //}
-
+            
             while (amount > 0)
             {
                 index = FindCountableItemSlotIndex(ciData, 0, quickSlotCount);
@@ -555,6 +502,74 @@ public class Inventory : MonoBehaviour
         items[index] = item;
 
         UpdateSlot(index);
+    }
+
+    public int AddItemInstance(Item item)
+    {
+        if (item == null) return 0;
+
+        int index;
+
+        if (item is CountableItem ci)
+        {
+            index = FindCountableItemSlotIndex(ci.CountableData, 0, quickSlotCount);
+            if (index == -1)
+            {
+                index = FindCountableItemSlotIndex(ci.CountableData, quickSlotCount, Capacity);
+            }
+
+            if (index != -1)
+            {
+                CountableItem existingItem = items[index] as CountableItem;
+
+                int excess = existingItem.AddAmountAndGetExcess(ci.Amount);
+
+                ci.SetAmount(excess);
+
+                UpdateSlot(index);
+
+                if (excess == 0) return 0;
+            }
+
+            if (ci.Amount > 0)
+            {
+                index = FindEmptySlotIndex(0, quickSlotCount);
+                if (index == -1)
+                {
+                    index = FindEmptySlotIndex(quickSlotCount, Capacity);
+                }
+                if (index != -1)
+                {
+                    items[index] = ci;
+                    UpdateSlot(index);
+                    return 0;
+                }
+                else
+                {
+                    return ci.Amount;
+                }
+            }
+        }
+        else
+        {
+            index = FindEmptySlotIndex(0, quickSlotCount);
+            if (index == -1)
+            {
+                index = FindEmptySlotIndex(quickSlotCount, Capacity);
+            }
+            if (index != -1)
+            {
+                items[index] = item;
+                UpdateSlot(index);
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
+        return 0;
     }
 
     // 플레이어 아이템 슬롯에 아이템 추가

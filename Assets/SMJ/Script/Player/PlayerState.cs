@@ -66,6 +66,9 @@ public class PlayerState : MonoBehaviour
     private float _satietyTimer = 0f;
     private float _hydrationTimer = 0f;
     private float _starvationTimer = 0f;
+
+    private bool _isDeadSequenceStarted = false;
+    public bool IsDeadSequenceStarted => _isDeadSequenceStarted;
     #endregion
 
     private void Awake()
@@ -221,11 +224,13 @@ public class PlayerState : MonoBehaviour
 
     public void DecreaseHP(float amount)
     {
+        if (_isDeadSequenceStarted || _die) return;
+
         _hp = Mathf.Max(0, _hp - amount);
         if (_hp <= 0)
         {
             _hp = 0;
-            _die = true;
+            StartCoroutine(DeathSequence());
         }
     }
 
@@ -258,5 +263,20 @@ public class PlayerState : MonoBehaviour
         {
             AttackSpeed = speed;
         }
+    }
+
+    private IEnumerator DeathSequence()
+    {
+        _isDeadSequenceStarted = true;
+        
+        Animator animator = GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetTrigger("Die");
+        }
+
+        yield return new WaitForSeconds(2.0f);
+
+        _die = true;
     }
 }

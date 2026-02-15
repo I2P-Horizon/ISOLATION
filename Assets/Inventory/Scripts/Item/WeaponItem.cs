@@ -22,18 +22,10 @@ public class WeaponItem : EquipmentItem
     // 장착
     public override void Equip()
     {
-        // 장비에 따른 플레이어 능력치 반영
-        DataManager.Instance.GetPlayerData().EquipItem(WeaponData.Damage, WeaponData.Type);
-        // 장비에 따른 플레이어 무기 설정
-        //WeaponManager.Instance.SetWeapon(WeaponData.SubType, WeaponData.ItemPrefab);
     }
 
     // 장착 해제
     public override void Unequip()
     {
-        // 장비에 따른 플레이어 능력치 반영
-        DataManager.Instance.GetPlayerData().UnequipItem(WeaponData.Damage, WeaponData.Type);
-        // 기본 무기 설정
-        //WeaponManager.Instance.SetWeapon();
     }
 }

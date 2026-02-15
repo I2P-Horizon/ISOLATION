@@ -33,11 +33,21 @@ public class PlayerMovement : MonoBehaviour
 
         _moveSpeed = _player.State.MoveSpeed;
         _jumpHeight = _player.State.JumpHeight;
+
+        CanMove = false;
+        IsMoving = false;
+
+        IslandManager.OnGenerationComplete += startWakeUpSequence;
+    }
+
+    private void OnDestroy()
+    {
+        IslandManager.OnGenerationComplete -= startWakeUpSequence;
     }
 
     void Update()
     {
-        if (CanMove == false || _player.State.Die) return;
+        if (CanMove == false || _player.State.Die || _player.State.IsDeadSequenceStarted) return;
 
         _moveSpeed = _player.State.MoveSpeed;
 
@@ -158,5 +168,30 @@ public class PlayerMovement : MonoBehaviour
     {
         _velocity.y += _gravity * Time.deltaTime; // 중력을 누적시켜 시간이 지날수록 더 빠르게 떨어지도록 함
         _characterController.Move(_velocity * Time.deltaTime); // 최종 이동 적용
+    }
+
+    private void startWakeUpSequence()
+    {
+        StartCoroutine(WakeUpSequence());
+    }
+
+    private IEnumerator WakeUpSequence()
+    {
+        _animator.SetTrigger("WakeUp");
+
+        yield return new WaitForSeconds(0.1f);
+
+        while (_animator.GetCurrentAnimatorStateInfo(0).IsName("GettingUp") ||
+               _animator.GetCurrentAnimatorStateInfo(0).IsName("Laying"))
+        {
+            if (_animator.GetCurrentAnimatorStateInfo(0).IsName("GettingUp") &&
+                _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+            {
+                break;
+            }
+            yield return null;
+        }
+
+        CanMove = true;
     }
 }
