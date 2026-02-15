@@ -47,7 +47,19 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (CanMove == false || _player.State.Die || _player.State.IsDeadSequenceStarted) return;
+        if (CanMove == false || _player.State.Die || _player.State.IsDeadSequenceStarted)
+        {
+            IsMoving = false;
+            _velocity.x = 0f;
+            _velocity.z = 0f;
+
+            _animator.SetBool("isMoving", false);
+            _animator.SetFloat("Horizontal", 0f, 0.5f, Time.deltaTime);
+            _animator.SetFloat("Vertical", 0f, 0.5f, Time.deltaTime);
+
+            ApplyGravity();
+            return; 
+        }
 
         _moveSpeed = _player.State.MoveSpeed;
 
