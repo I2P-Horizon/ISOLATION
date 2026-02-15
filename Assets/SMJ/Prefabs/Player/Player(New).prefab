@@ -161,6 +161,9 @@ MonoBehaviour:
   AttackSpeed: 0
   AttackPower: 0
   DefensivePower: 0
+  BaseAttackSpeed: 0
+  BaseAttackPower: 0
+  BaseMoveSpeed: 0
   _hp: 0
   _satiety: 0
   _hydration: 0
@@ -182,6 +185,8 @@ MonoBehaviour:
   _rightHandMount: {fileID: 8804496085116905088}
   _leftHandMount: {fileID: 8535054456113928123}
   _bucketMount: {fileID: 9120214824510618555}
+  _bagGo: {fileID: 0}
+  _sunglassesGo: {fileID: 0}
 --- !u!114 &6670535937848646732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +227,7 @@ MonoBehaviour:
   _moveSpeed: 0
   _gravity: -9.81
   IsMoving: 0
+  CanMove: 1
 --- !u!114 &1073451655151067944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,6 +251,10 @@ MonoBehaviour:
   _ctLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  _campfireDetectRadius: 1
+  _campfireLayerMask:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!1 &4996451277726477634
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,13 +341,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9153997975340643041}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12848678, y: 0.7995334, z: 0.02626273, w: 0.5861295}
-  m_LocalPosition: {x: 0.217, y: 0.201, z: -0.031}
+  m_LocalRotation: {x: 0.17478152, y: 0.80070156, z: 0.03660924, w: 0.5718289}
+  m_LocalPosition: {x: 0.2240544, y: 0.2151877, z: -0.0168598}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8251501174488048933}
-  m_LocalEulerAnglesHint: {x: 6.236, y: 108.263, z: 13.748}
+  m_LocalEulerAnglesHint: {x: 8.121, y: 110.293, z: 18.967}
 --- !u!1001 &2936166972770398438
 PrefabInstance:
   m_ObjectHideFlags: 0

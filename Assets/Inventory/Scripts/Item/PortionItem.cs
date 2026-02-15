@@ -21,6 +21,7 @@ public class PortionItem : CountableItem, IUsableItem
     // 포션 사용
     public bool Use(int index = -1)
     {
+        Debug.Log($"[Portion] Use portion item: {PortionData.ItemName}");
         Player player = Player.Instance;
 
         if (player == null || player.State.Die) return false;
@@ -29,6 +30,7 @@ public class PortionItem : CountableItem, IUsableItem
 
         applyEffects(player);
 
+        Amount--;
         return true;
     }
 

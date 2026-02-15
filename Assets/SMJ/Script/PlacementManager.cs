@@ -16,6 +16,7 @@ public class PlacementManager : MonoBehaviour
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _obstacleLayer;
     [SerializeField] private LayerMask _CraftingTableLayer;
+    [SerializeField] private LayerMask _CampfireLayer;
     [SerializeField] private string _prefabPath = "Prefabs/";
 
     [Header("Materials")]
@@ -109,10 +110,7 @@ public class PlacementManager : MonoBehaviour
 
              float difference = hit.point.y - bounds.min.y;
 
-            if (difference > 0)
-            {
-                _currentGhostObj.transform.position += Vector3.up * difference;
-            }
+            _currentGhostObj.transform.position += Vector3.up * difference;
 
             _currentGhostObj.transform.rotation = Quaternion.identity;
 
@@ -140,10 +138,29 @@ public class PlacementManager : MonoBehaviour
         }
 
         Bounds combinedBounds = renderers[0].bounds;
+        bool hasBounds = false;
 
-        for (int i = 1; i < renderers.Length; i++)
+        foreach (var render in renderers)
         {
-            combinedBounds.Encapsulate(renderers[i].bounds);
+            if (render is ParticleSystemRenderer || render is TrailRenderer || render is LineRenderer)
+                continue;
+
+            if (render.GetComponent<RectTransform>() != null) continue;
+
+            if (!hasBounds)
+            {
+                combinedBounds = render.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                combinedBounds.Encapsulate(render.bounds);
+            }
+        }
+
+        if (!hasBounds)
+        {
+            return new Bounds(target.transform.position, Vector3.zero);
         }
 
         return combinedBounds;
@@ -161,7 +178,7 @@ public class PlacementManager : MonoBehaviour
         _debugCenter = checkPos;
         _debugSize = halfExtents * 2;
 
-        LayerMask combinedLayer = _obstacleLayer | _CraftingTableLayer;
+        LayerMask combinedLayer = _obstacleLayer | _CraftingTableLayer | _CampfireLayer;
 
         Collider[] hits = Physics.OverlapBox(checkPos, halfExtents, Quaternion.identity, combinedLayer);
         return hits.Length == 0;
@@ -189,7 +206,10 @@ public class PlacementManager : MonoBehaviour
 
     private void cancelPlacement()
     {
-        endPlacement(); 
+        _isPlacementMode = false;
+        if (_currentGhostObj != null) Destroy(_currentGhostObj);
+        _currentItem = null;
+        _currentItemIndex = -1;
     }
 
     private void endPlacement()

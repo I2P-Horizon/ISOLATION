@@ -38,11 +38,17 @@ public class PlayerInteraction : MonoBehaviour
     /// <summary>제작대 레이어</summary>
     [SerializeField] private LayerMask _ctLayerMask;
 
+    [Header("Campfire Interaction")]
+    [SerializeField] private float _campfireDetectRadius = 1.0f;
+    [SerializeField] private LayerMask _campfireLayerMask;
+
     private List<PickupItem> _ItemsInScope; // 플레이어 주변에 감지된 아이템 목록
 
     private InteractionState _currentState = InteractionState.None; // 현재 상태
     private MonoBehaviour _currentTarget = null; // 현재 상호작용 중인 대상
     private float _lastInteractionTime = 0; // 마지막으로 상호작용한 시간
+
+    private const float BASE_DURABILITY_COST = 2.0f; // 기본 내구도 소모량
 
     public bool IsInteracting => _currentState != InteractionState.None;
 
@@ -80,6 +86,7 @@ public class PlayerInteraction : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             if (TryInteractionWithCraftingTable()) return;
+            if (TryInteractionWithCampfire()) return;
 
             TryPickupItem();
         }
@@ -156,36 +163,6 @@ public class PlayerInteraction : MonoBehaviour
     /// </summary>
     private bool TryFindTarget(out MonoBehaviour target)
     {
-        //target = null;
-
-        //// ray에 걸리지 않는 것: trigger collider, 'Ignore Raycast' Layer로 설정된 객체
-        //int mask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
-
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //if (Physics.Raycast(ray, out RaycastHit mouseHit, 100f, mask, QueryTriggerInteraction.Ignore))
-        //{
-        //    Debug.Log($"Camera : {mouseHit.collider.name}");
-        //    Debug.DrawRay(ray.origin, ray.direction * 100.0f, Color.green, 1f);
-        //    Vector3 dir = (mouseHit.collider.bounds.center - transform.position).normalized;
-        //    //Debug.Log($"mouseHit.transform.position : {mouseHit.transform.position}");
-        //    //Debug.Log($"mouseHit.transform.localPosition : {mouseHit.transform.localPosition}");
-        //    //Debug.Log($"transform.position : {transform.position}");
-
-        //    if (Physics.Raycast(transform.position, dir, out RaycastHit hit, _interactionDistance, mask, QueryTriggerInteraction.Ignore))
-        //    {
-        //        Debug.Log($"Player : {hit.collider.name}");
-        //        Debug.DrawRay(transform.position, dir * _interactionDistance, Color.green, 1f);
-        //        if (hit.collider.TryGetComponent(out DestructibleObject destructible))
-        //        {
-        //            Debug.Log("Targetting");
-        //            target = destructible;
-        //            return true;
-        //        }
-        //    }
-        //}
-
-        //return false;
-
         target = null;
         int mask = ~(1 << LayerMask.NameToLayer("Ignore Raycast"));
 
@@ -234,16 +211,25 @@ public class PlayerInteraction : MonoBehaviour
         if (_currentState == InteractionState.None)
             return;
 
-        float damage = _player.State.AttackPower;
+        EquipmentItem currentEquip = _player.Equipment.GetEquippedItem(EquipmentType.RightHand);
+        WeaponItem weapon = currentEquip as WeaponItem;
 
-        switch (_currentState)
+        string weaponType = weapon != null ? weapon.WeaponData.Type : "None";
+
+        float finalDamage = _player.State.AttackPower;
+        float durabilityCost = BASE_DURABILITY_COST;
+
+        if (_currentState == InteractionState.Gathering && _currentTarget is GatherableObject gatherable)
         {
-            case InteractionState.Gathering:
-                (_currentTarget as GatherableObject)?.Interact(damage);
-                break;
-            case InteractionState.Attacking:
-                (_currentTarget as CreatureBase)?.Interact(damage);
-                break;
+            calculateGatheringStats(weaponType, gatherable, ref finalDamage, ref durabilityCost);
+
+            gatherable.Interact(finalDamage);
+            if (weapon != null) applyDurabilityLoss(weapon, durabilityCost);
+        }
+        else if (_currentState == InteractionState.Attacking && _currentTarget is CreatureBase creature)
+        {
+            creature.Interact(finalDamage);
+            if (weapon != null) applyDurabilityLoss(weapon, durabilityCost);
         }
 
         if (!Input.GetMouseButton(0))
@@ -260,6 +246,45 @@ public class PlayerInteraction : MonoBehaviour
         if (result)
         {
             _player.Equipment.UnEquipBucket();
+        }
+    }
+
+    private void calculateGatheringStats(string weaponType, GatherableObject gatherable, ref float damage, ref float durability)
+    {
+        switch (weaponType)
+        {
+            case "Axe":
+                if (gatherable is RockObject || gatherable is GemStoneObject)
+                {
+                    damage *= 0.6f;
+                    durability *= 1.4f;
+                }
+                break;
+            case "Pickax":
+                if (gatherable is TreeObject || gatherable is FruitTreeObject)
+                {
+                    damage *= 0.5f;
+                    durability *= 1.3f;
+                }
+                break;
+            case "Sword":
+                if (gatherable is TreeObject || gatherable is FruitTreeObject
+                    || gatherable is RockObject || gatherable is GemStoneObject)
+                {
+                    damage *= 0.4f;
+                    durability *= 1.4f;
+                }
+                break;
+        }
+    }
+
+    private void applyDurabilityLoss(WeaponItem weapon, float durabilityCost)
+    {
+        bool isBroken = weapon.DecreaseDurability(durabilityCost);
+
+        if (isBroken)
+        {
+            _player.Equipment.UnEquip(EquipmentType.RightHand);
         }
     }
 
@@ -422,5 +447,35 @@ public class PlayerInteraction : MonoBehaviour
     private void tryBucketFill()
     {
         _animator.SetTrigger("Watering");
+    }
+
+    private bool TryInteractionWithCampfire()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _campfireDetectRadius, _campfireLayerMask);
+
+        Campfire nearestCampfire = null;
+        float nearestDist = float.MaxValue;
+
+        foreach (Collider col in colliders)
+        {
+            if (col.TryGetComponent(out Campfire campfire))
+            {
+                float dist = Vector3.Distance(transform.position, campfire.transform.position);
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearestCampfire = campfire;
+                }
+            }
+        }
+
+        if (nearestCampfire != null)
+        {
+            nearestCampfire.TryCook(_inventory);
+
+            return true;
+        }
+
+        return false;
     }
 }

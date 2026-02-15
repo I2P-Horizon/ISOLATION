@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Creature
   - Grass
+  - CraftingUI
+  - Inventory
+  - box
   layers:
   - Default
   - TransparentFX
@@ -18,7 +21,7 @@ TagManager:
   - Ground
   - Obstacle
   - DummyObjects
-  - 
+  - Campfire
   - 
   - 
   - 

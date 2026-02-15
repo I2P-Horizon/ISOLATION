@@ -21,11 +21,11 @@ public class ArmorItem : EquipmentItem
     
     public override void Equip()
     {
-        DataManager.Instance.GetPlayerData().EquipItem(ArmorData.Defense, ArmorData.Type);
+        //DataManager.Instance.GetPlayerData().EquipItem(ArmorData.Defense, ArmorData.Type);
     }
 
     public override void Unequip()
     {
-        DataManager.Instance.GetPlayerData().UnequipItem(ArmorData.Defense, ArmorData.Type);
+        //DataManager.Instance.GetPlayerData().UnequipItem(ArmorData.Defense, ArmorData.Type);
     }
 }
