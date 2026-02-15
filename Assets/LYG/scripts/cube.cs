@@ -17,9 +17,7 @@ public class cube : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F) && Trigger)
-        {
-            ui.SetActive(true);
-        }
+            ui.GetComponent<UIAnimator>().Show();
     }
 
     void OnTriggerEnter(Collider other)

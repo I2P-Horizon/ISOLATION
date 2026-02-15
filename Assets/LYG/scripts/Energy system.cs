@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Energysystem : MonoBehaviour
 {
+    private energy _energy;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        _energy = FindFirstObjectByType<energy>();
     }
 
     // Update is called once per frame
@@ -17,6 +19,6 @@ public class Energysystem : MonoBehaviour
     }
     public void close()
     {
-        gameObject.SetActive(false);
+        if (!_energy.isFilling) gameObject.GetComponent<UIAnimator>().Close();
     }
 }

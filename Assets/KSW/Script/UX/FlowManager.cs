@@ -54,7 +54,7 @@ public class FlowManager : MonoBehaviour
 
     private IEnumerator Flow1()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
         dialogDone = false;
         DialogManager.Instance.OnDialogFinished += OnDialogFinishedCallback;
         DialogManager.Instance.Show(0, 2);

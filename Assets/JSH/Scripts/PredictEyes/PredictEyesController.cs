@@ -52,10 +52,14 @@ public class PredictEyesController : MonoBehaviour
 
     void Update()
     {
+        if (EnergyBar.Instance == null) return;
+        if (EnergyBar.Instance.slider.value < EnergyBar.Instance.slider.maxValue) return;
+
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {
             StartCoroutine(IncreaseRadius());
             StartCoroutine(PredictEyesActivation(cachedEventNum));
+            EnergyBar.Instance.slider.value = 0;
         }
         predictEyesRadius.transform.LookAt(Camera.main.transform);
     }
