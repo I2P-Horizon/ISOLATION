@@ -23,7 +23,7 @@ public class T1 : TutorialState
         {
             isCompleted = true;
             manager.StartCoroutine(manager.EndTutorial("완료!"));
-            FlowManager.Instance.StartFlow2();
+            manager.StartCoroutine(FlowManager.Instance.Flow2());
         }
     }
 
@@ -48,7 +48,7 @@ public class T2 : TutorialState
         {
             isCompleted = true;
             manager.StartCoroutine(manager.EndTutorial("완료!"));
-            FlowManager.Instance.StartFlow3();
+            manager.StartCoroutine(FlowManager.Instance.Flow3());
         }
     }
 
@@ -88,21 +88,34 @@ public class T4 : TutorialState
     public override void Enter()
     {
         inventory = MonoBehaviour.FindFirstObjectByType<Inventory>();
-        manager.Message("나무 조각 4개 획득");
+        manager.Message("나무 조각 6개 획득");
         isCompleted = false;
+
+        CheckClear();
     }
 
     public override void Update()
     {
-        // 나무 조각 4개 획득
-        if (inventory.GetTotalAmountOfItem(50001) == 4)
-        {
-            isCompleted = true;
-            manager.StartCoroutine(manager.NextState(new T5(manager), "완료!"));
-        }
+        if (!isCompleted)
+            CheckClear();
     }
 
     public override void Exit() { }
+
+    private void CheckClear()
+    {
+        if (inventory.GetTotalAmountOfItem(50001) >= 6)
+        {
+            isCompleted = true;
+            manager.StartCoroutine(CompleteRoutine());
+        }
+    }
+
+    private IEnumerator CompleteRoutine()
+    {
+        yield return manager.EndTutorial("완료!");
+        yield return FlowManager.Instance.Flow4();
+    }
 }
 #endregion
 
@@ -122,8 +135,8 @@ public class T5 : TutorialState
         if (!isCompleted && Input.GetKeyDown(KeyCode.Tab))
         {
             isCompleted = true;
-            //manager.StartCoroutine(manager.EndTutorial("완료!"));
-            manager.StartCoroutine(manager.NextState(new T6(manager), "완료!"));
+            manager.StartCoroutine(manager.EndTutorial("완료!"));
+            manager.StartCoroutine(FlowManager.Instance.Flow5());
         }
     }
 
@@ -148,7 +161,8 @@ public class T6 : TutorialState
         if (tables.Length > 0 && Input.GetMouseButtonDown(1))
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.NextState(new T7(manager), "완료!"));
+            manager.StartCoroutine(manager.EndTutorial("완료!"));
+            manager.StartCoroutine(FlowManager.Instance.Flow6());
         }
     }
 
@@ -169,6 +183,8 @@ public class T7 : TutorialState
 
     public override void Update()
     {
+        if (isCompleted) return;
+
         /* Inventory에서 나무 곡괭이 아이템이 있는지 확인 */
         Inventory playerInventory = MonoBehaviour.FindObjectOfType<Inventory>();
         if (playerInventory != null)
@@ -177,7 +193,8 @@ public class T7 : TutorialState
             if (count > 0)
             {
                 isCompleted = true;
-                manager.StartCoroutine(manager.NextState(new T8(manager), "완료!"));
+                manager.StartCoroutine(manager.EndTutorial("완료!"));
+                manager.StartCoroutine(FlowManager.Instance.Flow7());
             }
         }
     }
@@ -195,7 +212,7 @@ public class T8 : TutorialState
 
     public override void Enter()
     {
-        manager.Message("나무 곡괭이 착용");
+        manager.Message("나무 곡괭이를 드래그하여 장착");
         isCompleted = false;
 
         Player player = Player.Instance;
@@ -208,6 +225,8 @@ public class T8 : TutorialState
 
     public override void Update()
     {
+        if (isCompleted) return;
+
         if (_equipment == null) return;
 
         checkWeapon();
@@ -240,16 +259,21 @@ public class T9 : TutorialState
 
     public override void Enter()
     {
+        inventory = MonoBehaviour.FindFirstObjectByType<Inventory>();
         manager.Message("돌 조각 4개 획득");
         isCompleted = false;
     }
 
     public override void Update()
     {
-        if (inventory.GetTotalAmountOfItem(50002) == 4)
+        if (isCompleted) return;
+
+        if (inventory.GetTotalAmountOfItem(50002) >= 4)
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.NextState(new T10(manager), "완료!"));
+            manager.StartCoroutine(manager.EndTutorial("완료!"));
+            manager.StartCoroutine(FlowManager.Instance.Flow8());
+
         }
     }
 
@@ -264,19 +288,23 @@ public class T10 : TutorialState
 
     public override void Enter()
     {
-        manager.Message("예지의 눈 조각 1개 획득");
+        inventory = MonoBehaviour.FindFirstObjectByType<Inventory>();
+        manager.Message("광산에서 예지의 눈 조각 획득");
         isCompleted = false;
     }
 
     public override void Update()
     {
+        if (isCompleted) return;
+
         if (inventory.GetTotalAmountOfItem(50011) == 1 ||
             inventory.GetTotalAmountOfItem(50012) == 1 ||
             inventory.GetTotalAmountOfItem(50013) == 1 ||
             inventory.GetTotalAmountOfItem(50014) == 1)
         {
             isCompleted = true;
-            manager.StartCoroutine(manager.NextState(new T11(manager), "완료!"));
+            manager.StartCoroutine(manager.EndTutorial("완료!"));
+            manager.StartCoroutine(FlowManager.Instance.Flow9());
         }
     }
 
@@ -291,12 +319,14 @@ public class T11 : TutorialState
 
     public override void Enter()
     {
-        manager.Message("고대 사원 조각 맞추기");
+        manager.Message("고대 사원에서 예지의 눈 조각 맞추기");
         isCompleted = false;
     }
 
     public override void Update()
     {
+        if (isCompleted) return;
+
         // 고대 사원 조각 1개 맞추기
     }
 
