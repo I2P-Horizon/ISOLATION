@@ -976,6 +976,21 @@ public class Island : Shape
         player.position = spawnPos + Vector3.up * 1f;
     }
 
+    public void SpawnStartItems(GameObject sunglasses, GameObject bag)
+    {
+        if (player == null) return;
+
+        Vector3 rightOffset = player.right * 2f;
+        Vector3 spawnPos = player.position + rightOffset;
+
+        if (sunglasses != null)
+            MonoBehaviour.Instantiate(sunglasses, spawnPos, Quaternion.identity);
+
+        if (bag != null)
+            MonoBehaviour.Instantiate(bag, spawnPos + Vector3.forward * 1f, Quaternion.identity);
+    }
+
+
     public IEnumerator SceneChange()
     {
         WorldMapMarker worldMapMarker = MonoBehaviour.FindFirstObjectByType<WorldMapMarker>();
@@ -1088,6 +1103,10 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private BlockData blockData;
     [SerializeField] private ObjectData[] objectData;
 
+    [Header("Start Items")]
+    [SerializeField] private GameObject _sunglassesItem;
+    [SerializeField] private GameObject _bagItem;
+
     /// <summary>
     /// 섬 생성 완료 시점에 보내는 신호
     /// </summary>
@@ -1131,6 +1150,8 @@ public class IslandManager : MonoBehaviour
         objectSpawner.SpawnObjects();
         jungle.Spawn();
         island.SpawnPlayer();
+        /* 플레이어 오른쪽 주변에 선글라스, 가방 스폰 */
+        island.SpawnStartItems(_sunglassesItem, _bagItem);
 
         /* 경로 Bake */
         navMeshBuild(island.grassRoot.gameObject);
