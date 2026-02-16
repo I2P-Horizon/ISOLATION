@@ -19557,7 +19557,7 @@ MonoBehaviour:
     typingSpeed: 0.05
   - sprite: {fileID: 21300000, guid: 0e62fb253bbac9247bdd8bd0644d3432, type: 3}
     text: "\uBC24\uC5D0 \uC77C\uC5B4\uB0A0 \uC77C\uC744 \uC608\uCE21\uD558\uB824\uBA74
-      \u2018\uC608\uC9C0\uC758 \uB208\u2019\uC744 \uC0AC\uC6A9\uD574\uC57C \uD569\uB2C8\uB2E4.."
+      \u2018\uC608\uC9C0\uC758 \uB208\u2019\uC744 \uC0AC\uC6A9\uD574\uC57C \uD569\uB2C8\uB2E4."
     showImage: 0
     typingSpeed: 0.05
   - sprite: {fileID: 21300000, guid: 0e62fb253bbac9247bdd8bd0644d3432, type: 3}

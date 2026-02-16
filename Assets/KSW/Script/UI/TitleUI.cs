@@ -52,7 +52,7 @@ public class TitleUI : MonoBehaviour
     private IEnumerator StartEffect()
     {
         mainPanel.SetActive(false);
-        StartCoroutine(Fade.Instance.FadeIn(Color.white));
+        StartCoroutine(Fade.Instance.FadeIn(Color.white, 0.5f));
         yield return new WaitForSeconds(1f);
         mainPanel.GetComponent<UIAnimator>().Show();
     }

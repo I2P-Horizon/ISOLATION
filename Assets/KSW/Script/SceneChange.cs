@@ -32,59 +32,60 @@ public class SceneChange : MonoBehaviour
     private bool _isChangingScene = false;
 
     /// <summary>
-    /// 씬이 최초로 전환되는지 확인
-    /// </summary>
-    private bool firstChange = false;
-
-    /// <summary>
     /// 씬 전환
     /// </summary>
     /// <param name="_sceneName"></param>
     /// <returns></returns>
-    private IEnumerator ChangeScene(string _sceneName)
+    private IEnumerator changeScene(string _sceneName)
     {
         _isChangingScene = true;
 
-        try
+        yield return null;
+
+        /* 씬 전환 */
+        if (!SceneManager.GetSceneByName(_sceneName).isLoaded)
         {
-            yield return null;
+            AsyncOperation op = SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
+            yield return op;
+        }
 
-            /* 씬 전환 */
-            if (!SceneManager.GetSceneByName(_sceneName).isLoaded)
+        /* 플레이어 위치 변경 */
+        GameObject spawnPoint = GameObject.Find("SpawnPoint_" + _spawnPoint);
+
+        if (spawnPoint != null)
+        {
+            CharacterController controller = Player.Instance.GetComponent<CharacterController>();
+
+            if (controller != null)
             {
-                /* 씬을 메모리에 올릴 시간이 필요하므로, 씬이 최초로 전환될 때 한 프레임 대기 */
-                if (!firstChange)
-                {
-                    yield return SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
-                    firstChange = true;
-                }
+                controller.enabled = false;
 
-                else SceneManager.LoadSceneAsync(_sceneName, LoadSceneMode.Additive);
+                Vector3 targetPos = spawnPoint.transform.position;
+                targetPos.y += 0.1f;
+
+                Player.Instance.transform.position = targetPos;
+
+                yield return null;
+
+                controller.enabled = true;
             }
 
-            /* 플레이어 위치 변경 */
-            GameObject spawnPoint = GameObject.Find("SpawnPoint_" + _spawnPoint);
-            if (spawnPoint != null)
-                Player.Instance.transform.position = spawnPoint.transform.position;
-
-            /* 카메라 변경 */
-            ChangeSceneCamera(_sceneName);
-
-            /* 페이드 아웃 -> 페이드 인 시, 씬 전환 시간이 오래 걸리므로 씬 전환 후 페이드 인 효과만 적용. */
-            yield return StartCoroutine(Fade.Instance.FadeIn(Color.black));
+            else Player.Instance.transform.position = spawnPoint.transform.position;
         }
-        
-        finally
-        {
-            _isChangingScene = false;
-        }
+
+        /* 카메라 변경 */
+        changeSceneCamera(_sceneName);
+
+        yield return StartCoroutine(Fade.Instance.FadeIn(Color.black, 1f));
+
+        _isChangingScene = false;
     }
 
     /// <summary>
     /// 씬 카메라 변경
     /// </summary>
     /// <param name="sceneName"></param>
-    private void ChangeSceneCamera(string sceneName)
+    private void changeSceneCamera(string sceneName)
     {
         /* 모든 카메라 비활성화 */
         foreach (var cam in Camera.allCameras)
@@ -124,7 +125,7 @@ public class SceneChange : MonoBehaviour
             float distance = Vector3.Distance(other.transform.position, transform.position);
 
             /* 플레이어가 트리거 거리 이내로 접근했을 때 씬 전환 */
-            if (distance <= _triggerDistance) StartCoroutine(ChangeScene(_sceneName));
+            if (distance <= _triggerDistance) StartCoroutine(changeScene(_sceneName));
         }
     }
 }

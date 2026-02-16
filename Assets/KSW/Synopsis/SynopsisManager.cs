@@ -26,7 +26,7 @@ public class SynopsisManager : MonoBehaviour
 
         playerMotion.Play("Sit");
 
-        StartCoroutine(Fade.Instance.FadeIn(Color.black));
+        StartCoroutine(Fade.Instance.FadeIn(Color.black, 0.5f));
 
         float timer = 0f;
         Vector3 startPos = mainCamera.transform.position;
@@ -46,10 +46,10 @@ public class SynopsisManager : MonoBehaviour
 
         // 마지막 위치 정확히 설정
         mainCamera.transform.position = endPos;
-        StartCoroutine(Fade.Instance.FadeOut(Color.black));
+        StartCoroutine(Fade.Instance.FadeOut(Color.black, 0.5f));
 
         /* 페이드인 시작 */
-        StartCoroutine(Fade.Instance.FadeIn(Color.black));
+        StartCoroutine(Fade.Instance.FadeIn(Color.black, 0.5f));
 
         /* 카메라 위치 설정 */
         ChangePosition(mainCamera.gameObject, 0.1f, 3.9f, 2.5f);
@@ -119,7 +119,7 @@ public class SynopsisManager : MonoBehaviour
 
         playerMotion.SetBool("Dying", true);
         yield return new WaitForSeconds(2f);
-        yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
+        yield return StartCoroutine(Fade.Instance.FadeOut(Color.black, 0.5f));
     }
 
     private void ChangePosition(GameObject obj, float x, float y, float z)

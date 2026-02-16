@@ -24,16 +24,16 @@ public class Loading : MonoBehaviour
     /// </summary>
     private string[] tips =
     {
-        "예지의 눈을 사용해서 꿈의 현상을 예측하세요!",
-        "밤에는 동물들이 몬스터로 변형하여 배회합니다. 조심하세요!",
-        "예지의 눈을 사용하기 위해 조각을 모아 에너지를 채우세요.",
-        "인벤토리 창에서 아이템을 우클릭하면 사용 또는 배치가 가능합니다.",
-        "캐릭터의 수분량이 0이 되면 체력이 서서히 감소하니 주의하세요!",
-        "고기는 익혀서 섭취하는 것을 권장합니다.",
-        "이온음료 재료는 변형된 나무에서 획득 가능합니다.",
-        "소화불량에는 파인애플이 좋을지도 모릅니다.",
-        "탈수에 걸리지 않도록 수분량을 유지하세요.",
-        "밤에는 무슨 일이 일어날지 모릅니다."
+        "밤이 되면 동물들이 몬스터로 변해 배회합니다. 조심하세요.",
+        "예지의 눈으로 꿈의 현상을 예측해 보세요.",
+        "예지의 눈을 사용하려면 조각을 모아 에너지를 채워야 합니다.",
+        "인벤토리에서 아이템을 우클릭하면 사용하거나 배치할 수 있습니다.",
+        "수분량이 0이 되면 체력이 서서히 감소합니다. 주의하세요.",
+        "고기는 모닥불에 구워 섭취하는 것이 좋습니다.",
+        "소화불량에는 파인애플이 도움이 됩니다.",
+        "이온음료와 소화제 재료는 주변을 잘 살펴보세요.",
+        "탈수를 막기 위해 수분량을 꾸준히 유지하세요.",
+        "밤에는 예상치 못한 일이 벌어질 수 있습니다."
     };
 
     /// <summary>
@@ -46,7 +46,7 @@ public class Loading : MonoBehaviour
 
         while (true)
         {
-            tipText.text = "Tip: " + tips[index];
+            tipText.text = "TIP: " + tips[index];
             index = (index + 1) % tips.Length;
             yield return new WaitForSeconds(interval);
         }
@@ -74,8 +74,8 @@ public class Loading : MonoBehaviour
         //SceneManager.UnloadSceneAsync("Synopsis");
         //StartCoroutine(Fade.Instance.FadeIn(Color.black));
 
-        yield return StartCoroutine(Fade.Instance.FadeOut(Color.black));
-        StartCoroutine(Fade.Instance.FadeIn(Color.black));
+        yield return StartCoroutine(Fade.Instance.FadeOut(Color.black, 0.5f));
+        StartCoroutine(Fade.Instance.FadeIn(Color.black, 0.5f));
 
         /* 로딩 패널, 로딩 활성화 */
         loadingPanel.SetActive(true);
@@ -95,23 +95,21 @@ public class Loading : MonoBehaviour
             yield return null;
         }
 
-        /* 로딩 값이 0.9 이전까지만 "Loading..." 표시 */
-        while (IslandManager.generationProgress < 0.9f)
+        while (IslandManager.generationProgress < 0.8f)
         {
             loadingBar.value = IslandManager.generationProgress;
             UpdateLoadingBar(IslandManager.generationProgress);
-            loadingText.text = "LOADING...";
+            loadingText.text = "섬으로 진입 중...";
             yield return null;
         }
 
-        /* 로딩 값이 0.9 이상이면 "Rendering..." 으로 변경 후 월드 맵 렌더링 */
         StartCoroutine(worldMapMarker.DelayedRender());
 
         while (IslandManager.generationProgress < 1f)
         {
             loadingBar.value = IslandManager.generationProgress;
             UpdateLoadingBar(IslandManager.generationProgress);
-            loadingText.text = "RENDERING...";
+            loadingText.text = "주인공을 찾는 중...";
             yield return null;
         }
     }

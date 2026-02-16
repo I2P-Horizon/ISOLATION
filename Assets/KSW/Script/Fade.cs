@@ -21,7 +21,7 @@ public class Fade : MonoBehaviour
         else Destroy(this.gameObject);
     }
 
-    public IEnumerator FadeOut(Color color)
+    public IEnumerator FadeOut(Color color, float duration)
     {
         fadeImage.gameObject.SetActive(true);
         float elapsed = 0f;
@@ -30,10 +30,10 @@ public class Fade : MonoBehaviour
         c.a = 0f;
         fadeImage.color = c;
 
-        while (elapsed < fadeDuration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            c.a = Mathf.Clamp01(elapsed / fadeDuration);
+            c.a = Mathf.Clamp01(elapsed / duration);
             fadeImage.color = c;
             yield return null;
         }
@@ -42,7 +42,7 @@ public class Fade : MonoBehaviour
         fadeImage.color = c;
     }
 
-    public IEnumerator FadeIn(Color color)
+    public IEnumerator FadeIn(Color color, float duration)
     {
         fadeImage.gameObject.SetActive(true);
         float elapsed = 0f;
@@ -51,10 +51,10 @@ public class Fade : MonoBehaviour
         c.a = 1f;
         fadeImage.color = c;
 
-        while (elapsed < fadeDuration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            c.a = 1f - Mathf.Clamp01(elapsed / fadeDuration);
+            c.a = 1f - Mathf.Clamp01(elapsed / duration);
             fadeImage.color = c;
             yield return null;
         }
