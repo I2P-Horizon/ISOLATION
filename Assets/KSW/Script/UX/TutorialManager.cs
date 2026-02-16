@@ -56,14 +56,14 @@ public class T2 : TutorialState
 }
 #endregion
 
-#region T3: 마우스 우클릭
+#region T3: 마우스 좌클릭
 public class T3 : TutorialState
 {
     public T3(TutorialManager manager) : base(manager) { }
 
     public override void Enter()
     {
-        manager.Message("마우스 우클릭으로 공격하기");
+        manager.Message("마우스 좌클릭으로 공격하기");
         isCompleted = false;
     }
 
@@ -270,7 +270,14 @@ public class T10 : TutorialState
 
     public override void Update()
     {
-        // 예지의 눈 조각 1개 획득
+        if (inventory.GetTotalAmountOfItem(50011) == 1 ||
+            inventory.GetTotalAmountOfItem(50012) == 1 ||
+            inventory.GetTotalAmountOfItem(50013) == 1 ||
+            inventory.GetTotalAmountOfItem(50014) == 1)
+        {
+            isCompleted = true;
+            manager.StartCoroutine(manager.NextState(new T11(manager), "완료!"));
+        }
     }
 
     public override void Exit() { }
