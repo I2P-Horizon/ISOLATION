@@ -20,10 +20,13 @@ public class FlowManager : MonoBehaviour
     }
     #endregion
 
+    [SerializeField] private GameObject _ui;
+
     private bool dialogDone = false;
 
     private void OnEnable()
     {
+        _ui.GetComponent<CanvasGroup>().alpha = 0;
         IslandManager.OnGenerationComplete += startFlow1;
     }
 
@@ -45,11 +48,13 @@ public class FlowManager : MonoBehaviour
     private IEnumerator Flow1()
     {
         yield return new WaitForSeconds(2.5f);
+        _ui.GetComponent<CanvasGroup>().alpha = 1;
         dialogDone = false;
         DialogManager.Instance.OnDialogFinished += OnDialogFinishedCallback;
         DialogManager.Instance.Show(0, 2);
         yield return new WaitUntil(() => dialogDone);
         DialogManager.Instance.OnDialogFinished -= OnDialogFinishedCallback;
+
         TutorialManager.Instance.StartState(new T1(TutorialManager.Instance));
     }
 
@@ -156,7 +161,7 @@ public class FlowManager : MonoBehaviour
     }
 
     /// <summary>
-    ///  예지의 눈 조각은 섬 중앙 근처 고대 사원 내부에서 사용할 수 있습니다. -> T11 : 고대 사원에서 예지의 눈 조각 맞추기
+    ///  예지의 눈 조각은 섬 중앙 근처 고대 사원 내부에서 사용할 수 있습니다. -> T11 : 고대 사원에서 예지의 눈 에너지 채우기
     /// </summary>
     /// <returns></returns>
     public IEnumerator Flow9()
@@ -164,9 +169,23 @@ public class FlowManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         dialogDone = false;
         DialogManager.Instance.OnDialogFinished += OnDialogFinishedCallback;
-        DialogManager.Instance.Show(11, 11);
+        DialogManager.Instance.Show(11, 12);
         yield return new WaitUntil(() => dialogDone);
         DialogManager.Instance.OnDialogFinished -= OnDialogFinishedCallback;
         TutorialManager.Instance.StartState(new T11(TutorialManager.Instance));
+    }
+
+    /// <summary>
+    /// 예지의 눈 에너지가 채워졌습니다! 고대 사원 밖으로 나가 Ctrl 키를 눌러 사용해 보세요.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator Flow10()
+    {
+        yield return new WaitForSeconds(2f);
+        dialogDone = false;
+        DialogManager.Instance.OnDialogFinished += OnDialogFinishedCallback;
+        DialogManager.Instance.Show(13, 14);
+        yield return new WaitUntil(() => dialogDone);
+        DialogManager.Instance.OnDialogFinished -= OnDialogFinishedCallback;
     }
 }

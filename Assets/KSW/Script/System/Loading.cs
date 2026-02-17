@@ -95,7 +95,7 @@ public class Loading : MonoBehaviour
             yield return null;
         }
 
-        while (IslandManager.generationProgress < 0.8f)
+        while (IslandManager.generationProgress < 0.9f)
         {
             loadingBar.value = IslandManager.generationProgress;
             UpdateLoadingBar(IslandManager.generationProgress);
@@ -109,7 +109,7 @@ public class Loading : MonoBehaviour
         {
             loadingBar.value = IslandManager.generationProgress;
             UpdateLoadingBar(IslandManager.generationProgress);
-            loadingText.text = "주인공을 찾는 중...";
+            loadingText.text = "캐릭터를 찾는 중...";
             yield return null;
         }
     }

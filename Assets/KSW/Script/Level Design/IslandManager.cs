@@ -1107,6 +1107,8 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private GameObject _sunglassesItem;
     [SerializeField] private GameObject _bagItem;
 
+    [SerializeField] private Camera _mainCamera;
+
     /// <summary>
     /// 섬 생성 완료 시점에 보내는 신호
     /// </summary>
@@ -1157,15 +1159,25 @@ public class IslandManager : MonoBehaviour
         navMeshBuild(island.grassRoot.gameObject);
         navMeshBuild(island.sandRoot.gameObject);
 
+        _mainCamera.transform.position = new Vector3(
+            island.player.transform.position.x,
+            island.player.transform.position.y + 3.5f,
+            island.player.transform.position.z - 3.5f);
+
         /* Game Scene 으로 변경 */
         yield return StartCoroutine(island.SceneChange());
 
         /* 섬 생성 완료 신호 */
         OnGenerationComplete?.Invoke();
+
+        yield return new WaitForSeconds(2f);
+        _mainCamera.GetComponent<CameraMovement>().enabled = true;
     }
 
     private void Start()
     {
+        _mainCamera.GetComponent<CameraMovement>().enabled = false;
+
         island.Set(height, grid, noise, temple, blockData, mapObject, mineEntrance);
         jungle.Set(island, height, temple, mapObject);
         temple.Set(height, noise);

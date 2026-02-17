@@ -319,18 +319,25 @@ public class T11 : TutorialState
 
     public override void Enter()
     {
-        manager.Message("고대 사원에서 예지의 눈 조각 맞추기");
+        manager.Message("고대 사원에서 예지의 눈 에너지 채우기");
         isCompleted = false;
+
+        energy.OnEnergy += OnEnergyFilled;
     }
 
     public override void Update()
     {
         if (isCompleted) return;
-
-        // 고대 사원 조각 1개 맞추기
     }
 
     public override void Exit() { }
+
+    private void OnEnergyFilled()
+    {
+        energy.OnEnergy -= OnEnergyFilled;
+        manager.StartCoroutine(manager.EndTutorial("완료!"));
+        manager.StartCoroutine(FlowManager.Instance.Flow10());
+    }
 }
 #endregion
 

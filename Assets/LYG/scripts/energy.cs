@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class energy : MonoBehaviour
     public bool isFilling = false;
 
     private EnergyBar _energyBar;
+
+    public static Action OnEnergy;
 
     // Start is called before the first frame update
     void Start()
@@ -73,12 +76,13 @@ public class energy : MonoBehaviour
         button.interactable = false;
         _energyBar.slider.value = _energyBar.slider.maxValue;
         Invoke("Textoff", 1.5f);
-        isFilling = false;
+        OnEnergy?.Invoke();
     }
 
     public void Textoff()
     {
         _textsuccess.GetComponent<UIAnimator>().Close();
+        isFilling = false;
     }
 
 }
