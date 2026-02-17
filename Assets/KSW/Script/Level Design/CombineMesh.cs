@@ -66,7 +66,7 @@ public class CombineMesh : MonoBehaviour
         }
 
         /* 레이어 이름 설정 */
-        if (combinedObject.name.EndsWith("Grass") || combinedObject.name.EndsWith("Sand"))
+        if (combinedObject.name.EndsWith("Grass") || combinedObject.name.EndsWith("Sand") || combinedObject.name.EndsWith("Rock"))
             combinedObject.gameObject.layer = LayerMask.NameToLayer("Ground");
 
         /* Add MeshCollider (Water, bush excluded) */
