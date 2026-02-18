@@ -206,6 +206,9 @@ public class PlayerItemSlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragH
 
         if (playerItemSlotUI != null)
         {
+            // 복사 버그 방지
+            if (this.Index == playerItemSlotUI.Index) return;
+
             inventory.Swap(this.Index, playerItemSlotUI.Index);
             return;
         }
