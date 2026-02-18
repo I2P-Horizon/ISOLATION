@@ -59,10 +59,9 @@ public class TitleUI : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            //SceneManager.LoadScene("TitleBackground");
-        }
+        //if (Input.GetKeyDown(KeyCode.N)) SceneManager.LoadScene("TitleBackground");
+
+        //if (Input.GetKeyDown(KeyCode.B)) SceneManager.LoadScene("Synopsis");
     }
 
     private void Start()

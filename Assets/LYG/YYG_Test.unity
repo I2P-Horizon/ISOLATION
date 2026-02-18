@@ -1666,8 +1666,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1756006360}
-        m_TargetAssemblyTypeName: Energysystem, Assembly-CSharp
+      - m_Target: {fileID: 956332355}
+        m_TargetAssemblyTypeName: cube, Assembly-CSharp
         m_MethodName: close
         m_Mode: 1
         m_Arguments:
@@ -2225,6 +2225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af23d53bff6ca84e8632ddf4f794309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _energy: {fileID: 636662663}
   ui: {fileID: 1756006358}
 --- !u!1 &979613894
 GameObject:
@@ -2609,7 +2610,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1067007591
 RectTransform:
@@ -5041,6 +5042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6af23d53bff6ca84e8632ddf4f794309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _energy: {fileID: 0}
   ui: {fileID: 1756006358}
 --- !u!65 &1870224133
 BoxCollider:

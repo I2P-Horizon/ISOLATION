@@ -20,13 +20,11 @@ public class FlowManager : MonoBehaviour
     }
     #endregion
 
-    [SerializeField] private GameObject _ui;
-
     private bool dialogDone = false;
 
     private void OnEnable()
     {
-        _ui.GetComponent<CanvasGroup>().alpha = 0;
+        UIManager.Instance.ui.alpha = 0;
         IslandManager.OnGenerationComplete += startFlow1;
     }
 
@@ -48,7 +46,7 @@ public class FlowManager : MonoBehaviour
     private IEnumerator Flow1()
     {
         yield return new WaitForSeconds(2.5f);
-        _ui.GetComponent<CanvasGroup>().alpha = 1;
+        UIManager.Instance.ui.alpha = 1;
         dialogDone = false;
         DialogManager.Instance.OnDialogFinished += OnDialogFinishedCallback;
         DialogManager.Instance.Show(0, 2);
