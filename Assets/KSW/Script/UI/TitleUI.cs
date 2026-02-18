@@ -16,6 +16,7 @@ public class TitleUI : MonoBehaviour
     [Header("Button")]
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button settingButton;
+    [SerializeField] private Button _creditsButton;
     [SerializeField] private Button exitButton;
     [SerializeField] private Button s_BackButton;
 
@@ -42,6 +43,11 @@ public class TitleUI : MonoBehaviour
             settingsPanel.GetComponent<UIAnimator>().Close();
             _background.GetComponent<UIAnimator>().Close();
         }
+    }
+
+    private void creditsButton()
+    {
+        SceneManager.LoadScene("Credits");
     }
 
     private void ExitButton()
@@ -72,6 +78,7 @@ public class TitleUI : MonoBehaviour
         // Main 화면 버튼
         newGameButton.onClick.AddListener(PlayButton);
         settingButton.onClick.AddListener(SettingsButton);
+        _creditsButton.onClick.AddListener(creditsButton);
         exitButton.onClick.AddListener(ExitButton);
 
         s_BackButton.onClick.AddListener(SettingsButton);
