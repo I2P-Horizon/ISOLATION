@@ -181,7 +181,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 849e925e446bf984a9f57ddf75afdfaa, type: 3}
-    m_FontSize: 40
+    m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -314,8 +314,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 841, y: -483}
-  m_SizeDelta: {x: 206.1698, y: 79.0554}
+  m_AnchoredPosition: {x: 863.8, y: 487.2}
+  m_SizeDelta: {x: 150, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &311281021
 MonoBehaviour:
@@ -516,8 +516,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -2200}
-  m_SizeDelta: {x: 1865, y: 3178.5205}
+  m_AnchoredPosition: {x: 0, y: -1820}
+  m_SizeDelta: {x: 1830, y: 2500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1295359835
 MonoBehaviour:
@@ -541,7 +541,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 849e925e446bf984a9f57ddf75afdfaa, type: 3}
-    m_FontSize: 40
+    m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -562,10 +562,9 @@ MonoBehaviour:
     C577025 \uC774\uC724\uADDC\n\n\uAC8C\uC784\uD559\uBD80 \uAC8C\uC784\uC18C\uD504\uD2B8\uC6E8\uC5B4\uC804\uACF5
     C377031 \uC7A5\uC601\uADDC\n\n\uAC8C\uC784\uD559\uBD80 \uAC8C\uC784\uC18C\uD504\uD2B8\uC6E8\uC5B4\uC804\uACF5
     C277032 \uC804\uC11C\uD604\n\n\uAC8C\uC784\uD559\uBD80 \uAC8C\uC784\uC18C\uD504\uD2B8\uC6E8\uC5B4\uC804\uACF5
-    C577038 \uD64D\uBCF4\uC11D\n\nUnity 2022.3.60f1\n\n[\uC774\uD399\uD2B8 \uC5D0\uC14B
-    \uCD9C\uCC98]\n\nhttps://assetstore.unity.com/packages/vfx/shaders/fullscreen-camera-effects/lowhp-bloody-fullscreen-shader-fullscreen-effects-256057\n\nhttps://assetstore.unity.com/packages/vfx/shaders/fullscreen-camera-effects/freeze-frost-fullscreen-shader-fullscreen-effects-256054\n\nhttps://assetstore.unity.com/packages/vfx/particles/fire-explosions/free-stylized-smoke-effects-pack-226406\n\nhttps://assetstore.unity.com/packages/vfx/particles/environment/hail-particles-pack-62038\n\n\n[\uC2A4\uCE74\uC774
+    C577038 \uD64D\uBCF4\uC11D\n\n\n[\uC774\uD399\uD2B8 \uC5D0\uC14B \uCD9C\uCC98]\n\nhttps://assetstore.unity.com/packages/vfx/shaders/fullscreen-camera-effects/lowhp-bloody-fullscreen-shader-fullscreen-effects-256057\n\nhttps://assetstore.unity.com/packages/vfx/shaders/fullscreen-camera-effects/freeze-frost-fullscreen-shader-fullscreen-effects-256054\n\nhttps://assetstore.unity.com/packages/vfx/particles/fire-explosions/free-stylized-smoke-effects-pack-226406\n\nhttps://assetstore.unity.com/packages/vfx/particles/environment/hail-particles-pack-62038\n\n\n[\uC2A4\uCE74\uC774
     \uBC15\uC2A4 \uC5D0\uC14B \uCD9C\uCC98]\n\nhttps://assetstore.unity.com/packages/2d/textures-materials/sky/skybox1-demo-303884\n\n\n[\uD3F0\uD2B8
-    \uCD9C\uCC98]\n\nCafe24 Ssurround - https://fonts.cafe24.com/\n\n\n\n\n\nDeveloped
+    \uCD9C\uCC98]\n\nCafe24 Ssurround - https://fonts.cafe24.com/\n\n\n\nUnity 2022.3.60f1\n\n\n\nDeveloped
     by Team Horizon\n(2025.03.26 - 2026.02.14)"
 --- !u!222 &1295359836
 CanvasRenderer:
@@ -605,7 +604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 1295359833}
-  _speed: 200
+  _speed: 100
   _backButton: {fileID: 311281022}
 --- !u!4 &1333068757
 Transform:
