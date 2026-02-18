@@ -38,14 +38,14 @@
         },
         {
             "slotIndex": 6,
-            "itemId": 0,
-            "amount": 0,
+            "itemId": 20002,
+            "amount": 1,
             "isAccessibleSlot": false
         },
         {
             "slotIndex": 7,
-            "itemId": 0,
-            "amount": 0,
+            "itemId": 20001,
+            "amount": 1,
             "isAccessibleSlot": false
         },
         {
