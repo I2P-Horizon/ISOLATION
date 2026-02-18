@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 1575762675453837660}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: 0.03, y: 3.44, z: -3.23}
-  m_LocalScale: {x: 0.5, y: 1, z: 0.59395}
+  m_LocalPosition: {x: 0.03, y: 3.33, z: -3.23}
+  m_LocalScale: {x: 0.5, y: 1, z: 0.536366}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8093988939836816588}
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sceneName: CaveScene
   _spawnPoint: Cave(Inside)
-  _triggerDistance: 3
+  _triggerDistance: 2.5
 --- !u!65 &5806813538068384396
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -121,6 +121,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10.000005, y: 1, z: 10.000002}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &3739461738244839702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2620462084741426691}
+  m_Layer: 0
+  m_Name: SpawnPoint_Mine(Outside)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2620462084741426691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3739461738244839702}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.2, z: -7}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8093988939836816588}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6525624881022553124
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,6 +183,7 @@ Transform:
   m_Children:
   - {fileID: 3564775536146953499}
   - {fileID: 5344383586576690466}
+  - {fileID: 2620462084741426691}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3959254561452446448

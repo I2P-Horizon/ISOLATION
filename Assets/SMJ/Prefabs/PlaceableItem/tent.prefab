@@ -193,6 +193,10 @@ MonoBehaviour:
   _dropAmount: 1
   _hpUI: {fileID: 4876726936410343742}
   _UIHideTime: 3
+  _isRespawnable: 1
+  _respawnTime: 180
+  _destroyEffect: {fileID: 0}
+  _modelObject: {fileID: 0}
 --- !u!4 &899309782821752018 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 36cfcd3bc205b8042b36300c3c9a35c3, type: 3}
@@ -342,6 +346,10 @@ PrefabInstance:
     - target: {fileID: 4044842287539796994, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_Name
       value: HpUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5550836465626057156, guid: 0da8438502d69b042807caca74565a91, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6195920642657744267, guid: 0da8438502d69b042807caca74565a91, type: 3}
       propertyPath: m_AnchorMax.x

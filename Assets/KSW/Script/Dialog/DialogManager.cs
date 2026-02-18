@@ -57,7 +57,13 @@ public class DialogManager : MonoBehaviour
 
         inventoryHUD.GetComponent<UIAnimator>().Close();
 
-        image.sprite = dialog[startIndex].sprite;
+        if (dialog[startIndex].showImage)
+        {
+            image.sprite = dialog[startIndex].sprite;
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 1);
+        }
+
+        else image.color = new Color(image.color.r, image.color.g, image.color.b, 0);
 
         dialogUI.GetComponent<UIAnimator>().Show();
         StartCoroutine(ShowDelay(image, 0.1f));

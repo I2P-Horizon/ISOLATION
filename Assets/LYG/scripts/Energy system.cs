@@ -4,19 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Energysystem : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    //private energy _energy;
 
-    // Update is called once per frame
-    void Update()
-    {
+    //// Start is called before the first frame update
+    //void Start()
+    //{
+    //    _energy = FindFirstObjectByType<energy>();
+    //}
+
+    //// Update is called once per frame
+    //void Update()
+    //{
         
-    }
-    public void close()
-    {
-        gameObject.SetActive(false);
-    }
+    //}
+    //public void close()
+    //{
+    //    if (!_energy.isFilling)
+    //    {
+    //        gameObject.GetComponent<UIAnimator>().Close();
+    //        UIManager.Instance.ui.alpha = 1;
+    //    }
+    //}
 }

@@ -375,6 +375,10 @@ PrefabInstance:
       propertyPath: m_Size.y
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 7499735550326978670, guid: 4baf1aa5d8429704a8c0fe68846144ae, type: 3}
+      propertyPath: m_FadeFactor
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8432770753082380407, guid: 4baf1aa5d8429704a8c0fe68846144ae, type: 3}
       propertyPath: m_Name
       value: ShadowDecal

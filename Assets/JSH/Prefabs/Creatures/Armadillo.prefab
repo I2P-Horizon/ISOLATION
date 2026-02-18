@@ -374,6 +374,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5660129277195319488, guid: 4baf1aa5d8429704a8c0fe68846144ae, type: 3}
+      propertyPath: _character
+      value: 
+      objectReference: {fileID: 1052548979792412689}
+    - target: {fileID: 7499735550326978670, guid: 4baf1aa5d8429704a8c0fe68846144ae, type: 3}
+      propertyPath: m_FadeFactor
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 8432770753082380407, guid: 4baf1aa5d8429704a8c0fe68846144ae, type: 3}
       propertyPath: m_Name
       value: ShadowDecal

@@ -39,7 +39,7 @@ public class StoneBoard3D : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
             return;
         }
 
@@ -126,7 +126,7 @@ public class StoneBoard3D : MonoBehaviour
         {
             if (stoneDict.TryGetValue(itemID, out var prefab))
             {
-                inventory.ConsumeItem(itemID, 1); 
+                inventory.ConsumeItem(itemID, 1);
 
                 Transform targetSlot = stoneSlots[nextSlotIndex];
                 GameObject newStone = Instantiate(prefab, targetSlot.position, targetSlot.rotation, targetSlot);

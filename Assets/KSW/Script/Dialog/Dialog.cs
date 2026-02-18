@@ -6,6 +6,7 @@ using UnityEngine;
 public class Dialog 
 {
     public Sprite sprite;
-    public string text;
+    [TextArea(1, 2)] public string text;
+    public bool showImage = true;
     public float typingSpeed = 0.05f;
 }

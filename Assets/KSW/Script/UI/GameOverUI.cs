@@ -10,12 +10,7 @@ public class GameOverUI : Overlay
     [SerializeField] private Button replayButton;
     [SerializeField] private Button mainButton;
 
-    public IEnumerator GameOverSequence()
-    {
-        yield return new WaitForSeconds(0.01f);
-        Show();
-        Time.timeScale = 0;
-    }
+    private bool _isGameOverTriggered = false;
 
     protected override void Awake()
     {
@@ -23,5 +18,22 @@ public class GameOverUI : Overlay
         mainButton.onClick.AddListener(() => GameManager.Instance.SceneChange("MainScene"));
 
         _animator = _gameOverUI.GetComponent<UIAnimator>();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (!_isGameOverTriggered && Player.Instance.State.Die)
+        {
+            _isGameOverTriggered = true;
+            StartCoroutine(showGameOverAfterDelay());
+        }
+    }
+
+    private IEnumerator showGameOverAfterDelay()
+    {
+        yield return new WaitForSeconds(3f);
+        Show();
     }
 }
