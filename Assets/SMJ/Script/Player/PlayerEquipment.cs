@@ -77,7 +77,8 @@ public class PlayerEquipment : MonoBehaviour
     {
         if (_equippedItems.TryGetValue(type, out EquipmentItem oldItem))
         {
-            if (oldItem.CurrentDurability > 0)
+            if (oldItem.CurrentDurability > 0 
+               || oldItem is ArmorItem)
             {
                 _inventory.AddItemInstance(oldItem);
             }
